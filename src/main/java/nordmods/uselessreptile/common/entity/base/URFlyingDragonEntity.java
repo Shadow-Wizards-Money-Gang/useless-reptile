@@ -23,6 +23,10 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     protected final int maxInAirTimer = 600;
     protected float pitchLimitAir = 90;
     protected float rotationSpeedAir = 180;
+    protected float tiltProgress;
+    protected boolean shouldGlide;
+    private int glideTimer = 100;
+    protected float verticalSpeed;
 
     protected URFlyingDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
@@ -71,8 +75,8 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
 
     @Override
     public float getRotationSpeed() {
-        if (isFlying()) return rotationSpeedAir * calcSpeedMod();
-        return rotationSpeedGround * calcSpeedMod();
+        if (isFlying()) return rotationSpeedAir * calcSpeedMod() / 2f;
+        return super.getRotationSpeed();
     }
 
     @Override
@@ -100,6 +104,18 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        updateTiltProgress();
+
+        if (getWorld().isClient()) {
+            glideTimer--;
+            shouldGlide = glideTimer < 0 && getAccelerationDuration()/getMaxAccelerationDuration() > 0.9;
+            if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
+        }
+    }
+
+    @Override
     public void travel(Vec3d movementInput) {
         if (!isAlive()) return;
 
@@ -114,12 +130,6 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
         if (isOnGround() && !isInsideWaterOrBubbleColumn() || hasVehicle()) setFlying(false);
         setNoGravity(isFlying());
 
-        byte turnState = 0;
-        float rotationSpeed = getRotationSpeed();
-        float yawDiff = bodyYaw - headYaw;
-        turnState = (Math.abs(yawDiff)) > rotationSpeed && yawDiff < 0 ? 2 : turnState;
-        turnState = (Math.abs(yawDiff)) > rotationSpeed && yawDiff > 0 ? 1 : turnState;
-        setTurningState(turnState);
         if (isFlying()) {
             setPitch( MathHelper.clamp(getPitch(), -getPitchLimit(), getPitchLimit()));
             if (getInAirTimer() < maxInAirTimer) setInAirTimer(getInAirTimer() + 1);
@@ -140,5 +150,32 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
 
     protected float getOffGroundSpeed() {
         return getMovementSpeed() *  0.14f;
+    }
+
+    private void updateTiltProgress() {
+        switch (getTiltState()) {
+            case 1 -> {
+                if (tiltProgress < TRANSITION_TICKS) tiltProgress++;
+            }
+            case 2 -> {
+                if (tiltProgress > -TRANSITION_TICKS) tiltProgress--;
+            }
+            default -> {
+                if (tiltProgress != 0) {
+                    if (tiltProgress > 0) tiltProgress--;
+                    else  tiltProgress++;
+                }
+            }
+        }
+    }
+
+    @Override
+    public float getVerticalSpeed() {
+        return verticalSpeed;
+    }
+
+    @Override
+    public FlyingDragonMoveControl<? extends FlyingDragon> getMoveControl() {
+        return (FlyingDragonMoveControl<?>) moveControl;
     }
 }

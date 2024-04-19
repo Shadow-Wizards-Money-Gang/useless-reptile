@@ -2,7 +2,13 @@ package nordmods.uselessreptile.common.entity;
 
 import com.mojang.authlib.GameProfile;
 import eu.pb4.common.protection.api.CommonProtection;
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import mod.azure.azurelib.animatable.GeoEntity;
+import mod.azure.azurelib.core.animation.AnimatableManager;
+import mod.azure.azurelib.core.animation.AnimationController;
+import mod.azure.azurelib.core.keyframe.event.SoundKeyframeEvent;
+import mod.azure.azurelib.core.object.PlayState;
+import mod.azure.azurelib.core.animation.AnimationState;
+import net.fabricmc.fabric.api.mininglevel.v1.MiningLevelManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.SitGoal;
@@ -22,53 +28,41 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.*;
-import nordmods.uselessreptile.common.entity.ai.pathfinding.MoleclawNavigation;
+import nordmods.uselessreptile.common.config.URConfig;
+import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawEscapeLightGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawUntamedTargetGoal;
+import nordmods.uselessreptile.common.entity.ai.pathfinding.MoleclawNavigation;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.gui.MoleclawScreenHandler;
-import nordmods.uselessreptile.common.init.URConfig;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.items.DragonArmorItem;
-import nordmods.uselessreptile.common.network.AttackTypeSyncS2CPacket;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 public class MoleclawEntity extends URRideableDragonEntity {
     public int attackDelay = 0;
     public static final float defaultWidth = 2f;
     public static final float defaultHeight = 2.9f;
-    private int attackType = 1;
     private int panicSoundDelay = 0;
 
     public MoleclawEntity(EntityType<? extends URRideableDragonEntity> entityType, World world) {
@@ -77,28 +71,18 @@ public class MoleclawEntity extends URRideableDragonEntity {
         navigation = new MoleclawNavigation(this, world);
 
         pitchLimitGround = 50;
-        rotationSpeedGround = 6;
-        basePrimaryAttackCooldown = 60;
-        baseSecondaryAttackCooldown = 30;
+        rotationSpeedGround = attributes().moleclawRotationSpeedGround;
+        basePrimaryAttackCooldown = attributes().moleclawBasePrimaryAttackCooldown;
+        baseSecondaryAttackCooldown = attributes().moleclawBaseSecondaryAttackCooldown;
         baseTamingProgress = 64;
-        favoriteFood = Items.BEETROOT;
-        regenFromFood = 2;
-        dragonID = "moleclaw";
+        regenerationFromFood = attributes().moleclawRegenerationFromFood;
+        ticksUntilHeal = 400;
     }
 
-    @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
-        setPersistent();
-        return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
-    }
-
-    public static boolean canMoleclawSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        if (world.getChunk(pos).getInhabitedTime() > 3000) return false;
-        if (pos.getY() < -2) return false;
-        if (world.getLightLevel(LightType.SKY, pos) > 4) return false;
-        Box box =  new Box(pos.getX() - 16, pos.getY() - 16, pos.getZ() - 16,pos.getX() + 16, pos.getY() + 16, pos.getZ() + 16);
-        if (!world.getEntitiesByClass(MoleclawEntity.class, box, Predicate.not(TameableEntity::isTamed)).isEmpty()) return false;
-        return canMobSpawn(type, world, spawnReason, pos, random) && world.getBlockState(pos.down()).isIn(URTags.ALLOWS_MOLECLAW_SPAWN);
+    public static boolean canDragonSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
+        if (world.getChunk(pos).getInhabitedTime() > 12000) return false;
+        if (world.getLightLevel(LightType.SKY, pos) > 7 || world.getLightLevel(LightType.BLOCK, pos) > 7) return false;
+        return spawnReason == SpawnReason.SPAWNER || world.getBlockState(pos.down()).isIn(URTags.MOLECLAW_SPAWNABLE_ON);
     }
 
     @Override
@@ -129,48 +113,46 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     public static DefaultAttributeContainer.Builder createMoleclawAttributes() {
         return TameableEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 50.0 * URConfig.getHealthMultiplier())
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 8.0 * URConfig.getDamageMultiplier())
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
-                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, 4.0)
-                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.5)
-                .add(EntityAttributes.GENERIC_ARMOR, 8);
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, attributes().moleclawDamage * attributes().dragonDamageMultiplier)
+                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, attributes().moleclawKnockback * URMobAttributesConfig.getConfig().dragonKnockbackMultiplier)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, attributes().moleclawHealth * attributes().dragonHealthMultiplier)
+                .add(EntityAttributes.GENERIC_ARMOR, attributes().moleclawArmor * attributes().dragonArmorMultiplier)
+                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, attributes().moleclawArmorToughness * attributes().dragonArmorToughnessMultiplier)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, attributes().moleclawGroundSpeed * attributes().dragonGroundSpeedMultiplier)
+                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
+
     }
 
     @Override
-    public void registerControllers(AnimationData animationData) {
-        AnimationController<MoleclawEntity> main = new AnimationController<>(this, "main", transitionTicks, this::main);
-        AnimationController<MoleclawEntity> turn = new AnimationController<>(this, "turn", transitionTicks, this::turn);
+    public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
+        AnimationController<MoleclawEntity> main = new AnimationController<>(this, "main", TRANSITION_TICKS, this::main);
+        AnimationController<MoleclawEntity> turn = new AnimationController<>(this, "turn", TRANSITION_TICKS, this::turn);
         AnimationController<MoleclawEntity> attack = new AnimationController<>(this, "attack", 0, this::attack);
         AnimationController<MoleclawEntity> eye = new AnimationController<>(this, "eye", 0, this::eye);
-        main.registerSoundListener(this::soundListenerMain);
-        attack.registerSoundListener(this::soundListenerAttack);
-        animationData.addAnimationController(main);
-        animationData.addAnimationController(turn);
-        animationData.addAnimationController(attack);
-        animationData.addAnimationController(eye);
+        main.setSoundKeyframeHandler(this::soundListenerMain);
+        attack.setSoundKeyframeHandler(this::soundListenerAttack);
+        animationData.add(main, turn, attack, eye);
     }
 
-    private <ENTITY extends IAnimatable> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
+    private <ENTITY extends GeoEntity> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
         if (getWorld().isClient())
-            if (event.sound.equals("step"))
+            if (event.getKeyframeData().getSound().equals("step"))
                 playSound(getStepSound(getBlockPos(), getWorld().getBlockState(getBlockPos())), 1, 1);
     }
 
-    private <ENTITY extends IAnimatable> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
+    private <ENTITY extends GeoEntity> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
         if (getWorld().isClient())
-            switch (event.sound) {
+            switch (event.getKeyframeData().getSound()) {
                 case "attack_strong" -> playSound(URSounds.MOLECLAW_STRONG_ATTACK, 1, 1F);
                 case "attack" -> playSound(URSounds.MOLECLAW_ATTACK, 1, 1);
             }
     }
 
-    private <A extends IAnimatable> PlayState eye(AnimationEvent<A> event) {
+    private <A extends GeoEntity> PlayState eye(AnimationState<A> event) {
         return loopAnim("blink", event);
     }
 
-    private <A extends IAnimatable> PlayState main(AnimationEvent<A> event) {
+    private <A extends GeoEntity> PlayState main(AnimationState<A> event) {
         event.getController().setAnimationSpeed(animationSpeed);
         if (getIsSitting() && !isDancing()) return loopAnim("sit", event);
         if (event.isMoving() || isMoveForwardPressed() || isMovingBackwards()) {
@@ -183,7 +165,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         return loopAnim("idle", event);
     }
 
-    private <A extends IAnimatable> PlayState turn(AnimationEvent<A> event) {
+    private <A extends GeoEntity> PlayState turn(AnimationState<A> event) {
         byte turnState = getTurningState();
         event.getController().setAnimationSpeed(animationSpeed);
         if (turnState == 1) return loopAnim("turn.left", event);
@@ -191,9 +173,9 @@ public class MoleclawEntity extends URRideableDragonEntity {
         return loopAnim("turn.none", event);
     }
 
-    private <A extends IAnimatable> PlayState attack(AnimationEvent<A> event){
+    private <A extends GeoEntity> PlayState attack(AnimationState<A> event){
         event.getController().setAnimationSpeed(1/calcCooldownMod());
-        if (isSecondaryAttack()) return playAnim( "attack.normal" + attackType, event);
+        if (isSecondaryAttack()) return playAnim( "attack.normal" + getAttackType(), event);
         if (isPrimaryAttack()) {
             if (isPanicking()) return playAnim( "attack.strong.panic", event);
             return playAnim( "attack.strong", event);
@@ -204,21 +186,22 @@ public class MoleclawEntity extends URRideableDragonEntity {
     @Override
     public void tick() {
         super.tick();
-        setHitboxModifiers(1, 1, 2.5f);
+        if (!getIsSitting()) setHitboxModifiers(1, 1, 2.5f);
+        else setHitboxModifiers(0.75f, 1f, 2.5f);
         tryPanic();
 
         if (canBeControlledByRider()) {
-            if (attackDelay > 0) {
-                attackDelay++;
-                if (attackDelay > transitionTicks + 1) {
-                    if (isPrimaryAttack()) strongAttack();
-                    if (isSecondaryAttack()) meleeAttack();
-                    attackDelay = 0;
-                }
-            }
+            if (isSecondaryAttackPressed && getSecondaryAttackCooldown() == 0) scheduleNormalAttack();
+            if (isPrimaryAttackPressed && getPrimaryAttackCooldown() == 0) scheduleStrongAttack();
+        }
 
-            if (isSecondaryAttackPressed) tryNormalAttack();
-            if (isPrimaryAttackPressed) tryStrongAttack();
+        if (attackDelay > 0) {
+            attackDelay++;
+            if (attackDelay > TRANSITION_TICKS + 1) {
+                if (isPrimaryAttack()) strongAttack();
+                if (isSecondaryAttack()) meleeAttack();
+                attackDelay = 0;
+            }
         }
     }
 
@@ -234,7 +217,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         setMovementSpeed(speed * getSpeedMod());
 
         if (canBeControlledByRider()) {
-            PlayerEntity rider = (PlayerEntity) getPrimaryPassenger();
+            PlayerEntity rider = (PlayerEntity) getControllingPassenger();
 
             float f1 = MathHelper.clamp(rider.forwardSpeed, -forwardSpeed, forwardSpeed);
 
@@ -247,12 +230,6 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
             super.travel(new Vec3d(0, movementInput.y, f1));
         } else {
-            byte turnState = 0;
-            float rotationSpeed = getRotationSpeed();
-            float yawDiff = bodyYaw - headYaw;
-            turnState = (Math.abs(yawDiff)) > rotationSpeed && yawDiff < 0 ? 2 : turnState;
-            turnState = (Math.abs(yawDiff)) > rotationSpeed && yawDiff > 0 ? 1 : turnState;
-            setTurningState(turnState);
             super.travel(movementInput);
         }
     }
@@ -267,7 +244,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     @Override
     protected void updateEquipment() {
-        updateSaddle();
+        super.updateEquipment();
         updateBanner();
 
         int armorBonus = 0;
@@ -297,11 +274,11 @@ public class MoleclawEntity extends URRideableDragonEntity {
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
 
-        if (isFavoriteFood(itemStack) && !isTamed()) {
+        if (isTamingItem(itemStack) && !isTamed()) {
             eat(player, hand, itemStack);
-            if (random.nextInt(3) == 0) setTamingProgress((byte) (getTamingProgress() - 2));
-            else setTamingProgress((byte) (getTamingProgress() - 1));
-            if (player.isCreative()) setTamingProgress((byte) 0);
+            if (random.nextInt(3) == 0) setTamingProgress(getTamingProgress() - 2);
+            else setTamingProgress(getTamingProgress() - 1);
+            if (player.isCreative()) setTamingProgress(0);
             if (getTamingProgress() <= 0) {
                 setOwner(player);
                 getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
@@ -321,90 +298,61 @@ public class MoleclawEntity extends URRideableDragonEntity {
         return super.interactMob(player, hand);
     }
 
-    @Override
-    public void openInventory(PlayerEntity player) {
-        if (!getWorld().isClient() && canBeControlledByRider() && isOwnerOrCreative(player)) {
-            player.openHandledScreen(this);
-        }
-    }
-
     public void meleeAttack() {
-        List<Entity> targets = getWorld().getOtherEntities(this, getNormalAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
+        List<Entity> targets = getWorld().getOtherEntities(this, getAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
         if (!targets.isEmpty()) for (Entity mob: targets) {
             Box targetBox = mob.getBoundingBox();
-            if (doesCollide(targetBox, getNormalAttackBox())) tryAttack(mob);
+            if (doesCollide(targetBox, getAttackBox())) tryAttack(mob);
         }
     }
 
     public void strongAttack() {
-        List<Entity> targets = getWorld().getOtherEntities(this, getStrongAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
+        List<Entity> targets = getWorld().getOtherEntities(this, getSecondaryAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
         if (!targets.isEmpty()) for (Entity mob : targets) {
             Box targetBox = mob.getBoundingBox();
-            if (doesCollide(targetBox, getStrongAttackBox())) tryAttack(mob);
+            if (doesCollide(targetBox, getSecondaryAttackBox())) tryAttack(mob);
         }
 
         boolean shouldBreakBlocks = isTamed() ? URConfig.getConfig().allowDragonGriefing.canTamedBreak() : URConfig.getConfig().allowDragonGriefing.canUntamedBreak();
         boolean canBreakBlocks = shouldBreakBlocks && getWorld().getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING);
-        if (canBreakBlocks && !getWorld().isClient()) {
-            Vec3d rotationVec = getRotationVec(1);
-            Box box = getBoundingBox();
-            double minX = box.minX;
-            double maxX = box.maxX;
-            double minY = box.minY;
-            double maxY = box.maxY;
-            double minZ = box.minZ;
-            double maxZ = box.maxZ;
-            for (double x = minX; x <= maxX; x++)
-                for (double y = minY + 1; y <= maxY + 2; y++)
-                    for (double z = minZ; z <= maxZ; z++) {
-                        Vec3d start = new Vec3d(x, y, z);
-                        Vec3d end = rotationVec.multiply(2.5).add(new Vec3d(x, y, z));
-                        BlockHitResult hitResult = getWorld().raycast(new RaycastContext(start,
-                                end,
-                                RaycastContext.ShapeType.COLLIDER,
-                                RaycastContext.FluidHandling.NONE,
-                                this));
-                        if (hitResult.getType() == HitResult.Type.BLOCK) {
-                            BlockPos blockPos = new BlockPos(hitResult.getBlockPos());
-                            BlockState blockState = getWorld().getBlockState(blockPos);
+        if (getWorld().isClient() || !canBreakBlocks) return;
 
-                            PlayerEntity rider = canBeControlledByRider() ? (PlayerEntity) getPrimaryPassenger() : null;
-                            GameProfile playerId = rider != null ? rider.getGameProfile() : CommonProtection.UNKNOWN;
+        Box box = getSecondaryAttackBox();
+        Iterable<BlockPos> blocks = BlockPos.iterate((int) box.minX, (int) box.minY, (int) box.minZ, (int) box.maxX, (int) box.maxY, (int) box.maxZ);
+        for (BlockPos blockPos : blocks) {
+            BlockState blockState = getWorld().getBlockState(blockPos);
+            PlayerEntity rider = canBeControlledByRider() ? (PlayerEntity) getControllingPassenger() : null;
+            GameProfile playerId = rider != null ? rider.getGameProfile() : CommonProtection.UNKNOWN;
+            if (blockState.isIn(URTags.DRAGON_UNBREAKABLE) || !CommonProtection.canBreakBlock(getWorld(), blockPos, playerId, rider)) continue;
 
-                            if (!blockState.isIn(URTags.DRAGON_UNBREAKABLE) && CommonProtection.canBreakBlock(getWorld(), blockPos, playerId, rider)) {
-                                float hardness = blockState.getHardness(getWorld(), blockPos);
-                                float bonus = 1;
-                                if (hasStatusEffect(StatusEffects.STRENGTH))
-                                    bonus += (getStatusEffect(StatusEffects.STRENGTH).getAmplifier() + 1) * 0.1;
-                                if (hasStatusEffect(StatusEffects.WEAKNESS))
-                                    bonus -= (getStatusEffect(StatusEffects.WEAKNESS).getAmplifier() + 1) * 0.1;
+            float miningLevel = MiningLevelManager.getRequiredMiningLevel(blockState);
+            float maxMiningLevel = 0;
+            if (hasStatusEffect(StatusEffects.STRENGTH)) maxMiningLevel += getStatusEffect(StatusEffects.STRENGTH).getAmplifier() + 1;
+            if (hasStatusEffect(StatusEffects.WEAKNESS)) maxMiningLevel -= getStatusEffect(StatusEffects.WEAKNESS).getAmplifier() + 1;
 
-                                if (!blockState.isAir() && hardness >= 0 && hardness < 3 * bonus) {
-                                    boolean shouldDrop = getRandom().nextDouble() * 100 <= URConfig.getConfig().blockDropChance;
-                                    getWorld().breakBlock(blockPos, shouldDrop, this);
-                                }
-                            }
-                        }
-                    }
+            if (!blockState.isAir() && miningLevel <= maxMiningLevel) {
+                boolean shouldDrop = getRandom().nextDouble() * 100 <= URConfig.getConfig().blockDropChance;
+                getWorld().breakBlock(blockPos, shouldDrop, this);
+            }
         }
     }
 
-    public Box getNormalAttackBox() {
+    @Override
+    public Box getAttackBox() {
         Vec3d rotationVec = getRotationVector(0, getYaw());
         double x = rotationVec.x * 2;
         double z = rotationVec.z * 2;
-        return new Box(getBlockPos().getX() + x - 1.5, getBlockPos().getY(), getBlockPos().getZ() + z - 1.5,
-                getBlockPos().getX() + x + 1.5, getBlockPos().getY() + getHeight(), getBlockPos().getZ() + z + 1.5);
+        return new Box(getPos().getX() + x - 1.5, getPos().getY(), getPos().getZ() + z - 1.5,
+                getPos().getX() + x + 1.5, getPos().getY() + getHeight(), getPos().getZ() + z + 1.5);
     }
 
-    public Box getStrongAttackBox() {
-        Vec3d rotationVec = getRotationVec(1f);
-        double mod = getWidthMod()/2;
-        double x = rotationVec.x * mod;
-        double y = rotationVec.y >= 0 ? rotationVec.y : rotationVec.y * 2;
-        double z = rotationVec.z * mod;
-        return new Box(getBlockPos().getX() + x - 1.25, getBlockPos().getY() + y, getBlockPos().getZ() + z - 1.25,
-                getBlockPos().getX() + x + 1.25, getBlockPos().getY() + getHeight() + 1 + y, getBlockPos().getZ() + z + 1.25);
+    @Override
+    public Box getSecondaryAttackBox() {
+        double x = -Math.sin(Math.toRadians(getYaw())) * 2;
+        double y = -Math.sin(Math.toRadians(getPitch()));
+        double z = Math.cos(Math.toRadians(getYaw())) * 2;
+        return new Box(getPos().getX() + x - 1.25, getPos().getY() + y + 0.5, getPos().getZ() + z - 1.25,
+                getPos().getX() + x + 1.25, getPos().getY() + getHeight() + 1 + y, getPos().getZ() + z + 1.25);
     }
 
     public void tryPanic() {
@@ -441,21 +389,15 @@ public class MoleclawEntity extends URRideableDragonEntity {
         return super.canBeControlledByRider() && !isPanicking();
     }
 
-    public void tryNormalAttack() {
-        if (getSecondaryAttackCooldown() == 0) {
-            if (attackDelay == 0) attackDelay = 6;
-            setSecondaryAttackCooldown(getMaxSecondaryAttackCooldown());
-            attackType = random.nextInt(2)+1;
-            if (getWorld() instanceof ServerWorld world)
-                for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) AttackTypeSyncS2CPacket.send(player, this);
-        }
+    public void scheduleNormalAttack() {
+        setSecondaryAttackCooldown(getMaxSecondaryAttackCooldown());
+        if (attackDelay == 0) attackDelay = 6;
+        setAttackType(random.nextInt(2)+1);
     }
 
-    public void tryStrongAttack() {
-        if (getPrimaryAttackCooldown() == 0) {
-            if (attackDelay == 0) attackDelay = 6;
-            setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
-        }
+    public void scheduleStrongAttack() {
+        if (attackDelay == 0) attackDelay = 6;
+        setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
     }
 
     private SoundEvent getStepSound(BlockPos pos, BlockState state) {
@@ -482,6 +424,11 @@ public class MoleclawEntity extends URRideableDragonEntity {
         return URSounds.MOLECLAW_AMBIENT;
     }
 
+    @Override
+    public float getPathfindingFavor(BlockPos pos, WorldView world) {
+        return -world.getPhototaxisFavor(pos);
+    }
+
     private void playPanicSound() {
         if (isPanicking()) {
             if (panicSoundDelay == 0) {
@@ -492,4 +439,13 @@ public class MoleclawEntity extends URRideableDragonEntity {
         } else panicSoundDelay = 2;
     }
 
+    @Override
+    public boolean isFavoriteFood(ItemStack itemStack){
+        return itemStack.isOf(Items.BEETROOT);
+    }
+
+    @Override
+    public int getLimitPerChunk() {
+        return URConfig.getConfig().moleclawMaxGroupSize * 2;
+    }
 }

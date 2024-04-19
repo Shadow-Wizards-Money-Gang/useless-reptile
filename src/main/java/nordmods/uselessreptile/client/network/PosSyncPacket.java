@@ -12,9 +12,9 @@ public class PosSyncPacket {
             double y = buffer.readDouble();
             double z = buffer.readDouble();
             Vec3d pos = new Vec3d(x, y, z);
-            URRideableDragonEntity dragon = (URRideableDragonEntity) client.world.getEntityById(buffer.readInt());
+            URRideableDragonEntity dragon = client.world != null ? (URRideableDragonEntity) client.world.getEntityById(buffer.readInt()) : null;
             client.execute(() ->{
-                if (dragon != null && dragon.getPrimaryPassenger() != client.player) dragon.setPosition(pos);
+                if (dragon != null && dragon.getControllingPassenger() != client.player) dragon.setPosition(pos);
             });
         });
     }

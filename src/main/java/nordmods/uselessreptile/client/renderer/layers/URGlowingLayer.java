@@ -1,32 +1,53 @@
 package nordmods.uselessreptile.client.renderer.layers;
 
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumerProvider;
+import mod.azure.azurelib.cache.object.BakedGeoModel;
+import mod.azure.azurelib.core.animatable.GeoAnimatable;
+import mod.azure.azurelib.renderer.GeoRenderer;
+import mod.azure.azurelib.renderer.layer.GeoRenderLayer;
+import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.client.config.URClientConfig;
+import nordmods.uselessreptile.client.util.AssetCache;
+import nordmods.uselessreptile.client.util.AssetCahceOwner;
 import nordmods.uselessreptile.client.util.ResourceUtil;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import nordmods.uselessreptile.common.init.URConfig;
-import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
-import software.bernie.geckolib3.renderers.geo.layer.LayerGlowingAreasGeo;
 
-import java.util.function.Function;
+public class URGlowingLayer<T extends GeoAnimatable & AssetCahceOwner> extends GeoRenderLayer<T> {
+    public URGlowingLayer(GeoRenderer<T> renderer) {
+        super(renderer);
+    }
+    public void render(MatrixStack matrixStackIn, T animatable, BakedGeoModel model, RenderLayer renderType,
+                       VertexConsumerProvider bufferSource, VertexConsumer buffer, float partialTick,
+                       int packedLight, int packedOverlay) {
+        if (URClientConfig.getConfig().disableEmissiveTextures) return;
 
-public class URGlowingLayer <T extends URDragonEntity> extends LayerGlowingAreasGeo<T> {
-    public URGlowingLayer(GeoEntityRenderer<T> renderer, Function<T, Identifier> currentTextureFunction, Function<T, Identifier> currentModelFunction, Function<Identifier, RenderLayer> emissiveRenderTypeFunction) {
-        super(renderer, currentTextureFunction, currentModelFunction, emissiveRenderTypeFunction);
+        AssetCache assetCache = animatable.getAssetCache();
+        if (!ResourceUtil.isResourceReloadFinished) {
+            assetCache.setGlowLayerLocationCache(null);
+            assetCache.setHasGlowing(true);
+            return;
+        }
+
+        if (!assetCache.hasGlowing()) return;
+        Identifier id = getGlowingTexture(animatable);
+        if (!ResourceUtil.doesExist(id)) {
+            assetCache.setHasGlowing(false);
+            return;
+        }
+
+        RenderLayer cameo =  RenderLayer.getEyes(id);
+        getRenderer().reRender(getDefaultBakedModel(animatable), matrixStackIn, bufferSource, animatable, cameo,
+                bufferSource.getBuffer(cameo), partialTick, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV,
+                1, 1, 1, 1);
     }
 
-    @Override
-    public void render(MatrixStack matrixStackIn, VertexConsumerProvider bufferSource, int packedLight, T entity,
-                       float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw,
-                       float headPitch)  {
-        if (!ResourceUtil.isResourceReloadFinished) return;
-        if (!URConfig.getConfig().disableEmissiveTextures) {
-            Identifier id = getEntityModel().getTextureResource(entity);
-            id = new Identifier(UselessReptile.MODID, id.getPath() + ".mcmeta");
-            if (ResourceUtil.doesExist(id)) super.render(matrixStackIn,bufferSource, packedLight , entity, limbSwing, limbSwingAmount, partialTick, ageInTicks, netHeadYaw, headPitch);
-        }
+    protected Identifier getGlowingTexture(T animatable) {
+        if (animatable.getAssetCache().getGlowLayerLocationCache() != null) return animatable.getAssetCache().getGlowLayerLocationCache();
+        String namespace = getTextureResource(animatable).getNamespace();
+        String path = getTextureResource(animatable).getPath().replace(".png", "_glowing.png");
+        Identifier id = new Identifier(namespace, path);
+        animatable.getAssetCache().setGlowLayerLocationCache(id);
+
+        return id;
     }
 }

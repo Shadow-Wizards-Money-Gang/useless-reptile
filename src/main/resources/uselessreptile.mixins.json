@@ -1,13 +1,19 @@
 {
   "required": true,
-  "package": "nordmods.uselessreptile.common.mixin",
+  "package": "nordmods.uselessreptile.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "common.AbstractBlockMixin"
+    "common.AbstractBlockMixin",
+    "common.PlayerEntityMixin",
+    "common.ServerPlayerEntityMixin",
+    "common.ServerWorldMixin",
+    "common.SpawnGroupMixin"
   ],
   "client": [
     "client.CameraMixin",
     "client.EntityMixin",
+    "client.EntityRenderDispathcerMixin",
+    "client.GameRendererMixin",
     "client.InGameHudMixin",
     "client.LivingEntityMixin",
     "client.LivingEntityRendererMixin",

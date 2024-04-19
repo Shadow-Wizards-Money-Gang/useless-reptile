@@ -5,15 +5,17 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.SpawnEggItem;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.items.DragonArmorItem;
 import nordmods.uselessreptile.common.items.FluteItem;
 
 public class URItems {
-    public static final Item WYVERN_SPAWN_EGG = new SpawnEggItem(UREntities.WYVERN_ENTITY, 5462570, 3094045, new Item.Settings());
     public static final Item WYVERN_SKIN = new Item(new FabricItemSettings());
     public static final DragonArmorItem DRAGON_HELMET_IRON = new DragonArmorItem(2, EquipmentSlot.HEAD, new FabricItemSettings().maxCount(1));
     public static final DragonArmorItem DRAGON_HELMET_GOLD = new DragonArmorItem(3, EquipmentSlot.HEAD, new FabricItemSettings().maxCount(1));
@@ -27,8 +29,10 @@ public class URItems {
     public static final DragonArmorItem MOLECLAW_HELMET_IRON = new DragonArmorItem(2, EquipmentSlot.HEAD, new FabricItemSettings().maxCount(1));
     public static final DragonArmorItem MOLECLAW_HELMET_GOLD = new DragonArmorItem(3, EquipmentSlot.HEAD, new FabricItemSettings().maxCount(1));
     public static final DragonArmorItem MOLECLAW_HELMET_DIAMOND = new DragonArmorItem(4, EquipmentSlot.HEAD, new FabricItemSettings().maxCount(1));
+    public static final Item WYVERN_SPAWN_EGG = new SpawnEggItem(UREntities.WYVERN_ENTITY, 5462570, 3094045, new Item.Settings());
     public static final Item MOLECLAW_SPAWN_EGG = new SpawnEggItem(UREntities.MOLECLAW_ENTITY,2105119, 458752, new Item.Settings());
     public static final Item RIVER_PIKEHORN_SPAWN_EGG = new SpawnEggItem(UREntities.RIVER_PIKEHORN_ENTITY,2910895, 1457243, new Item.Settings());
+    public static final Item LIGHTNING_CHASER_SPAWN_EGG = new SpawnEggItem(UREntities.LIGHTNING_CHASER_ENTITY,4145472, 10922151, new Item.Settings());
     public static final FluteItem FLUTE = new FluteItem(new FabricItemSettings().maxCount(1));
 
     public static final ItemGroup UR_ITEM_GROUP = FabricItemGroupBuilder.create(new Identifier(UselessReptile.MODID, "item_group"))
@@ -37,6 +41,7 @@ public class URItems {
                 c.add(WYVERN_SPAWN_EGG.getDefaultStack());
                 c.add(MOLECLAW_SPAWN_EGG.getDefaultStack());
                 c.add(RIVER_PIKEHORN_SPAWN_EGG.getDefaultStack());
+                c.add(LIGHTNING_CHASER_SPAWN_EGG.getDefaultStack());
                 c.add(MOLECLAW_HELMET_IRON.getDefaultStack());
                 c.add(MOLECLAW_HELMET_GOLD.getDefaultStack());
                 c.add(MOLECLAW_HELMET_DIAMOND.getDefaultStack());
@@ -71,6 +76,7 @@ public class URItems {
         register(MOLECLAW_SPAWN_EGG, "moleclaw_spawn_egg");
         register(RIVER_PIKEHORN_SPAWN_EGG, "river_pikehorn_spawn_egg");
         register(WYVERN_SPAWN_EGG, "wyvern_spawn_egg");
+        register(LIGHTNING_CHASER_SPAWN_EGG, "lightning_chaser_spawn_egg");
         register(FLUTE, "flute");
     }
 

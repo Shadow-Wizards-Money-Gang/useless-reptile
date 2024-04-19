@@ -98,12 +98,10 @@ public class PikehornHuntGoal extends Goal {
 
                 } else {
                     //kill the fish
-                    double attackDistance = entity.getWidth() * 2.0f * (entity.getWidth() * 2.0f);
-                    double distance = entity.squaredDistanceTo(fish);
-                    entity.lookAtEntity(fish, entity.getRotationSpeed(), 180);
+                    entity.lookAt(fish);
                     entity.getNavigation().startMovingTo(fish, 1);
-                    if (entity.getPrimaryAttackCooldown() > 0 || distance >= attackDistance) return;
-                    entity.attackMelee(fish);
+                    if (entity.getPrimaryAttackCooldown() > 0) return;
+                    if (entity.doesCollide(entity.getAttackBox(), fish.getBoundingBox())) entity.attackMelee(fish);
                 }
             }
         } else {
@@ -112,9 +110,7 @@ public class PikehornHuntGoal extends Goal {
             entity.getNavigation().startMovingTo(startingPos.getX(), startingPos.getY() + 1, startingPos.getZ(), 1);
             if (entity.forceTargetInWater) {
                 double distance = entity.getBlockPos().getSquaredDistance(startingPos.up());
-                if (distance < entity.getWidth() * 2.0f * (entity.getWidth() * 2.0f)) {
-                    stopHunt();
-                }
+                if (distance < entity.getWidth() * 2.0f * (entity.getWidth() * 2.0f)) stopHunt();
             }
         }
     }

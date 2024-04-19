@@ -25,6 +25,9 @@
     ],
     "modmenu": [
       "nordmods.uselessreptile.integration.ModMenuIntegration"
+    ],
+    "preLaunch": [
+      "nordmods.uselessreptile.UselessReptile"
     ]
   },
   "mixins": [
@@ -32,11 +35,11 @@
   ],
   "accessWidener" : "uselessreptile.accesswidener",
   "depends": {
-    "fabricloader": "*",
+    "fabricloader": ">=0.14",
     "fabric-api": "*",
     "java": ">=17",
-    "minecraft": "~1.19",
-    "geckolib3": "*",
-    "yet-another-config-lib": "2.2.0-for-1.19.2"
+    "minecraft": "1.19.2",
+    "azurelib": "*",
+    "yet-another-config-lib": "*"
   }
 }

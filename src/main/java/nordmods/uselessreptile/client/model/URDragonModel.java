@@ -1,77 +1,122 @@
 package nordmods.uselessreptile.client.model;
 
+import mod.azure.azurelib.model.GeoModel;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.client.util.AssetCache;
+import nordmods.uselessreptile.client.util.DragonAssetCache;
 import nordmods.uselessreptile.client.util.ResourceUtil;
-import nordmods.uselessreptile.client.util.modelRedirect.ModelRedirectUtil;
+import nordmods.uselessreptile.client.util.model_data.ModelDataUtil;
+import nordmods.uselessreptile.client.util.model_data.base.DragonModelData;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import nordmods.uselessreptile.common.init.URConfig;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
 
-public abstract class URDragonModel<T extends URDragonEntity> extends AnimatedGeoModel<T> {
-    public final String dragonID;
-    public final String defaultVariant;
+public abstract class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
+    private final String defaultVariant;
 
-    protected URDragonModel(String dragon, String defaultVariant) {
-        dragonID = dragon;
+    protected URDragonModel(String defaultVariant) {
         this.defaultVariant = defaultVariant;
     }
 
     @Override
-    public Identifier getAnimationResource(T dragon) {
-        if (!ResourceUtil.isResourceReloadFinished) return getDefaultAnimation();
-
-        if (!URConfig.getConfig().disableNamedEntityModels && dragon.getCustomName() != null) {
-            Identifier id = ModelRedirectUtil.getCustomAnimationPath(dragon, dragonID);
-            if (ResourceUtil.doesExist(id)) return id;
+    public Identifier getAnimationResource(T entity) {
+        AssetCache assetCache = entity.getAssetCache();
+        if (!ResourceUtil.isResourceReloadFinished) {
+            assetCache.setAnimationLocationCache(null);
+            return getDefaultAnimation(entity);
         }
 
-        Identifier id = ModelRedirectUtil.getVariantAnimationPath(dragon, dragonID);
-        if (ResourceUtil.doesExist(id)) return id;
+        Identifier id = assetCache.getAnimationLocationCache();
+        if (id != null) return id;
 
-        return getDefaultAnimation();
+        DragonModelData data  = ModelDataUtil.getDragonModelData(entity);
+        if (data != null && ResourceUtil.doesExist(data.modelData().animation())) {
+            id = data.modelData().animation();
+            assetCache.setAnimationLocationCache(id);
+            return id;
+        }
+
+        id = getDefaultAnimation(entity);
+        assetCache.setAnimationLocationCache(id);
+        return id;
     }
 
     @Override
-    public Identifier getModelResource(T dragon) {
-        if (!ResourceUtil.isResourceReloadFinished) return getDefaultModel();
-
-        if (!URConfig.getConfig().disableNamedEntityModels && dragon.getCustomName() != null) {
-            Identifier id = ModelRedirectUtil.getCustomModelPath(dragon, dragonID);
-            if (ResourceUtil.doesExist(id)) return id;
+    public Identifier getModelResource(T entity) {
+        AssetCache assetCache = entity.getAssetCache();
+        if (!ResourceUtil.isResourceReloadFinished) {
+            assetCache.setModelLocationCache(null);
+            return getDefaultModel(entity);
         }
 
-        Identifier id = ModelRedirectUtil.getVariantModelPath(dragon, dragonID);
-        if (ResourceUtil.doesExist(id)) return id;
+        Identifier id = assetCache.getModelLocationCache();
+        if (id != null) return id;
 
-        return getDefaultModel();
+        DragonModelData data = ModelDataUtil.getDragonModelData(entity);
+        if (data != null && ResourceUtil.doesExist(data.modelData().model())) {
+            id = data.modelData().model();
+            assetCache.setModelLocationCache(id);
+            return id;
+        }
+
+        id = getDefaultModel(entity);
+        assetCache.setModelLocationCache(id);
+        return id;
     }
 
     @Override
-    public Identifier getTextureResource(T dragon){
-        if (!ResourceUtil.isResourceReloadFinished) return getDefaultTexture();
-
-        if (!URConfig.getConfig().disableNamedEntityModels && dragon.getCustomName() != null) {
-            Identifier id = ModelRedirectUtil.getCustomTexturePath(dragon, dragonID);
-            if (ResourceUtil.doesExist(id)) return id;
+    public Identifier getTextureResource(T entity){
+        AssetCache assetCache = entity.getAssetCache();
+        if (!ResourceUtil.isResourceReloadFinished) {
+            assetCache.setTextureLocationCache(null);
+            return getDefaultTexture(entity);
         }
 
-        Identifier id = ModelRedirectUtil.getVariantTexturePath(dragon.getVariant(), dragonID);
-        if (ResourceUtil.doesExist(id)) return id;
+        Identifier id = assetCache.getTextureLocationCache();
+        if (id != null) return id;
 
-        return getDefaultTexture();
+        DragonModelData data = ModelDataUtil.getDragonModelData(entity);
+        if (data != null && ResourceUtil.doesExist(data.modelData().texture())) {
+            id = data.modelData().texture();
+            assetCache.setTextureLocationCache(id);
+            return id;
+        }
+
+        id = getDefaultTexture(entity);
+        assetCache.setTextureLocationCache(id);
+        return id;
     }
 
-    protected final Identifier getDefaultTexture() {
-        return new Identifier(UselessReptile.MODID, "textures/entity/"+ dragonID + "/" + defaultVariant + ".png");
+    protected final Identifier getDefaultTexture(T entity) {
+        return new Identifier(UselessReptile.MODID, "textures/entity/"+ entity.getDragonID() + "/" + defaultVariant + ".png");
     }
 
-    protected final Identifier getDefaultAnimation() {
-        return new Identifier(UselessReptile.MODID, "animations/entity/" + dragonID + "/" + dragonID + ".animation.json");
+    protected final Identifier getDefaultAnimation(T entity) {
+        return new Identifier(UselessReptile.MODID, "animations/entity/" + entity.getDragonID() + "/" + entity.getDragonID() + ".animation.json");
     }
 
-    protected final Identifier getDefaultModel() {
-        return new Identifier(UselessReptile.MODID, "geo/entity/" + dragonID + "/" + dragonID + ".geo.json");
+    protected final Identifier getDefaultModel(T entity) {
+        return new Identifier(UselessReptile.MODID, "geo/entity/" + entity.getDragonID() + "/" + entity.getDragonID() + ".geo.json");
+    }
+
+    @Override
+    public RenderLayer getRenderType(T entity, Identifier texture) {
+        if (!ResourceUtil.isResourceReloadFinished) return RenderLayer.getEntityCutout(texture);
+
+        DragonAssetCache assetCache = entity.getAssetCache();
+        RenderLayer renderType = assetCache.getRenderTypeCache();
+        if (renderType != null) return renderType;
+
+        DragonModelData data = ModelDataUtil.getDragonModelData(entity);
+        if (data != null) {
+            renderType = data.modelData().renderType();
+            assetCache.setRenderTypeCache(renderType);
+            return renderType;
+        }
+
+        renderType = RenderLayer.getEntityCutout(texture);
+        assetCache.setRenderTypeCache(renderType);
+        return renderType;
     }
 
 }

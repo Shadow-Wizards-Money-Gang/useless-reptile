@@ -1,7 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "uselessreptile:item/armor/dragon/armor_diamond_head"
+    "layer0": "uselessreptile:item/armor/dragon/armor_diamond_head_moleclaw"
   },
   "display": {
     "thirdperson_righthand": {

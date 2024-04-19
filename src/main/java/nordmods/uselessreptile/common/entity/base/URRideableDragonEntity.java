@@ -20,18 +20,12 @@ import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import nordmods.uselessreptile.common.network.KeyInputSyncS2CPacket;
 import nordmods.uselessreptile.common.network.PosSyncS2CPacket;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
 public abstract class URRideableDragonEntity extends URDragonEntity implements RideableInventory {
     public boolean isSecondaryAttackPressed = false;
     public boolean isPrimaryAttackPressed = false;
-    public static Set<UUID> passengers = new HashSet<>();
 
     protected URRideableDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
-        stepHeight = 1;
     }
 
     @Override
@@ -64,6 +58,10 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     public boolean isDownPressed() {return dataTracker.get(MOVE_DOWN_PRESSED);}
     public boolean isSprintPressed() {return dataTracker.get(SPRINT_PRESSED);}
 
+    public LivingEntity getControllingPassenger() {
+        return getPassengerList().isEmpty() ? null : (LivingEntity) getPassengerList().get(0);
+    }
+
     @Override
     public LivingEntity getPrimaryPassenger() {
         return getPassengerList().isEmpty() ? null : (LivingEntity) getPassengerList().get(0);
@@ -95,7 +93,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     @Override
     public void tick() {
         super.tick();
-        if (getWorld().isClient() && getPrimaryPassenger() == MinecraftClient.getInstance().player) {
+        if (getWorld().isClient() && getControllingPassenger() == MinecraftClient.getInstance().player) {
             boolean isSprintPressed = MinecraftClient.getInstance().options.sprintKey.isPressed();
             boolean isMoveForwardPressed = MinecraftClient.getInstance().options.forwardKey.isPressed();
             boolean isJumpPressed = MinecraftClient.getInstance().options.jumpKey.isPressed();
@@ -106,7 +104,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
             isSecondaryAttackPressed = URKeybinds.secondaryAttackKey.isPressed();
             isPrimaryAttackPressed = URKeybinds.primaryAttackKey.isPressed();
         }
-        if (getPrimaryPassenger() == null) updateInputs(false, false, false, false, false);
+        if (getControllingPassenger() == null) updateInputs(false, false, false, false, false);
 
         if (getWorld() instanceof ServerWorld world && canBeControlledByRider())
             for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) {
@@ -115,6 +113,11 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
             }
     }
 
+    @Override
+    protected void updateEquipment() {
+        super.updateEquipment();
+        updateSaddle();
+    }
 
     protected void updateSaddle() {
         if (isTamed() && inventory != null) {
@@ -144,4 +147,9 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
             player.openHandledScreen(this);
         }
     }
+
+    protected void setRotation(PlayerEntity rider) {
+        setRotation(rider.getYaw(), rider.getPitch());
+    }
+
 }

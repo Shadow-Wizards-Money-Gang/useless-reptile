@@ -1,6 +1,11 @@
 package nordmods.uselessreptile.common.entity;
 
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import mod.azure.azurelib.animatable.GeoEntity;
+import mod.azure.azurelib.core.animation.AnimatableManager;
+import mod.azure.azurelib.core.animation.AnimationController;
+import mod.azure.azurelib.core.keyframe.event.SoundKeyframeEvent;
+import mod.azure.azurelib.core.object.PlayState;
+import mod.azure.azurelib.core.animation.AnimationState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.SitGoal;
@@ -12,6 +17,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,44 +29,37 @@ import net.minecraft.item.Items;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.*;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
+import nordmods.uselessreptile.common.config.URConfig;
+import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
-import nordmods.uselessreptile.common.entity.ai.goal.swamp_wyvern.WyvernAttackGoal;
-import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
+import nordmods.uselessreptile.common.entity.ai.goal.wyvern.WyvernAttackGoal;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
+import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
+import nordmods.uselessreptile.common.entity.special.AcidBlastEntity;
 import nordmods.uselessreptile.common.gui.WyvernScreenHandler;
-import nordmods.uselessreptile.common.init.URConfig;
 import nordmods.uselessreptile.common.init.URPotions;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URStatusEffects;
-import nordmods.uselessreptile.common.network.AttackTypeSyncS2CPacket;
+import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import nordmods.uselessreptile.common.network.URPacketHelper;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
+import net.minecraft.util.math.Vec3f;
 
 public class WyvernEntity extends URRideableFlyingDragonEntity implements MultipartEntity {
-    private int ticksUntilHeal = 400;
-    private int glideTimer = 100;
-    private boolean shouldGlide;
+
     private final URDragonPart wingLeft = new URDragonPart(this);
     private final URDragonPart wingRight = new URDragonPart(this);
     private final URDragonPart neck = new URDragonPart(this);
@@ -74,17 +73,17 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         super(entityType, world);
         experiencePoints = 20;
 
-        baseSecondaryAttackCooldown = 30;
-        basePrimaryAttackCooldown = 80;
-        baseAccelerationDuration = 400;
+        baseSecondaryAttackCooldown = attributes().wyvernBaseSecondaryAttackCooldown;
+        basePrimaryAttackCooldown = attributes().wyvernBasePrimaryAttackCooldown;
+        baseAccelerationDuration = attributes().wyvernBaseAccelerationDuration;
         baseTamingProgress = 128;
         pitchLimitGround = 50;
         pitchLimitAir = 20;
-        rotationSpeedGround = 8;
-        rotationSpeedAir = 4;
-        favoriteFood = Items.CHICKEN;
-        regenFromFood = 4;
-        dragonID = "wyvern";
+        rotationSpeedGround = attributes().wyvernRotationSpeedGround;
+        rotationSpeedAir = attributes().wyvernRotationSpeedAir;
+        verticalSpeed = attributes().wyvernVerticalSpeed;
+        regenerationFromFood = attributes().wyvernRegenerationFromFood;
+        ticksUntilHeal = 200;
     }
 
     @Override
@@ -98,58 +97,58 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         goalSelector.add(8, new DragonWanderAroundGoal(this));
         goalSelector.add(8, new FlyingDragonFlyAroundGoal<>(this, 30));
         goalSelector.add(9, new DragonLookAroundGoal(this));
-        targetSelector.add(5, new UntamedActiveTargetGoal<>(this, ChickenEntity.class, true, null));
+        targetSelector.add(6, new UntamedActiveTargetGoal<>(this, ChickenEntity.class, true, null));
         targetSelector.add(5, new DragonAttackWithOwnerGoal<>(this));
         targetSelector.add(4, new DragonRevengeGoal(this));
+        if (URConfig.getConfig().dragonMadness) targetSelector.add(5, new UntamedActiveTargetGoal<>(this, PlayerEntity.class, true, null));
     }
 
     public static DefaultAttributeContainer.Builder createWyvernAttributes() {
         return TameableEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 35.0 * URConfig.getHealthMultiplier())
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.2)
-                .add(EntityAttributes.GENERIC_FLYING_SPEED, 0.7)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0 * URConfig.getDamageMultiplier())
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
-                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, 2.0)
-                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.3)
-                .add(EntityAttributes.GENERIC_ARMOR, 4);
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, attributes().wyvernDamage * attributes().dragonDamageMultiplier)
+                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, attributes().wyvernKnockback * URMobAttributesConfig.getConfig().dragonKnockbackMultiplier)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, attributes().wyvernHealth * attributes().dragonHealthMultiplier)
+                .add(EntityAttributes.GENERIC_ARMOR, attributes().wyvernArmor * attributes().dragonArmorMultiplier)
+                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, attributes().wyvernArmorToughness * attributes().dragonArmorToughnessMultiplier)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, attributes().wyvernGroundSpeed * attributes().dragonGroundSpeedMultiplier)
+                .add(EntityAttributes.GENERIC_FLYING_SPEED, attributes().wyvernFlyingSpeed * attributes().dragonFlyingSpeedMultiplier)
+                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
     }
 
     @Override
-    public void registerControllers(AnimationData animationData) {
-        AnimationController<WyvernEntity> main = new AnimationController<>(this, "main", transitionTicks, this::main);
-        AnimationController<WyvernEntity> turn = new AnimationController<>(this, "turn", transitionTicks, this::turn);
+    public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
+        AnimationController<WyvernEntity> main = new AnimationController<>(this, "main", TRANSITION_TICKS, this::main);
+        AnimationController<WyvernEntity> turn = new AnimationController<>(this, "turn", TRANSITION_TICKS, this::turn);
         AnimationController<WyvernEntity> attack = new AnimationController<>(this, "attack", 0, this::attack);
         AnimationController<WyvernEntity> eye = new AnimationController<>(this, "eye", 0, this::eye);
-        main.registerSoundListener(this::soundListenerMain);
-        attack.registerSoundListener(this::soundListenerAttack);
-        animationData.addAnimationController(main);
-        animationData.addAnimationController(turn);
-        animationData.addAnimationController(attack);
-        animationData.addAnimationController(eye);
+        main.setSoundKeyframeHandler(this::soundListenerMain);
+        attack.setSoundKeyframeHandler(this::soundListenerAttack);
+        animationData.add(main, turn, attack, eye);
     }
 
-    private <ENTITY extends IAnimatable> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
+    private <ENTITY extends GeoEntity> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
         if (getWorld().isClient())
-            switch (event.sound) {
+            switch (event.getKeyframeData().getSound()) {
                 case "flap" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 3, 0.7F);
                 case "woosh" -> playSound(URSounds.DRAGON_WOOSH, 2, 1);
                 case "step" -> playSound(URSounds.WYVERN_STEP, 1, 1);
             }
     }
 
-    private <ENTITY extends IAnimatable> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
+    private <ENTITY extends GeoEntity> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
         if (getWorld().isClient())
-            switch (event.sound) {
+            switch (event.getKeyframeData().getSound()) {
                 case "shoot" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_SHOOT, 2, 1);
                 case "bite" ->  playSound(URSounds.WYVERN_BITE, 1, 1);
             }
     }
 
-    private <A extends IAnimatable> PlayState eye(AnimationEvent<A> event) {
+    private <A extends GeoEntity> PlayState eye(AnimationState<A> event) {
         return loopAnim("blink", event);
     }
-    private <A extends IAnimatable> PlayState main(AnimationEvent<A> event) {
+    private <A extends GeoEntity> PlayState main(AnimationState<A> event) {
+        //MinecraftClient.getInstance().inGameHud.setOverlayMessage(Text.literal(event.getController().getAnimationState().toString()), false);
+        if (event.getController().hasAnimationFinished()) event.getController().forceAnimationReset();
         event.getController().setAnimationSpeed(animationSpeed);
         if (isFlying()) {
             if (isSecondaryAttack()) {
@@ -174,7 +173,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         return loopAnim("idle", event);
     }
 
-    private <A extends IAnimatable> PlayState turn(AnimationEvent<A> event) {
+    private <A extends GeoEntity> PlayState turn(AnimationState<A> event) {
         byte turnState = getTurningState();
         event.getController().setAnimationSpeed(animationSpeed);
         if (isFlying() && (isMoving() || event.isMoving()) && !isSecondaryAttack() && !isMovingBackwards()) {
@@ -186,14 +185,19 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         return loopAnim("turn.none", event);
     }
 
-    private <A extends IAnimatable> PlayState attack(AnimationEvent<A> event) {
+    private <A extends GeoEntity> PlayState attack(AnimationState<A> event) {
         event.getController().setAnimationSpeed(1/calcCooldownMod());
-        if (!isFlying() && isSecondaryAttack()) return playAnim( "attack.melee" + attackType, event);
+        if (!isFlying() && isSecondaryAttack()) return playAnim( "attack.melee" + getAttackType(), event);
         if (isPrimaryAttack()) {
             if (isFlying() && (isMoving() || event.isMoving()) && !isMovingBackwards()) return playAnim("attack.fly.range", event);
             return playAnim("attack.range", event);
         }
         return playAnim("attack.none", event);
+    }
+
+    public static boolean canDragonSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
+        BlockPos blockPos = pos.down();
+        return spawnReason == SpawnReason.SPAWNER || world.getBlockState(blockPos).isIn(URTags.WYVERN_SPAWNABLE_ON);
     }
 
     @Override
@@ -214,7 +218,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     @Override
     public boolean canHaveStatusEffect(StatusEffectInstance effect) {
         StatusEffect type = effect.getEffectType();
-        return !(type == URStatusEffects.ACID || type == StatusEffects.POISON);
+        return !(type == URStatusEffects.ACID || type == StatusEffects.POISON || type == StatusEffects.HUNGER);
     }
 
     @Override
@@ -248,17 +252,6 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
             if (isPrimaryAttackPressed && getPrimaryAttackCooldown() == 0) shoot();
         }
 
-        if (ticksUntilHeal <= 0){
-            heal(1);
-            ticksUntilHeal = 400;
-        } else ticksUntilHeal--;
-
-        if (getWorld().isClient()) {
-            glideTimer--;
-            shouldGlide = glideTimer < 0 && getAccelerationDuration()/getMaxAccelerationDuration() > 0.9;
-            if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
-        }
-
         updateChildParts();
     }
 
@@ -266,11 +259,11 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
 
-        if (isFavoriteFood(itemStack) && !isTamed()) {
+        if (isTamingItem(itemStack) && !isTamed()) {
             eat(player, hand, itemStack);
-            if (random.nextInt(3) == 0) setTamingProgress((byte) (getTamingProgress() - 2));
-            else setTamingProgress((byte) (getTamingProgress() - 1));
-            if (player.isCreative()) setTamingProgress((byte) 0);
+            if (random.nextInt(3) == 0) setTamingProgress(getTamingProgress() - 2);
+            else setTamingProgress(getTamingProgress() - 1);
+            if (player.isCreative()) setTamingProgress(0);
             if (getTamingProgress() <= 0) {
                 setOwner(player);
                 getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
@@ -313,7 +306,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     public void shoot() {
         if (getWorld().isClient()) return;
         setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
-        float progress = rotationProgress / transitionTicks;
+        float progress = rotationProgress / TRANSITION_TICKS;
         float yaw = 0;
         boolean check = isFlying() && isMoving() && !isMovingBackwards();
         if (canBeControlledByRider()) {
@@ -321,7 +314,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
             yaw *= progress;
         }
         for (int i = 0; i < 5; ++i) {
-            WyvernProjectileEntity projectileEntity = new WyvernProjectileEntity(getWorld(), this);
+            AcidBlastEntity projectileEntity = new AcidBlastEntity(getWorld(), this);
             projectileEntity.setPosition(head.getX(), head.getY(), head.getZ());
             projectileEntity.setVelocity(this, getPitch(), getYaw() - yaw, 0.5f, 3.0f, 5.0f);
             getWorld().spawnEntity(projectileEntity);
@@ -330,9 +323,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     public void meleeAttack(LivingEntity target) {
         setSecondaryAttackCooldown(getMaxSecondaryAttackCooldown());
-        attackType = random.nextInt(3)+1;
-        if (getWorld() instanceof ServerWorld world)
-            for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) AttackTypeSyncS2CPacket.send(player, this);
+        setAttackType(random.nextInt(3)+1);
         if (isFlying()) URPacketHelper.playSound(this, URSounds.WYVERN_BITE, SoundCategory.NEUTRAL, 1, 1, 3);
         if (target != null && !getPassengerList().contains(target)) {
             Box targetBox = target.getBoundingBox();
@@ -340,16 +331,14 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         }
     }
 
+    @Override
     public Box getAttackBox() {
-        //сильно циферки не твикать, расчет положения хитбокса для ближней атаки
-        Vec3d rotationVec = getRotationVec(1f);
-        double modifier = isFlying() ? 1.5 : 3.5;
-        double x = rotationVec.x * modifier;
-        double z = rotationVec.z * modifier;
+        double modifier = isFlying() ? getWidthMod() / 2 : (getWidthMod() + 0.1);
+        double x = -Math.sin(Math.toRadians(getYaw())) * modifier;
+        double z = Math.cos(Math.toRadians(getYaw())) * modifier;
         double y = isFlying() ? -2 : 0;
-        double yTop = isMoving() && !isMovingBackwards() ? 2 : 0;
-        return new Box(getBlockPos().getX() + x - 2, getBlockPos().getY() + y, getBlockPos().getZ() + z - 2,
-                getBlockPos().getX() + x + 2, getBlockPos().getY() + getHeight() + yTop, getBlockPos().getZ() + z + 2);
+        return new Box(getPos().getX() + x - getWidthMod() / 1.5, getPos().getY() + y, getPos().getZ() + z - getWidthMod() / 1.5,
+                getPos().getX() + x + getWidthMod() / 1.5, getPos().getY() + getHeight() + 1, getPos().getZ() + z + getWidthMod() / 1.5);
     }
 
     @Override
@@ -386,8 +375,29 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     @Override
+    public boolean isFavoriteFood(ItemStack itemStack){
+        return itemStack.isOf(Items.CHICKEN);
+    }
+
+    @Override
+    public int getLimitPerChunk() {
+        return URConfig.getConfig().wyvernMaxGroupSize * 2;
+    }
+
+    @Override
     public EntityPart[] getParts() {
         return parts;
+    }
+
+    @Override
+    public void lookAt(Vec3d pos) {
+        double dx = pos.getX() - head.getX();
+        double dz = pos.getZ() - head.getZ();
+        double dy = pos.getY() - head.getY() + head.getHeight()/2;
+        double distance = Math.sqrt(dx * dx + dz * dz);
+        float yaw = (float)(MathHelper.atan2(dz, dx) * MathHelper.DEGREES_PER_RADIAN) - 90;
+        float pitch = (float)(MathHelper.atan2(dy, distance) * -MathHelper.DEGREES_PER_RADIAN);
+        setRotation(yaw, pitch);
     }
 
     public void updateChildParts() {
@@ -402,8 +412,8 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         Vec3f tail2Pos;
         Vec3f tail3Pos;
 
-        float yawOffset = rotationProgress / transitionTicks;
-        float pitchOffset = tiltProgress / transitionTicks;
+        float yawOffset = rotationProgress / TRANSITION_TICKS;
+        float pitchOffset = tiltProgress / TRANSITION_TICKS;
 
         if (isFlying()) {
             if (isMoving() && !isMovingBackwards() && !isSecondaryAttack()) {
