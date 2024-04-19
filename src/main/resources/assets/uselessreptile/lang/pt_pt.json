@@ -61,9 +61,9 @@
 
     "other.uselessreptile.none": "Nenhum",
     "other.uselessreptile.sound_respond": "%1$s Agora responderá ao seguinte som: %2$s",
-    "other.uselessreptile.flute_mode0": "Modo da flauta: Chamar",
-    "other.uselessreptile.flute_mode1": "Modo da flauta: Apanhar Peixe",
-    "other.uselessreptile.flute_mode2": "Modo da flauta: Atacar Alvo",
+    "tooltip.uselessreptile.flute_mode0": "Modo da flauta: Chamar",
+    "tooltip.uselessreptile.flute_mode1": "Modo da flauta: Apanhar Peixe",
+    "tooltip.uselessreptile.flute_mode2": "Modo da flauta: Atacar Alvo",
 
     "config.uselessreptile.title": "Configurações de réptil inútil",
     "config.uselessreptile.category.dragon" : "Opções de dragão",

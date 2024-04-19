@@ -1,18 +1,24 @@
 package nordmods.uselessreptile.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.RotationAxis;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
+import org.joml.Matrix4f;
 
 public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScreen<T> {
     protected static final Identifier TEXTURE = new Identifier(UselessReptile.MODID,"textures/gui/dragon_inventory.png");
@@ -58,20 +64,46 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
     }
 
     protected void drawSaddle(DrawContext context) {
-        if (hasSaddle) context.drawTexture(TEXTURE, i + 7, j + 35 - 18, 0, backgroundHeight + 54, 18, 18); //saddle
+        if (hasSaddle) context.drawTexture(TEXTURE, i + 7, j + 35 - 18, 0, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.FEET).isEmpty() ? 0 : 18), 18, 18); //saddle
     }
 
     protected void drawArmor(DrawContext context) {
         if (hasArmor) {
-            context.drawTexture(TEXTURE, i + 7 + 18 + 54, j + 35 - 18, 18, backgroundHeight + 54, 18, 18); //head
-            context.drawTexture(TEXTURE, i + 7 + 18 + 54, j + 35, 18 * 2, backgroundHeight + 54, 18, 18); //body
-            context.drawTexture(TEXTURE, i + 7 + 18 + 54, j + 35 + 18, 18 * 3, backgroundHeight + 54, 18, 18); //tail
+            context.drawTexture(TEXTURE, i + 7 + 18 + 54, j + 35 - 18, 18, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.HEAD).isEmpty() ? 0 : 18), 18, 18); //head
+            context.drawTexture(TEXTURE, i + 7 + 18 + 54, j + 35, 18 * 2, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.CHEST).isEmpty() ? 0 : 18), 18, 18); //body
+            context.drawTexture(TEXTURE, i + 7 + 18 + 54, j + 35 + 18, 18 * 3, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.LEGS).isEmpty() ? 0 : 18), 18, 18); //tail
         }
     }
 
     protected void drawEntity(DrawContext context) {
-        //if (entity != null) InventoryScreen.drawEntity(context, i + 51, j + 68, 13, i + 51 - mouseX, j + 75 - 50 - mouseY, entity);
-        if (entity != null) InventoryScreen.drawEntity(context, i + 26, j + 18, i + 78, j + 70, 13, 0.25F, this.mouseX, this.mouseY, this.entity);
+        if (entity != null) drawEntity(context, i + 26, j + 18, i + 78, j + 70, 13, this.mouseX, this.mouseY, this.entity);
+    }
+
+    private void drawEntity(DrawContext context, int x1, int y1, int x2, int y2, int size, float mouseX, float mouseY, LivingEntity entity) {
+        float centerX = (x1 + x2) / 2f;
+        float centerY = (y1 + y2) / 2f;
+        float dx = (float)Math.atan((centerX - mouseX) / 40f);
+        float dy = (float) Math.atan((centerY - mouseY) / 40f);
+        float tickDelta = MinecraftClient.getInstance().getTickDelta();
+
+        context.getMatrices().push();
+        context.enableScissor(x1, y1, x2, y2);
+
+        context.getMatrices().translate(centerX, centerY, 100);
+        context.getMatrices().multiplyPositionMatrix((new Matrix4f()).scaling(size, size, -size));
+        context.getMatrices().translate(0, entity.getHeight() / 2f + 0.4f, 0);
+        context.getMatrices().multiply(RotationAxis.POSITIVE_X.rotationDegrees(-dy * 20 + 180));
+        context.getMatrices().multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-dx * 40 + entity.getYaw(tickDelta)));
+
+        DiffuseLighting.method_34742();
+        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
+        entityRenderDispatcher.render(entity, 0, 0, 0, 0, tickDelta, context.getMatrices(), context.getVertexConsumers(), 15728880);
+        DiffuseLighting.enableGuiDepthLighting();
+
+        context.draw();
+        context.disableScissor();
+        context.getMatrices().pop();
+
     }
 
     protected void drawStorage(DrawContext context) {
@@ -81,6 +113,6 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
     }
 
     protected void drawBanner(DrawContext context) {
-        if (hasBanner) context.drawTexture(TEXTURE, i + 7, j + 35, 18 * 4, backgroundHeight + 54, 18, 18); //banner
+        if (hasBanner) context.drawTexture(TEXTURE, i + 7, j + 35, 18 * 4, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.OFFHAND).isEmpty() ? 0 : 18), 18, 18); //banner
     }
 }

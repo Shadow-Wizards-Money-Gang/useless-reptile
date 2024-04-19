@@ -15,6 +15,15 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
         this.entity = entity;
     }
 
+    public void moveBack() {
+        this.state = MoveControl.State.STRAFE;
+    }
+
+    public void notMove() {
+        this.state = State.WAIT;
+    }
+
+    @Override
     public void tick() {
         if (entity.hasControllingPassenger() || entity.hasVehicle()) return;
 
@@ -22,18 +31,34 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
         double diffY = targetY - entity.getY();
         double diffZ = targetZ - entity.getZ();
         double distanceSquared = diffX * diffX + diffY * diffY + diffZ * diffZ;
-        float destinationRot = (float)(MathHelper.atan2(diffZ, diffX) * 57.2957763671875D) - 90.0F;
+        float destinationYaw = (float)(MathHelper.atan2(diffZ, diffX) * 57.2957763671875D) - 90.0F;
         boolean swimming = entity.isTouchingWater() && entity.canNavigateInFluids();
 
         if (Double.isNaN(entity.getVelocity().y)) entity.setVelocity(entity.getVelocity().x, 0, entity.getVelocity().z);
-        int accelerationDuration = (int) MathHelper.clamp(entity.getAccelerationDuration() * 1.5, 0, entity.getMaxAccelerationDuration());
+        int accelerationDuration = entity.getAccelerationDuration();
         if (accelerationDuration < 0) accelerationDuration = 0;
         float accelerationModifier = (float)accelerationDuration/entity.getMaxAccelerationDuration();
         if (accelerationModifier > 1.5) accelerationModifier = 1.5f;
         entity.setGliding(accelerationModifier > 1);
+        entity.setMovingBackwards(false);
 
         if (this.state == MoveControl.State.STRAFE) {
             state = State.WAIT;
+            entity.setMovingBackwards(true);
+
+            if (accelerationDuration > entity.getMaxAccelerationDuration() * 0.25) accelerationDuration -= 2;
+            else accelerationDuration++;
+
+            float speed;
+            if (entity.isFlying() && !swimming) {
+                speed = (float) entity.getAttributeValue(EntityAttributes.GENERIC_FLYING_SPEED) * accelerationModifier;
+                if (entity.isTouchingWater() || entity.getRecentDamageSource() == entity.getDamageSources().lava()) {
+                    entity.getJumpControl().setActive();
+                }
+            } else speed = (float) entity.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+
+            entity.setMovementSpeed(-speed * entity.getSpeedMod() * 0.5f);
+
         } else if (state == State.MOVE_TO) {
             state = State.WAIT;
             if (distanceSquared < 2.500000277905201E-7D) {
@@ -47,7 +72,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
             if (accelerationDuration < entity.getMaxAccelerationDuration()) accelerationDuration++;
             if (accelerationDuration > entity.getMaxAccelerationDuration()) accelerationDuration--;
 
-            entity.setYaw(wrapDegrees(entity.getYaw(), destinationRot, entity.getRotationSpeed()));
+            entity.setRotation(destinationYaw, entity.getPitch());
 
             float speed;
             if (entity.isFlying() && !swimming) {
@@ -68,18 +93,18 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
                     if (diffY > divergence) {
                         if (accelerationDuration > entity.getMaxAccelerationDuration() * 0.4) accelerationDuration -= 2;
                         if (accelerationDuration > entity.getMaxAccelerationDuration()) accelerationDuration -= 2;
-                        entity.setUpwardSpeed(0.2f * (float) verticalAccelerationModifier);
+                        entity.setUpwardSpeed(entity.getVerticalSpeed() * (float) verticalAccelerationModifier);
                         tiltState = 1;
                     }
                     if (diffY < -divergence) {
                         if (accelerationDuration < entity.getMaxAccelerationDuration() * 3) accelerationDuration += 2;
-                        entity.setUpwardSpeed(-0.25f * (float) verticalAccelerationModifier);
+                        entity.setUpwardSpeed(-entity.getVerticalSpeed() * (float) verticalAccelerationModifier * 1.3f);
                         tiltState = 2;
                     }
                 } else {
                     if (accelerationDuration > entity.getMaxAccelerationDuration() * 0.4) accelerationDuration -= 2;
                     if (accelerationDuration > entity.getMaxAccelerationDuration()) accelerationDuration -= 2;
-                    entity.setUpwardSpeed(0.2f * (float) verticalAccelerationModifier);
+                    entity.setUpwardSpeed(entity.getVerticalSpeed() * (float) verticalAccelerationModifier);
                     tiltState = 1;
                 }
             }

@@ -59,9 +59,9 @@
 
     "other.uselessreptile.none": "None",
     "other.uselessreptile.sound_respond": "%1$s répondra désormais au son suivant : %2$s",
-    "other.uselessreptile.flute_mode0": "Chant de flûte : Appel",
-    "other.uselessreptile.flute_mode1": "Chant de flûte : pêche",
-    "other.uselessreptile.flute_mode2": "Chant de flûte : attaque",
+    "tooltip.uselessreptile.flute_mode0": "Chant de flûte : Appel",
+    "tooltip.uselessreptile.flute_mode1": "Chant de flûte : pêche",
+    "tooltip.uselessreptile.flute_mode2": "Chant de flûte : attaque",
 
     "config.uselessreptile.title": "Configuration de Useless Reptile",
     "config.uselessreptile.category.gameplay": "Options de jeu",
