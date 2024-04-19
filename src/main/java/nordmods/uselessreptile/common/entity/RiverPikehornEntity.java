@@ -1,14 +1,15 @@
 package nordmods.uselessreptile.common.entity;
 
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.SitGoal;
+import net.minecraft.entity.ai.goal.UntamedActiveTargetGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -17,23 +18,25 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
+import nordmods.uselessreptile.common.config.URConfig;
+import net.minecraft.world.WorldAccess;
+import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.*;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
-import nordmods.uselessreptile.common.init.URConfig;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URSounds;
+import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.items.FluteItem;
-import nordmods.uselessreptile.common.network.AttackTypeSyncS2CPacket;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -59,17 +62,17 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         experiencePoints = 5;
         setCanPickUpLoot(true);
 
-        baseSecondaryAttackCooldown = 20;
-        basePrimaryAttackCooldown = 20;
+        basePrimaryAttackCooldown = attributes().pikehornBasePrimaryAttackCooldown;
         secondaryAttackDuration = 12;
         primaryAttackDuration = 12;
-        baseAccelerationDuration = 100;
-        rotationSpeedGround = 10;
-        rotationSpeedAir = 10;
+        baseAccelerationDuration = attributes().pikehornBaseAccelerationDuration;
+        rotationSpeedGround = attributes().pikehornRotationSpeedGround;
+        rotationSpeedAir = attributes().pikehornRotationSpeedAir;
         canNavigateInFluids = true;
-        regenFromFood = 3;
-        dragonID = "river_pikehorn";
+        regenerationFromFood = attributes().pikehornRegenerationFromFood;
+        verticalSpeed = attributes().pikehornVerticalSpeed;
         inventory = new SimpleInventory(0);
+        ticksUntilHeal = 400;
     }
 
     @Override
@@ -89,8 +92,8 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
-        AnimationController<RiverPikehornEntity> main = new AnimationController<>(this, "main", transitionTicks, this::main);
-        AnimationController<RiverPikehornEntity> turn = new AnimationController<>(this, "turn", transitionTicks, this::turn);
+        AnimationController<RiverPikehornEntity> main = new AnimationController<>(this, "main", TRANSITION_TICKS, this::main);
+        AnimationController<RiverPikehornEntity> turn = new AnimationController<>(this, "turn", TRANSITION_TICKS, this::turn);
         AnimationController<RiverPikehornEntity> attack = new AnimationController<>(this, "attack", 0, this::attack);
         AnimationController<RiverPikehornEntity> eye = new AnimationController<>(this, "eye", 0, this::eye);
         main.setSoundKeyframeHandler(this::soundListenerMain);
@@ -134,7 +137,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
 
     private <A extends GeoEntity> PlayState attack(AnimationState<A> event) {
         event.getController().setAnimationSpeed(1/calcCooldownMod());
-        if (isPrimaryAttack()) return playAnim( "attack" + attackType, event);
+        if (isPrimaryAttack()) return playAnim( "attack" + getAttackType(), event);
         return playAnim("attack.none", event);
     }
 
@@ -165,6 +168,11 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     @Override
     protected SoundEvent getDeathSound() {
         return URSounds.PIKEHORN_DEATH;
+    }
+
+    public static boolean canDragonSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
+        BlockPos blockPos = pos.down();
+        return spawnReason == SpawnReason.SPAWNER || world.getBlockState(blockPos).isIn(URTags.PIKEHORN_SPAWNABLE_ON);
     }
 
     @Override
@@ -222,10 +230,13 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
 
     public static DefaultAttributeContainer.Builder createPikehornAttributes() {
         return TameableEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 14.0 * URConfig.getHealthMultiplier())
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.2)
-                .add(EntityAttributes.GENERIC_FLYING_SPEED, 0.8)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 3.0 * URConfig.getDamageMultiplier())
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, attributes().pikehornDamage * attributes().dragonDamageMultiplier)
+                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, attributes().pikehornKnockback * URMobAttributesConfig.getConfig().dragonKnockbackMultiplier)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, attributes().pikehornHealth * attributes().dragonHealthMultiplier)
+                .add(EntityAttributes.GENERIC_ARMOR, attributes().pikehornArmor * attributes().dragonArmorMultiplier)
+                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, attributes().pikehornArmorToughness * attributes().dragonArmorToughnessMultiplier)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, attributes().pikehornGroundSpeed * attributes().dragonGroundSpeedMultiplier)
+                .add(EntityAttributes.GENERIC_FLYING_SPEED, attributes().pikehornFlyingSpeed * attributes().dragonFlyingSpeedMultiplier)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
     }
 
@@ -245,13 +256,14 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         targetSelector.add(4, new DragonAttackWithOwnerGoal<>(this));
         targetSelector.add(4, new PikehornFluteTargetGoal<>(this, LivingEntity.class));
         targetSelector.add(5, new DragonTrackOwnerAttackerGoal(this));
+        if (URConfig.getConfig().dragonMadness) targetSelector.add(4, new UntamedActiveTargetGoal<>(this, PlayerEntity.class, true, null));
     }
 
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
 
-        if (itemStack.isOf(Items.TROPICAL_FISH_BUCKET) && !isTamed()) {
+        if (isTamingItem(itemStack) && !isTamed()) {
             if (!player.isCreative()) player.setStackInHand(hand, new ItemStack(Items.WATER_BUCKET));
             setOwner(player);
             getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
@@ -267,9 +279,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
 
     public void attackMelee(LivingEntity target) {
         setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
-        attackType = random.nextInt(3)+1;
-        if (getWorld() instanceof ServerWorld world)
-            for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) AttackTypeSyncS2CPacket.send(player, this);
+        setAttackType(random.nextInt(3)+1);
         tryAttack(target);
     }
 
@@ -336,6 +346,11 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     }
 
     @Override
+    public boolean isTamingItem(ItemStack itemStack) {
+        return itemStack.isOf(Items.TROPICAL_FISH_BUCKET);
+    }
+
+    @Override
     public double getHeightOffset() {
         return 0.275;
     }
@@ -343,5 +358,10 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     public void updateAnimations() {
         sitAnimation.setRunning(true, age);
         blinkAnimation.setRunning(true, age);
+    }
+
+    @Override
+    public int getLimitPerChunk() {
+        return URConfig.getConfig().pikehornMaxGroupSize * 2;
     }
 }

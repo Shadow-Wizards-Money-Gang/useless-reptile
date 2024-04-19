@@ -61,6 +61,11 @@ public class URDragonPart extends EntityPart {
         return super.getDimensions(pose).scaled(widthMod, heightMod);
     }
 
+    @Override
+    public boolean canHit() {
+        return owner.canHit();
+    }
+
     public void setScale(float destinationHeight, float destinationWidth) {
         float widthMod = getWidthMod();
         float heightMod = getHeightMod();

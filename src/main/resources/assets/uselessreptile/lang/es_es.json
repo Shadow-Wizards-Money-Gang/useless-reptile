@@ -59,9 +59,9 @@
 
     "other.uselessreptile.none": "Ninguno",
     "other.uselessreptile.sound_respond": " Ahora responderá al siguiente sonido: ",
-    "other.uselessreptile.flute_mode0": "Modo de Flauta: Llamar",
-    "other.uselessreptile.flute_mode1": "Modo de Flauta: Recolectar Peces",
-    "other.uselessreptile.flute_mode2": "Modo de Flauta: Atacar Objetivo",
+    "tooltip.uselessreptile.flute_mode0": "Modo de Flauta: Llamar",
+    "tooltip.uselessreptile.flute_mode1": "Modo de Flauta: Recolectar Peces",
+    "tooltip.uselessreptile.flute_mode2": "Modo de Flauta: Atacar Objetivo",
 
     "config.uselessreptile.title": "Configuración de Useless Reptile",
     "config.uselessreptile.category.dragon" : "Opciones de Dragón",

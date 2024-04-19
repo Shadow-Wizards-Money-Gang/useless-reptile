@@ -20,14 +20,9 @@ import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import nordmods.uselessreptile.common.network.KeyInputSyncS2CPacket;
 import nordmods.uselessreptile.common.network.PosSyncS2CPacket;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
 public abstract class URRideableDragonEntity extends URDragonEntity implements RideableInventory {
     public boolean isSecondaryAttackPressed = false;
     public boolean isPrimaryAttackPressed = false;
-    public static Set<UUID> passengers = new HashSet<>();
 
     protected URRideableDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
@@ -114,6 +109,11 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
             }
     }
 
+    @Override
+    protected void updateEquipment() {
+        super.updateEquipment();
+        updateSaddle();
+    }
 
     protected void updateSaddle() {
         if (isTamed() && inventory != null) {
@@ -143,4 +143,9 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
             player.openHandledScreen(this);
         }
     }
+
+    protected void setRotation(PlayerEntity rider) {
+        setRotation(rider.getYaw(), rider.getPitch());
+    }
+
 }

@@ -2,13 +2,14 @@ package nordmods.uselessreptile.client.renderer.layers;
 
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import net.minecraft.item.Items;
+import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.BlockAndItemGeoLayer;
 
-public class BannerLayer<T extends URDragonEntity> extends BlockAndItemGeoLayer<T> {
+public class BannerLayer<T extends DragonEquipmentAnimatable> extends BlockAndItemGeoLayer<T> {
     public BannerLayer(GeoRenderer<T> renderer) {
         super(renderer);
     }
@@ -16,6 +17,7 @@ public class BannerLayer<T extends URDragonEntity> extends BlockAndItemGeoLayer<
     @Nullable
     @Override
     protected ItemStack getStackForBone(GeoBone bone, T animatable) {
-        return bone.getName().equals("banner") ? animatable.getEquippedStack(EquipmentSlot.OFFHAND) : null;
+        if (animatable.item != Items.SADDLE) return null;
+        return bone.getName().equals("banner") ? animatable.owner.getEquippedStack(EquipmentSlot.OFFHAND) : null;
     }
 }
