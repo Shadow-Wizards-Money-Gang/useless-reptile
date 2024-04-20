@@ -1,14 +1,10 @@
 package nordmods.uselessreptile.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import mod.azure.azurelib.core.animatable.GeoAnimatable;
-import mod.azure.azurelib.util.AzureLibUtil;
-import mod.azure.azurelib.util.RenderUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
@@ -90,11 +86,15 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
         float dy = (float) Math.atan((centerY - mouseY) / 40f);
         float tickDelta = MinecraftClient.getInstance().getTickDelta();
 
-        context.push();
-
-        context.translate(centerX, centerY, 50);
-        context.scale(size, size, -size);
+        MatrixStack matrixStack = RenderSystem.getModelViewStack();
+        matrixStack.push();
+        matrixStack.translate(0, 0, 50.0);
+        matrixStack.scale(1.0F, 1.0F, -1.0F);
         RenderSystem.applyModelViewMatrix();
+
+        context.push();
+        context.translate(centerX, centerY, 0);
+        context.scale(size, size, size);
         context.translate(0, entity.getHeight() / 2f + 0.4f, 0);
         context.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-dy * 20 + 180));
         context.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(-dx * 40 + entity.getYaw(tickDelta)));
@@ -107,6 +107,7 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
         immediate.draw();
         entityRenderDispatcher.setRenderShadows(true);
         context.pop();
+        matrixStack.pop();
         RenderSystem.applyModelViewMatrix();
         DiffuseLighting.enableGuiDepthLighting();
     }
