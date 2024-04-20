@@ -40,6 +40,6 @@
     "java": ">=17",
     "minecraft": "1.20.1",
     "geckolib": "*",
-    "yet_another_config_lib_v3": ">=3.2.1"
+    "yet_another_config_lib_v3": ">=3.2.0"
   }
 }
