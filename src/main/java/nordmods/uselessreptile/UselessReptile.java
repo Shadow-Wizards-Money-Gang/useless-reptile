@@ -8,7 +8,6 @@ import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.util.dragon_variant.DragonVariantLoader;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.network.KeyInputC2SPacket;
-import nordmods.uselessreptile.common.init.URConfig;
 import org.slf4j.Logger;
 
 public class UselessReptile implements ModInitializer, PreLaunchEntrypoint {

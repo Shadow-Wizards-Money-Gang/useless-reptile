@@ -104,7 +104,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         setNoGravity(isFlying());
 
         if (canBeControlledByRider()) {
-            LivingEntity rider = getPrimaryPassenger();
+            LivingEntity rider = getControllingPassenger();
             if (rider instanceof PlayerEntity player) super.travel(getControlledMovementInput(player, player.getVelocity()));
         } else {
             if (isFlying()) {
