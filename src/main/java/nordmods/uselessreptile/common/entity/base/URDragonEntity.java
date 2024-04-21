@@ -700,8 +700,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     //asset location caching so mod doesn't have to make stupid amount of string operations and map references each frame
-    @Environment(EnvType.CLIENT) private final DragonAssetCache assetCache = new DragonAssetCache();
-    @Environment(EnvType.CLIENT)
+    private final DragonAssetCache assetCache = new DragonAssetCache();
+
     public DragonAssetCache getAssetCache() {
         return assetCache;
     }
