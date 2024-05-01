@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "uselessreptile:wyvern_spawn_egg"
+      "id": "uselessreptile:wyvern_spawn_egg"
     },
     "title": {
       "translate": "advancement.uselessreptile.tame_wyvern"

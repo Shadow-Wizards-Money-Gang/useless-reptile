@@ -2,6 +2,7 @@ package nordmods.uselessreptile.common.entity.special;
 
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
@@ -40,7 +41,7 @@ public class ShockwaveSphereEntity extends ProjectileEntity {
     }
 
     @Override
-    protected void initDataTracker() {}
+    protected void initDataTracker(DataTracker.Builder builder) {}
 
     @Override
     public void tick() {

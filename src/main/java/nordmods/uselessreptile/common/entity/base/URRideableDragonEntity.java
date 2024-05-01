@@ -17,7 +17,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.client.init.URKeybinds;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
-import nordmods.uselessreptile.common.network.KeyInputSyncS2CPacket;
 import nordmods.uselessreptile.common.network.PosSyncS2CPacket;
 
 public abstract class URRideableDragonEntity extends URDragonEntity implements RideableInventory {
@@ -29,13 +28,13 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     }
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        dataTracker.startTracking(MOVE_FORWARD_PRESSED, false);
-        dataTracker.startTracking(MOVE_BACK_PRESSED, false);
-        dataTracker.startTracking(JUMP_PRESSED, false);
-        dataTracker.startTracking(MOVE_DOWN_PRESSED, false);
-        dataTracker.startTracking(SPRINT_PRESSED, false);
+    protected void initDataTracker(DataTracker.Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(MOVE_FORWARD_PRESSED, false);
+        builder.add(MOVE_BACK_PRESSED, false);
+        builder.add(JUMP_PRESSED, false);
+        builder.add(MOVE_DOWN_PRESSED, false);
+        builder.add(SPRINT_PRESSED, false);
     }
 
     public static final TrackedData<Boolean> MOVE_FORWARD_PRESSED = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -104,7 +103,6 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
 
         if (getWorld() instanceof ServerWorld world && canBeControlledByRider())
             for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) {
-                KeyInputSyncS2CPacket.send(player, this);
                 PosSyncS2CPacket.send(player, this);
             }
     }

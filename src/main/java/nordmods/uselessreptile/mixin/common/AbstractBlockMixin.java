@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(AbstractBlock.class)
 public abstract class AbstractBlockMixin {
     @Inject(method = "onUse", at = @At("HEAD"))
-    private void putDragonAssOff(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+    private void putDragonAssOff(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
         if (player.isSneaking() && player.getFirstPassenger() instanceof RiverPikehornEntity dragon ) {
             dragon.stopRiding();
             dragon.setPosition(pos.up().toCenterPos());

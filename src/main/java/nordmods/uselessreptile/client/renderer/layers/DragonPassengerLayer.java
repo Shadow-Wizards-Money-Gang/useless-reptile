@@ -18,7 +18,7 @@ import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-import software.bernie.geckolib.util.RenderUtils;
+import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -51,7 +51,7 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable> extends G
             passengers.remove(passenger.getUuid());
 
             matrixStackIn.translate(0, -0.7f, 0);
-            RenderUtils.translateToPivotPoint(matrixStackIn, bone);
+            RenderUtil.translateToPivotPoint(matrixStackIn, bone);
             float yaw = MathHelper.lerpAngleDegrees(partialTick, animatable.owner.prevBodyYaw, animatable.owner.bodyYaw);
             matrixStackIn.multiply(RotationAxis.NEGATIVE_Y.rotationDegrees(180f - yaw));
             renderEntity(passenger, partialTick, matrixStackIn, bufferSource, packedLight);

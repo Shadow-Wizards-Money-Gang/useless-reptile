@@ -1,5 +1,7 @@
 package nordmods.uselessreptile.common.entity;
 
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.SitGoal;
@@ -13,14 +15,13 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.ChickenEntity;
-import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsage;
 import net.minecraft.item.Items;
-import net.minecraft.potion.PotionUtil;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
@@ -52,11 +53,11 @@ import nordmods.uselessreptile.common.network.URPacketHelper;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
+import software.bernie.geckolib.animation.AnimationState;
 
 public class WyvernEntity extends URRideableFlyingDragonEntity implements MultipartEntity {
 
@@ -104,7 +105,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     public static DefaultAttributeContainer.Builder createWyvernAttributes() {
-        return TameableEntity.createMobAttributes()
+        return createDragonAttributes()
                 .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, attributes().wyvernDamage * attributes().dragonDamageMultiplier)
                 .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, attributes().wyvernKnockback * URMobAttributesConfig.getConfig().dragonKnockbackMultiplier)
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, attributes().wyvernHealth * attributes().dragonHealthMultiplier)
@@ -112,7 +113,8 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
                 .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, attributes().wyvernArmorToughness * attributes().dragonArmorToughnessMultiplier)
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, attributes().wyvernGroundSpeed * attributes().dragonGroundSpeedMultiplier)
                 .add(EntityAttributes.GENERIC_FLYING_SPEED, attributes().wyvernFlyingSpeed * attributes().dragonFlyingSpeedMultiplier)
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
+                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
+                .add(EntityAttributes.GENERIC_JUMP_STRENGTH, 0.42 * 1.5);
     }
 
     @Override
@@ -217,7 +219,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     @Override
     public boolean canHaveStatusEffect(StatusEffectInstance effect) {
-        StatusEffect type = effect.getEffectType();
+        RegistryEntry<StatusEffect> type = effect.getEffectType();
         return !(type == URStatusEffects.ACID || type == StatusEffects.POISON || type == StatusEffects.HUNGER);
     }
 
@@ -282,7 +284,8 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
             if (itemStack.getItem() == Items.GLASS_BOTTLE && isOwnerOrCreative(player)) {
                 Item bottle = itemStack.getItem();
-                ItemStack potion = PotionUtil.setPotion(new ItemStack(Items.POTION), URPotions.ACID);
+                ItemStack potion = new ItemStack(Items.POTION);
+                potion.set(DataComponentTypes.POTION_CONTENTS, new PotionContentsComponent(URPotions.ACID));
                 player.incrementStat(Stats.USED.getOrCreateStat(bottle));
                 getWorld().playSound(player, player.getBlockPos(), SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.NEUTRAL, 1.0F, 1.0F);
                 if (itemStack.getCount() > 1) ItemUsage.exchangeStack(itemStack, player, potion);
@@ -294,8 +297,8 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     @Override
-    protected float getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions) {
-        return dimensions.height * 0.95f;
+    public EntityDimensions getBaseDimensions(EntityPose pose) {
+        return super.getBaseDimensions(pose).withEyeHeight(getHeight() * 0.95f);
     }
 
     @Override
@@ -339,18 +342,6 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         double y = isFlying() ? -2 : 0;
         return new Box(getPos().getX() + x - getWidthMod() / 1.5, getPos().getY() + y, getPos().getZ() + z - getWidthMod() / 1.5,
                 getPos().getX() + x + getWidthMod() / 1.5, getPos().getY() + getHeight() + 1, getPos().getZ() + z + getWidthMod() / 1.5);
-    }
-
-    @Override
-    public float getJumpBoostVelocityModifier() {
-        float jumpBoost = hasStatusEffect(StatusEffects.JUMP_BOOST) ? (0.1F * (float) (getStatusEffect(StatusEffects.JUMP_BOOST).getAmplifier() + 1)) : 0.0f;
-        return 0.2f + jumpBoost;
-    }
-
-    @Override
-    protected float getJumpVelocity() {
-        if (hasControllingPassenger()) super.getJumpVelocity();
-        return 0.42F * this.getJumpVelocityMultiplier() + this.getJumpBoostVelocityModifier()/2;
     }
 
     @Override

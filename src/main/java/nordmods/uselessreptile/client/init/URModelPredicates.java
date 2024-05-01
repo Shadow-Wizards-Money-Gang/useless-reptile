@@ -7,6 +7,6 @@ import nordmods.uselessreptile.common.init.URItems;
 public class URModelPredicates {
     public static void init() {
         ModelPredicateProviderRegistry.register(URItems.FLUTE, new Identifier("mode"),
-                (stack, world, entity, seed) -> stack.hasNbt() ? (float)stack.getNbt().getInt("Mode")/2 : 0.0F);
+                (stack, world, entity, seed) -> stack.get(URItems.FLUTE_MODE_COMPONENT)/2f);
     }
 }

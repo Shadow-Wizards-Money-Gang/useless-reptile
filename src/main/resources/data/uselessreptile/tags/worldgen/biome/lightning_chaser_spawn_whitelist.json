@@ -1,6 +1,6 @@
 {
   "replace": false,
   "values": [
-    "#c:in_overworld"
+    "#c:is_overworld"
   ]
 }

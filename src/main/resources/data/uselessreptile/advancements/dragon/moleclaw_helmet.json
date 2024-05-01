@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "uselessreptile:moleclaw_helmet_gold"
+      "id": "uselessreptile:moleclaw_helmet_gold"
     },
     "title": {
       "translate": "advancement.uselessreptile.moleclaw_helmet"

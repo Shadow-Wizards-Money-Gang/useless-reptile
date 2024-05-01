@@ -42,18 +42,18 @@ public class UREntities {
         FabricDefaultAttributeRegistry.register(LIGHTNING_CHASER_ENTITY, LightningChaserEntity.createLightningChaserAttributes());
     }
 
-    private static <T extends Entity> EntityType<T> register(String id, FabricEntityTypeBuilder<T> builder) {
+    private static <T extends Entity> EntityType<T> register(String id, EntityType.Builder<T> builder) {
         return Registry.register(Registries.ENTITY_TYPE, new Identifier(UselessReptile.MODID, id), builder.build());
     }
 
-    private static <T extends Entity> FabricEntityTypeBuilder<T> getBuilder(SpawnGroup spawnGroup, EntityType.EntityFactory<T> entity, float width, float height, boolean disableSummon, boolean fireImmune) {
-        FabricEntityTypeBuilder<T> builder = FabricEntityTypeBuilder.create(spawnGroup, entity).dimensions(EntityDimensions.changing(width, height)).spawnableFarFromPlayer();
+    private static <T extends Entity> EntityType.Builder<T> getBuilder(SpawnGroup spawnGroup, EntityType.EntityFactory<T> entity, float width, float height, boolean disableSummon, boolean fireImmune) {
+        EntityType.Builder<T> builder = EntityType.Builder.create(entity, spawnGroup).dimensions(width, height).spawnableFarFromPlayer();
         if (disableSummon) builder.disableSummon();
-        if (fireImmune) builder.fireImmune();
+        if (fireImmune) builder.makeFireImmune();
         return builder;
     }
 
-    private static <T extends Entity> FabricEntityTypeBuilder<T> getBuilder(SpawnGroup spawnGroup, EntityType.EntityFactory<T> entity, float width, float height) {
+    private static <T extends Entity> EntityType.Builder<T> getBuilder(SpawnGroup spawnGroup, EntityType.EntityFactory<T> entity, float width, float height) {
         return getBuilder(spawnGroup, entity, width, height, false, false);
     }
 }

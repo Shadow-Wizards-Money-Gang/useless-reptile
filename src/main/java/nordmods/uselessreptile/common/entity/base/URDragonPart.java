@@ -29,9 +29,9 @@ public class URDragonPart extends EntityPart {
     }
 
     @Override
-    protected void initDataTracker() {
-        dataTracker.startTracking(HEIGHT_MODIFIER, 1f);
-        dataTracker.startTracking(WIDTH_MODIFIER, 1f);
+    protected void initDataTracker(DataTracker.Builder builder) {
+        builder.add(HEIGHT_MODIFIER, 1f);
+        builder.add(WIDTH_MODIFIER, 1f);
     }
 
     public static final TrackedData<Float> HEIGHT_MODIFIER = DataTracker.registerData(URDragonPart.class, TrackedDataHandlerRegistry.FLOAT);

@@ -2,14 +2,12 @@ package nordmods.uselessreptile.common.items;
 
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.item.TooltipType;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.MutableText;
@@ -19,8 +17,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
+import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URSounds;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,39 +27,28 @@ public class FluteItem extends Item {
     public static final String MODE_TAG = "Mode";
     public FluteItem(Settings settings) {
         super(settings);
+        ItemStack itemStack = getDefaultStack();
+        itemStack.set(URItems.FLUTE_MODE_COMPONENT, 0);
     }
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
-        NbtCompound nbt = itemStack.getNbt();
+       int mode = getFluteMode(itemStack);
         if (user.isSneaking()) {
-            if (nbt == null || !nbt.contains(MODE_TAG)) {
-                if (nbt == null) nbt = new NbtCompound();
-                nbt.putInt(MODE_TAG, 1);
-                if (world.isClient() && user == MinecraftClient.getInstance().player) {
-                    Text text = Text.translatable("tooltip.uselessreptile.flute_mode1");
-                    MinecraftClient.getInstance().inGameHud.setOverlayMessage(text, false);
-                }
-                itemStack.setNbt(nbt);
-                return TypedActionResult.success(itemStack);
+            switch (mode) {
+                case 1 -> mode = 2;
+                case 2 -> mode = 0;
+                default -> mode = 1;
             }
-
-            int data = nbt.getInt(MODE_TAG);
-            switch (data) {
-                case 1 -> data = 2;
-                case 2 -> data = 0;
-                default -> data = 1;
-            }
-            nbt.putInt(MODE_TAG, data);
+            itemStack.set(URItems.FLUTE_MODE_COMPONENT, mode);
 
             if (world.isClient() && user == MinecraftClient.getInstance().player) {
-                Text text = Text.translatable("tooltip.uselessreptile.flute_mode" + data);
+                Text text = Text.translatable("tooltip.uselessreptile.flute_mode" + mode);
                 MinecraftClient.getInstance().inGameHud.setOverlayMessage(text, false);
             }
             return TypedActionResult.success(itemStack);
         } else {
-            int mode = nbt == null || !nbt.contains(MODE_TAG) ? 0 : nbt.getInt(MODE_TAG);
             user.getItemCooldownManager().set(this, 40);
             if (user instanceof ServerPlayerEntity serverPlayer) {
                 Criteria.CONSUME_ITEM.trigger(serverPlayer, itemStack);
@@ -81,14 +68,13 @@ public class FluteItem extends Item {
         return UseAction.TOOT_HORN;
     }
 
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        NbtCompound nbt = stack.getNbt();
-        int mode = nbt == null || !nbt.contains(MODE_TAG) ? 0 : nbt.getInt(MODE_TAG);
+    public void appendTooltip(ItemStack itemStack, TooltipContext context, List<Text> tooltip, TooltipType type) {
+        int mode = getFluteMode(itemStack);
         String tooltipString = "tooltip.uselessreptile.flute_mode" + mode;
-        if (world instanceof ClientWorld) {
-            if (!InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), InputUtil.GLFW_KEY_LEFT_SHIFT)) tooltip.add(Text.translatable("tooltip.uselessreptile.hidden").formatted(Formatting.DARK_GRAY));
-            else for (Text text : getParsedText("tooltip.uselessreptile.flute")) tooltip.add(((MutableText) text).formatted(Formatting.GRAY));
-        }
+
+        if (!InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), InputUtil.GLFW_KEY_LEFT_SHIFT)) tooltip.add(Text.translatable("tooltip.uselessreptile.hidden").formatted(Formatting.DARK_GRAY));
+        else for (Text text : getParsedText("tooltip.uselessreptile.flute")) tooltip.add(((MutableText) text).formatted(Formatting.GRAY));
+
         tooltip.add(Text.translatable(tooltipString).formatted(Formatting.GRAY));
     }
 
@@ -102,5 +88,10 @@ public class FluteItem extends Item {
         } else toReturn.add(Text.literal(I18n.translate(key)));
 
         return toReturn;
+    }
+
+    public static int getFluteMode(ItemStack itemStack) {
+        if (itemStack.getComponents().get(URItems.FLUTE_MODE_COMPONENT) == null) itemStack.set(URItems.FLUTE_MODE_COMPONENT, 0);
+        return itemStack.getComponents().get(URItems.FLUTE_MODE_COMPONENT);
     }
 }

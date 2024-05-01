@@ -2,7 +2,6 @@ package nordmods.uselessreptile.common.entity;
 
 import com.mojang.authlib.GameProfile;
 import eu.pb4.common.protection.api.CommonProtection;
-import net.fabricmc.fabric.api.mininglevel.v1.MiningLevelManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.SitGoal;
@@ -51,11 +50,11 @@ import nordmods.uselessreptile.common.items.DragonArmorItem;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 
 import java.util.List;
 
@@ -103,9 +102,9 @@ public class MoleclawEntity extends URRideableDragonEntity {
     }
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        dataTracker.startTracking(IS_PANICKING, false);
+    protected void initDataTracker(DataTracker.Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(IS_PANICKING, false);
     }
     public static final TrackedData<Boolean> IS_PANICKING = DataTracker.registerData(MoleclawEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public boolean isPanicking() {return dataTracker.get(IS_PANICKING);}
@@ -325,7 +324,13 @@ public class MoleclawEntity extends URRideableDragonEntity {
             GameProfile playerId = rider != null ? rider.getGameProfile() : CommonProtection.UNKNOWN;
             if (blockState.isIn(URTags.DRAGON_UNBREAKABLE) || !CommonProtection.canBreakBlock(getWorld(), blockPos, playerId, rider)) continue;
 
-            float miningLevel = MiningLevelManager.getRequiredMiningLevel(blockState);
+            //rip MiningLevelManager
+            float miningLevel = 0;
+            if (blockState.isIn(BlockTags.INCORRECT_FOR_NETHERITE_TOOL)) miningLevel = 5;
+            else if (blockState.isIn(BlockTags.INCORRECT_FOR_DIAMOND_TOOL)) miningLevel = 4;
+            else if (blockState.isIn(BlockTags.INCORRECT_FOR_IRON_TOOL)) miningLevel = 3;
+            else if (blockState.isIn(BlockTags.INCORRECT_FOR_STONE_TOOL)) miningLevel = 2;
+            else if (blockState.isIn(BlockTags.INCORRECT_FOR_WOODEN_TOOL)) miningLevel = 1;
             float maxMiningLevel = 0;
             if (hasStatusEffect(StatusEffects.STRENGTH)) maxMiningLevel += getStatusEffect(StatusEffects.STRENGTH).getAmplifier() + 1;
             if (hasStatusEffect(StatusEffects.WEAKNESS)) maxMiningLevel -= getStatusEffect(StatusEffects.WEAKNESS).getAmplifier() + 1;

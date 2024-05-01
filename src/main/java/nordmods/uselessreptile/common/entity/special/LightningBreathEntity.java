@@ -59,8 +59,8 @@ public class LightningBreathEntity extends ProjectileEntity {
     public int getBeamLength() {return dataTracker.get(BEAM_LENGTH);}
 
     @Override
-    protected void initDataTracker() {
-        dataTracker.startTracking(BEAM_LENGTH, 0);
+    protected void initDataTracker(DataTracker.Builder builder) {
+        builder.add(BEAM_LENGTH, 0);
     }
 
     @Override

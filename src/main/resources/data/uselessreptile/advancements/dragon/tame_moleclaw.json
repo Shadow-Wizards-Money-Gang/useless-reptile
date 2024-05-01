@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "uselessreptile:moleclaw_spawn_egg"
+      "id": "uselessreptile:moleclaw_spawn_egg"
     },
     "title": {
       "translate": "advancement.uselessreptile.tame_moleclaw"

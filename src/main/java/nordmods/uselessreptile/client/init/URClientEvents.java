@@ -12,8 +12,6 @@ import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.core.animatable.model.CoreBakedGeoModel;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.event.GeoRenderEvent;
 
 import java.util.Map;
@@ -46,7 +44,7 @@ public class URClientEvents {
                 id = dragonEquipmentRenderer.getGeoModel().getTextureResource(dragonEquipmentAnimatable);
                 if (id == null) continue;
 
-                Map<String, CoreGeoBone> equipmentBones = dragonEquipmentAnimatable.equipmentBones;
+                Map<String, GeoBone> equipmentBones = dragonEquipmentAnimatable.equipmentBones;
                 if (equipmentBones.isEmpty()) getSaddleBones(equipmentBones, bakedEquipmentModel);
 
                 event.getRenderer().getGeoModel().getAnimationProcessor().getRegisteredBones().forEach(bone -> {
@@ -67,13 +65,13 @@ public class URClientEvents {
         });
     }
 
-    private static void addChildren(Map<String, CoreGeoBone> equipmentBones, CoreGeoBone bone) {
+    private static void addChildren(Map<String, GeoBone> equipmentBones, GeoBone bone) {
         equipmentBones.put(bone.getName(), bone);
-        for (CoreGeoBone child : bone.getChildBones()) addChildren(equipmentBones, child);
+        for (GeoBone child : bone.getChildBones()) addChildren(equipmentBones, child);
     }
 
-    private static void getSaddleBones(Map<String, CoreGeoBone> equipmentBones, CoreBakedGeoModel model) {
+    private static void getSaddleBones(Map<String, GeoBone> equipmentBones, BakedGeoModel model) {
         //equipmentBones.clear();
-        for (CoreGeoBone bone : model.getBones()) addChildren(equipmentBones, bone);
+        for (GeoBone bone : model.topLevelBones()) addChildren(equipmentBones, bone);
     }
 }

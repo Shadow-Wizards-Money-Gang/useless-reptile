@@ -26,7 +26,7 @@ public class UselessReptile implements ModInitializer, PreLaunchEntrypoint {
         URPotions.init();
         URScreenHandlers.init();
         //UREvents.init();
-
+        URPackets.init();
         KeyInputC2SPacket.init();
     }
 

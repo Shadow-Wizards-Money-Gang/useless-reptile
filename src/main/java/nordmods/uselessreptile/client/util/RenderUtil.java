@@ -2,13 +2,14 @@ package nordmods.uselessreptile.client.util;
 
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class RenderUtil {
     public static void renderQuad(
-            Matrix4f positionMatrix, Matrix3f normalMatrix, VertexConsumer vertices,
+            Matrix4f positionMatrix, MatrixStack.Entry normalMatrix, VertexConsumer vertices,
             Vector3f v0, Vector3f v1, Vector3f v2, Vector3f v3,
             float a, float r, float g, float b, int light,
             float minU, float maxU, float minV, float maxV

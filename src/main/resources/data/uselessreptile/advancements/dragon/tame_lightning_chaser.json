@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "uselessreptile:lightning_chaser_spawn_egg"
+      "id": "uselessreptile:lightning_chaser_spawn_egg"
     },
     "title": {
       "translate": "advancement.uselessreptile.tame_lightning_chaser"

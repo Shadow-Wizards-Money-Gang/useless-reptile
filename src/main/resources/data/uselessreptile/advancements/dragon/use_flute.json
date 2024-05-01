@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "uselessreptile:flute"
+      "id": "uselessreptile:flute"
     },
     "title": {
       "translate": "advancement.uselessreptile.use_flute"

@@ -20,6 +20,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -54,11 +55,11 @@ import nordmods.uselessreptile.common.network.SyncLightningBreathRotationsS2CPac
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
+import software.bernie.geckolib.animation.AnimationState;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -114,9 +115,9 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
         if (spawnReason == SpawnReason.EVENT) isChallenger = true;
-        return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
+        return super.initialize(world, difficulty, spawnReason, entityData);
     }
 
     public static boolean canDragonSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
@@ -233,9 +234,9 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        dataTracker.startTracking(SURRENDERED, false);
+    protected void initDataTracker(DataTracker.Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(SURRENDERED, false);
     }
     public static final TrackedData<Boolean> SURRENDERED = DataTracker.registerData(LightningChaserEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public boolean hasSurrendered() {return dataTracker.get(SURRENDERED);}
@@ -343,11 +344,11 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
             getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).removeModifier(STORM_SPEED_BONUS);
             if (getWorld().getLevelProperties().isThundering()) {
                 getAttributeInstance(EntityAttributes.GENERIC_ARMOR)
-                        .addTemporaryModifier(new EntityAttributeModifier(STORM_ARMOR_BONUS, "Thunderstorm bonus", 4, EntityAttributeModifier.Operation.ADDITION));
+                        .addTemporaryModifier(new EntityAttributeModifier(STORM_ARMOR_BONUS, "Thunderstorm bonus", 4, EntityAttributeModifier.Operation.ADD_VALUE));
                 getAttributeInstance(EntityAttributes.GENERIC_FLYING_SPEED)
-                        .addTemporaryModifier(new EntityAttributeModifier(STORM_FLYING_SPEED_BONUS, "Thunderstorm bonus", 0.2, EntityAttributeModifier.Operation.ADDITION));
+                        .addTemporaryModifier(new EntityAttributeModifier(STORM_FLYING_SPEED_BONUS, "Thunderstorm bonus", 0.2, EntityAttributeModifier.Operation.ADD_VALUE));
                 getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)
-                        .addTemporaryModifier(new EntityAttributeModifier(STORM_SPEED_BONUS, "Thunderstorm bonus", 0.05, EntityAttributeModifier.Operation.ADDITION));
+                        .addTemporaryModifier(new EntityAttributeModifier(STORM_SPEED_BONUS, "Thunderstorm bonus", 0.05, EntityAttributeModifier.Operation.ADD_VALUE));
             }
         }
 
@@ -517,8 +518,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
     @Override
     public boolean isFavoriteFood(ItemStack itemStack){
-        Item item = itemStack.getItem();
-        return item.isFood() && item.getFoodComponent().isMeat();
+        return itemStack.isIn(ItemTags.MEAT);
     }
 
     public boolean getShouldBailOut() {

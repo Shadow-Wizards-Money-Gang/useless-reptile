@@ -2,6 +2,7 @@ package nordmods.uselessreptile.common.init;
 
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
+import net.minecraft.entity.SpawnLocationTypes;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.world.Heightmap;
 import nordmods.uselessreptile.common.config.URConfig;
@@ -46,9 +47,9 @@ public class URSpawns {
         //        URConfig.getConfig().lightningChaserSpawnWeight,
         //        URConfig.getConfig().lightningChaserMinGroupSize, URConfig.getConfig().lightningChaserMaxGroupSize);
 
-        SpawnRestriction.register(UREntities.WYVERN_ENTITY, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, WyvernEntity::canDragonSpawn);
-        SpawnRestriction.register(UREntities.MOLECLAW_ENTITY, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, MoleclawEntity::canDragonSpawn);
-        SpawnRestriction.register(UREntities.RIVER_PIKEHORN_ENTITY, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, RiverPikehornEntity::canDragonSpawn);
+        SpawnRestriction.register(UREntities.WYVERN_ENTITY, SpawnLocationTypes.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, WyvernEntity::canDragonSpawn);
+        SpawnRestriction.register(UREntities.MOLECLAW_ENTITY, SpawnLocationTypes.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, MoleclawEntity::canDragonSpawn);
+        SpawnRestriction.register(UREntities.RIVER_PIKEHORN_ENTITY, SpawnLocationTypes.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, RiverPikehornEntity::canDragonSpawn);
         //SpawnRestriction.register(UREntities.LIGHTNING_CHASER_ENTITY, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, LightningChaserEntity::canDragonSpawn);
 
     }
