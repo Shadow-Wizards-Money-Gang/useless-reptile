@@ -18,7 +18,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "uselessreptile:moleclaw_helmets"
+            "items": "#uselessreptile:moleclaw_helmets"
           }
         ]
       }
