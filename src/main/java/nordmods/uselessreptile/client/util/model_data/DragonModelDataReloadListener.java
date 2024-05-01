@@ -55,7 +55,7 @@ public class DragonModelDataReloadListener extends JsonDataLoader implements Ide
     public void debugPrint() {
         for (Map.Entry<String, Map<String, DragonModelData>> entry : DragonModelData.dragonModelDataHolder.entrySet()) {
             for ( Map.Entry<String, DragonModelData> data : entry.getValue().entrySet()) {
-                UselessReptile.LOGGER.error("{}: {}, {}", entry.getKey(), data.getKey(), data.getValue());
+                UselessReptile.LOGGER.debug("{}: {}, {}", entry.getKey(), data.getKey(), data.getValue());
             }
         }
     }
