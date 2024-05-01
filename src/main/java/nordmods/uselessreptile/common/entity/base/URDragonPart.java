@@ -46,14 +46,14 @@ public class URDragonPart extends EntityPart {
     @Override
     public boolean isInvulnerableTo(DamageSource damageSource) {
         boolean riderOwner = false;
-        if (damageSource.getSource() instanceof PlayerEntity player)
+        if (damageSource.getAttacker() instanceof PlayerEntity player)
             riderOwner = player.getVehicle() == owner && owner.getOwner() == player;
         return riderOwner || super.isInvulnerableTo(damageSource);
     }
 
     @Override
     public boolean damage(DamageSource source, float amount) {
-        return owner.damage(source, amount * damageMultiplier);
+        return super.damage(source, amount * damageMultiplier);
     }
 
     @Override

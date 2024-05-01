@@ -98,7 +98,7 @@ public class URItems {
     public static final DataComponentType<Integer> FLUTE_MODE_COMPONENT = register("flute_mode", builder -> builder.codec(Codecs.rangedInt(0, 2)).packetCodec(PacketCodecs.INTEGER).cache());
 
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator) {
-        return Registry.register(Registries.DATA_COMPONENT_TYPE, id, (builderOperator.apply(DataComponentType.builder())).build());
+        return Registry.register(Registries.DATA_COMPONENT_TYPE, new Identifier(UselessReptile.MODID, id), (builderOperator.apply(DataComponentType.builder())).build());
     }
 }
 

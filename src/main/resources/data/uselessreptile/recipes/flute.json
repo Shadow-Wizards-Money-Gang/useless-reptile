@@ -23,6 +23,9 @@
     }
   },
   "result": {
-    "id": "uselessreptile:flute"
+    "id": "uselessreptile:flute",
+    "components": {
+      "uselessreptile:flute_mode": 0
+    }
   }
 }
