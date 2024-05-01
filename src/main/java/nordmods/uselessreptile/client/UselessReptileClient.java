@@ -5,7 +5,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.*;
-import nordmods.uselessreptile.client.network.*;
 import nordmods.uselessreptile.client.util.model_data.DragonModelDataReloadListener;
 import nordmods.uselessreptile.client.util.model_data.EquipmentModelDataReloadListener;
 

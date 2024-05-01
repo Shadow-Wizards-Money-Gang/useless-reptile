@@ -2,7 +2,6 @@ package nordmods.uselessreptile.common.init;
 
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.block.entity.Sherds;
 import net.minecraft.component.DataComponentType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;

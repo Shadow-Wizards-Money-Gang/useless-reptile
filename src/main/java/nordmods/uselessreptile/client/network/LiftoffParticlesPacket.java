@@ -3,11 +3,7 @@ package nordmods.uselessreptile.client.network;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.particle.ParticleTypes;
-import nordmods.uselessreptile.client.gui.URDragonScreen;
-import nordmods.uselessreptile.common.entity.base.FlyingDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
-import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import nordmods.uselessreptile.common.network.LiftoffParticlesS2CPacket;
 
 public class LiftoffParticlesPacket {

@@ -48,7 +48,7 @@ public class URClientEvents {
                 if (equipmentBones.isEmpty()) getSaddleBones(equipmentBones, bakedEquipmentModel);
 
                 event.getRenderer().getGeoModel().getAnimationProcessor().getRegisteredBones().forEach(bone -> {
-                    GeoBone equipmentBone = (GeoBone) equipmentBones.get(bone.getName());
+                    GeoBone equipmentBone = equipmentBones.get(bone.getName());
                     if (equipmentBone != null) {
                         equipmentBone.updateScale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
                         equipmentBone.updateRotation(bone.getRotX(), bone.getRotY(), bone.getRotZ());

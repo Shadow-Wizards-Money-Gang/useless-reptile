@@ -28,7 +28,6 @@ import nordmods.uselessreptile.common.init.URTags;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class LightningBreathEntity extends ProjectileEntity {

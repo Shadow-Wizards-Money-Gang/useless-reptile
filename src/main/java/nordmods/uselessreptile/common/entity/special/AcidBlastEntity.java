@@ -127,6 +127,11 @@ public class AcidBlastEntity extends PersistentProjectileEntity implements GeoEn
     }
 
     @Override
+    protected SoundEvent getHitSound() {
+        return null;
+    }
+
+    @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
     }
