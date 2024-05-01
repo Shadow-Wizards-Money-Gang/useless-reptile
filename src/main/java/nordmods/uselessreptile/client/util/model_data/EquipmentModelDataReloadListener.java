@@ -51,7 +51,7 @@ public class EquipmentModelDataReloadListener extends JsonDataLoader implements 
     public void debugPrint() {
         for (Map.Entry<String, List<EquipmentModelData>> entry : EquipmentModelData.equipmentModelDataHolder.entrySet()) {
             for (EquipmentModelData data : entry.getValue()) {
-                UselessReptile.LOGGER.error("{}: {}", entry.getKey(), data);
+                UselessReptile.LOGGER.debug("{}: {}", entry.getKey(), data);
             }
         }
     }
