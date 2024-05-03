@@ -128,7 +128,7 @@ public class AcidBlastEntity extends PersistentProjectileEntity implements GeoEn
 
     @Override
     protected SoundEvent getHitSound() {
-        return null;
+        return URSounds.ACID_SPLASH;
     }
 
     @Override

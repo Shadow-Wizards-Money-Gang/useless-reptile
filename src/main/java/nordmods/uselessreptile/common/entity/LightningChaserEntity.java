@@ -572,28 +572,28 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         if (isFlying()) {
             if (isMoving() && !isMovingBackwards() && !isSecondaryAttack()) {
                 if (getTiltState() == 2) {
-                    wing1LeftPos = new Vector3f(wing1Left.getWidth() + 0.5f, 0, 0.5f);
+                    wing1LeftPos = new Vector3f(2, 0, 0.5f);
                     wing1LeftScale = new Vec2f(1, 1.5f);
 
-                    wing2LeftPos = new Vector3f(wing1Left.getWidth() + 0.5f, 0, -0.5f);
+                    wing2LeftPos = new Vector3f(2, 0, -0.5f);
                     wing2LeftScale = new Vec2f(1, 1.5f);
 
-                    wing1RightPos = new Vector3f(-wing1Right.getWidth() - 0.5f, 0, 0.5f);
+                    wing1RightPos = new Vector3f(-2, 0, 0.5f);
                     wing1RightScale = new Vec2f(1, 1.5f);
 
-                    wing2RightPos = new Vector3f(-wing1Right.getWidth() - 0.5f, 0, -0.5f);
+                    wing2RightPos = new Vector3f(-2, 0, -0.5f);
                     wing2RightScale = new Vec2f(1, 1.5f);
                 } else {
-                    wing1LeftPos = new Vector3f(wing1Left.getWidth(), 0, 0);
+                    wing1LeftPos = new Vector3f(2.5f, 0, 0);
                     wing1LeftScale = new Vec2f(1, 2.5f);
 
-                    wing2LeftPos = new Vector3f(wing1Left.getWidth() * 2, 0, 0);
+                    wing2LeftPos = new Vector3f(5, 0, 0);
                     wing2LeftScale = new Vec2f(1, 2.5f);
 
-                    wing1RightPos = new Vector3f(-wing1Right.getWidth(), 0, 0);
+                    wing1RightPos = new Vector3f(-2.5f, 0, 0);
                     wing1RightScale = new Vec2f(1, 2.5f);
 
-                    wing2RightPos = new Vector3f(-wing1Right.getWidth() * 2, 0, 0);
+                    wing2RightPos = new Vector3f(-5, 0, 0);
                     wing2RightScale = new Vec2f(1, 2.5f);
                 }
                 neck1Pos = new Vector3f(yawOffset * 0.25f, pitchOffset * 0.75f, 2f);
@@ -604,74 +604,74 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 tail2Pos = new Vector3f(yawOffset * 0.5f, -pitchOffset * 1.25f, -3);
                 tail3Pos = new Vector3f(yawOffset * 1.25f, -pitchOffset * 1.5f , -4 + Math.abs(yawOffset) * 0.25f);
             } else {
-                wing1LeftPos = new Vector3f(wing1Left.getWidth(), getHeight()/4, -0.5f);
-                wing1LeftScale = new Vec2f(getHeight()/2, 3);
+                wing1LeftPos = new Vector3f(3, 0.75f, -0.5f);
+                wing1LeftScale = new Vec2f(1.5f, 3);
 
-                wing2LeftPos = new Vector3f(wing1Left.getWidth() * 1.75f, getHeight()/4, -1);
-                wing2LeftScale = new Vec2f(getHeight()/2, 2);
+                wing2LeftPos = new Vector3f(3.5f, 0.75f, -1);
+                wing2LeftScale = new Vec2f(1.5f, 2);
 
-                wing1RightPos = new Vector3f(-wing1Right.getWidth(), getHeight()/4, -0.5f);
-                wing1RightScale = new Vec2f(getHeight()/2, 3);
+                wing1RightPos = new Vector3f(-3, 0.75f, -0.5f);
+                wing1RightScale = new Vec2f(1.5f, 3);
 
-                wing2RightPos = new Vector3f(-wing1Right.getWidth() * 1.75f, getHeight()/4, -1);
-                wing2RightScale = new Vec2f(getHeight()/2, 2);
+                wing2RightPos = new Vector3f(-3.5f, 0.75f, -1);
+                wing2RightScale = new Vec2f(1.5f, 2);
 
-                neck1Pos = new Vector3f(0, getHeight(), 1);
-                neck2Pos = new Vector3f(yawOffset * 0.5f, getHeight(), 1.5f);
-                headPos = new Vector3f(yawOffset,  getHeight() + 0.1f, 2f);
+                neck1Pos = new Vector3f(0, 3, 1);
+                neck2Pos = new Vector3f(yawOffset * 0.5f, 3, 1.5f);
+                headPos = new Vector3f(yawOffset,  3.1f, 2f);
 
-                tail1Pos = new Vector3f(yawOffset * 0.5f, getHeight() - 3.5f, -2);
-                tail2Pos = new Vector3f(yawOffset * 1.25f, getHeight() - 4.5f, -2.25f);
-                tail3Pos = new Vector3f(yawOffset * 2f, getHeight() - 5.5f , -2.5f);
+                tail1Pos = new Vector3f(yawOffset * 0.5f, -0.5f, -2);
+                tail2Pos = new Vector3f(yawOffset * 1.25f, -1.5f, -2.25f);
+                tail3Pos = new Vector3f(yawOffset * 2f, -2.5f , -2.5f);
             }
         } else {
             if (getIsSitting()) {
-                wing1LeftPos = new Vector3f(getWidth() / 2, 0, 0.5f);
-                wing1LeftScale = new Vec2f(getHeight() - 1, getWidth() / 2f);
+                wing1LeftPos = new Vector3f(1.5f, 0, 0.5f);
+                wing1LeftScale = new Vec2f(2, 1.5f);
 
-                wing2LeftPos = new Vector3f(getWidth() / 2 + 0.25f, 0.75f, -0.5f);
-                wing2LeftScale = new Vec2f(getHeight() - 1.5f, getWidth() / 2f);
+                wing2LeftPos = new Vector3f(1.75f, 0.75f, -0.5f);
+                wing2LeftScale = new Vec2f(1.5f, 1.5f);
 
-                wing1RightPos = new Vector3f(-getWidth() / 2, 0, 0.5f);
-                wing1RightScale = new Vec2f(getHeight() - 1, getWidth() / 2f);
+                wing1RightPos = new Vector3f(-1.5f, 0, 0.5f);
+                wing1RightScale = new Vec2f(2, 1.5f);
 
-                wing2RightPos = new Vector3f(-getWidth() / 2 - 0.25f, 0.75f, -0.5f);
-                wing2RightScale = new Vec2f(getHeight() - 1.5f, getWidth() / 2f);
+                wing2RightPos = new Vector3f(-1.75f, 0.75f, -0.5f);
+                wing2RightScale = new Vec2f(1.5f, 1.5f);
 
                 if (hasSurrendered()) {
                     neck1Pos = new Vector3f(0, 1.6f, 1);
                     neck2Pos = new Vector3f(yawOffset * 0.4f, 1.3f, 1.7f);
                     headPos = new Vector3f(yawOffset * 0.8f,  0.5f, 2.4f);
                 } else {
-                    neck1Pos = new Vector3f(0, getHeight() - 0.5f, 1);
-                    neck2Pos = new Vector3f(yawOffset * 0.4f, getHeight() - 0.2f, 1.5f);
-                    headPos = new Vector3f(yawOffset * 0.8f, getHeight() + 0.1f, 2f);
+                    neck1Pos = new Vector3f(0, 2.5f, 1);
+                    neck2Pos = new Vector3f(yawOffset * 0.4f, 2.8f, 1.5f);
+                    headPos = new Vector3f(yawOffset * 0.8f, 3.1f, 2f);
                 }
 
-                tail1Pos = new Vector3f(0, 0.3f, -getWidth() + 0.8f);
-                tail2Pos = new Vector3f(0, 0.35f, -getWidth() - 0.2f);
-                tail3Pos = new Vector3f(0, 0.4f , -getWidth() - 1.2f);
+                tail1Pos = new Vector3f(0, 0.3f, -2.2f);
+                tail2Pos = new Vector3f(0, 0.35f, -3.2f);
+                tail3Pos = new Vector3f(0, 0.4f , -4.2f);
 
             } else {
-                wing1LeftPos = new Vector3f(getWidth() / 2, 0, 0.5f);
-                wing1LeftScale = new Vec2f(getHeight() - 1, getWidth() / 2f);
+                wing1LeftPos = new Vector3f(1.5f, 0, 0.5f);
+                wing1LeftScale = new Vec2f(2, 1.5f);
 
-                wing2LeftPos = new Vector3f(getWidth() / 2 + 0.25f, 0.75f, -0.5f);
-                wing2LeftScale = new Vec2f(getHeight() - 1.5f, getWidth() / 2f);
+                wing2LeftPos = new Vector3f(1.75f, 0.75f, -0.5f);
+                wing2LeftScale = new Vec2f(1.5f, 1.5f);
 
-                wing1RightPos = new Vector3f(-getWidth() / 2, 0, 0.5f);
-                wing1RightScale = new Vec2f(getHeight() - 1, getWidth() / 2f);
+                wing1RightPos = new Vector3f(-1.5f, 0, 0.5f);
+                wing1RightScale = new Vec2f(2, 1.5f);
 
-                wing2RightPos = new Vector3f(-getWidth() / 2 - 0.25f, 0.75f, -0.5f);
-                wing2RightScale = new Vec2f(getHeight() - 1.5f, getWidth() / 2f);
+                wing2RightPos = new Vector3f(-1.75f, 0.75f, -0.5f);
+                wing2RightScale = new Vec2f(1.5f, 1.5f);
 
-                neck1Pos = new Vector3f(0, getHeight() - 1f, 1);
-                neck2Pos = new Vector3f(yawOffset * 0.4f, getHeight() - 0.75f, 1.5f);
-                headPos = new Vector3f(yawOffset * 0.8f,  getHeight() - 0.4f, 2f);
+                neck1Pos = new Vector3f(0, 2, 1);
+                neck2Pos = new Vector3f(yawOffset * 0.4f, 2.25f, 1.5f);
+                headPos = new Vector3f(yawOffset * 0.8f, 2.6f, 2f);
 
-                tail1Pos = new Vector3f(yawOffset * 0.2f, getHeight() - 1.5f, -getWidth() + 0.9f);
-                tail2Pos = new Vector3f(yawOffset * 0.4f, getHeight() - 0.8f,  -getWidth() + 0.2f);
-                tail3Pos = new Vector3f(yawOffset * 0.8f, getHeight() - 0.5f , -getWidth() - 0.7f);
+                tail1Pos = new Vector3f(yawOffset * 0.2f, 1.5f, -2.1f);
+                tail2Pos = new Vector3f(yawOffset * 0.4f, 2.2f, -2.8f);
+                tail3Pos = new Vector3f(yawOffset * 0.8f, 2.5f, -3.7f);
             }
         }
 
@@ -688,11 +688,21 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         wing2Right.setScale(wing2RightScale);
 
         head.setRelativePos(headPos);
+        head.setScale(1, 1);
+
         neck1.setRelativePos(neck1Pos);
+        neck1.setScale(1, 1);
+
         neck2.setRelativePos(neck2Pos);
+        neck2.setScale(1, 1);
 
         tail1.setRelativePos(tail1Pos);
+        tail1.setScale(1, 1);
+
         tail2.setRelativePos(tail2Pos);
+        tail2.setScale(1, 1);
+
         tail3.setRelativePos(tail3Pos);
+        tail3.setScale(1, 1);
     }
 }

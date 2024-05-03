@@ -23,6 +23,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
@@ -348,6 +349,11 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     @Override
     public boolean isTamingItem(ItemStack itemStack) {
         return itemStack.isOf(Items.TROPICAL_FISH_BUCKET);
+    }
+
+    @Override
+    public Box getAttackBox() {
+        return getBoundingBox().expand(getScale(), 0, getScale());
     }
 
     @Override

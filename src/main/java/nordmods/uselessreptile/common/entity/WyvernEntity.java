@@ -346,7 +346,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     @Override
     public float getHeightModTransSpeed() {
-        return (float) (0.13 * animationSpeed);
+        return (float) (0.13 * animationSpeed * getScale());
     }
 
     @Nullable
@@ -409,16 +409,16 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         if (isFlying()) {
             if (isMoving() && !isMovingBackwards() && !isSecondaryAttack()) {
                 if (getTiltState() == 2) {
-                    wingLeftPos = new Vector3f(wingLeft.getWidth() + 0.5f, 0, -0.5f);
+                    wingLeftPos = new Vector3f(2, 0, -0.5f);
                     wingLeftScale = new Vec2f(1, 1.5f);
 
-                    wingRightPos = new Vector3f(-wingRight.getWidth() - 0.5f, 0, -0.5f);
+                    wingRightPos = new Vector3f(-2, 0, -0.5f);
                     wingRightScale = new Vec2f(1, 1.5f);
                 } else {
-                    wingLeftPos = new Vector3f(wingLeft.getWidth(), 0, -0.5f);
+                    wingLeftPos = new Vector3f(2.5f, 0, -0.5f);
                     wingLeftScale = new Vec2f(1, 2.5f);
 
-                    wingRightPos = new Vector3f(-wingRight.getWidth(), 0, -0.5f);
+                    wingRightPos = new Vector3f(-2.5f, 0, -0.5f);
                     wingRightScale = new Vec2f(1, 2.5f);
                 }
                 neckPos = new Vector3f(yawOffset * 0.5f, pitchOffset * 1, 1.75f);
@@ -427,44 +427,44 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
                 tail2Pos = new Vector3f(yawOffset * 1.25f, -pitchOffset * 0.625f, -3 + Math.abs(yawOffset) * 0.5f);
                 tail3Pos = new Vector3f(yawOffset * 2f, -pitchOffset * 1 , -4 + Math.abs(yawOffset) * 1);
             } else {
-                wingLeftPos = new Vector3f(wingLeft.getWidth(), 0, -0.5f);
-                wingLeftScale = new Vec2f(getHeight(), 3);
+                wingLeftPos = new Vector3f(3, 0, -0.5f);
+                wingLeftScale = new Vec2f(3, 3);
 
-                wingRightPos = new Vector3f(-wingRight.getWidth(), 0, -0.5f);
-                wingRightScale = new Vec2f(getHeight(), 3);
+                wingRightPos = new Vector3f(-3, 0, -0.5f);
+                wingRightScale = new Vec2f(3, 3);
 
-                neckPos = new Vector3f(0, getHeight(), 1);
-                headPos = new Vector3f(yawOffset,  getHeight() + 0.1f, 1.9f);
-                tail1Pos = new Vector3f(yawOffset * 0.5f, getHeight() - 2, -2);
-                tail2Pos = new Vector3f(yawOffset * 1.25f, getHeight() - 2.5f, -2.6f + Math.abs(yawOffset) * 0.5f);
-                tail3Pos = new Vector3f(yawOffset * 2f, getHeight() - 3.2f , -3.2f + Math.abs(yawOffset) * 1);
+                neckPos = new Vector3f(0, 3, 1);
+                headPos = new Vector3f(yawOffset, 3.1f, 1.9f);
+                tail1Pos = new Vector3f(yawOffset * 0.5f, 1, -2);
+                tail2Pos = new Vector3f(yawOffset * 1.25f, 0.5f, -2.6f + Math.abs(yawOffset) * 0.5f);
+                tail3Pos = new Vector3f(yawOffset * 2f, -0.2f , -3.2f + Math.abs(yawOffset) * 1);
             }
         } else {
             if (getIsSitting()) {
-                wingLeftPos = new Vector3f(getWidth() / 1.5f, 0, 0);
-                wingLeftScale = new Vec2f(1.5f, getWidth());
+                wingLeftPos = new Vector3f(1.3333334f, 0, 0);
+                wingLeftScale = new Vec2f(1.5f, 2);
 
-                wingRightPos = new Vector3f(-getWidth() / 1.5f, 0, 0);
-                wingRightScale = new Vec2f(1.5f, getWidth());
+                wingRightPos = new Vector3f(-1.3333334f, 0, 0);
+                wingRightScale = new Vec2f(1.5f, 2);
 
-                neckPos = new Vector3f(0, getHeight(), 1f);
-                headPos = new Vector3f(0,  getHeight() - 0.25f, 0.5f);
-                tail1Pos = new Vector3f(0, 0.3f, -getWidth() + 0.4f);
-                tail2Pos = new Vector3f(0, 0.2f, -getWidth() - 0.6f);
-                tail3Pos = new Vector3f(0, 0.1f , -getWidth() - 1.6f);
+                neckPos = new Vector3f(0,  2.75f, 0.5f);
+                headPos = new Vector3f(0, 3, 1f);
+                tail1Pos = new Vector3f(0, 0.3f, -1.6f);
+                tail2Pos = new Vector3f(0, 0.2f, -2.6f);
+                tail3Pos = new Vector3f(0, 0.1f , -3.6f);
 
             } else {
-                wingLeftPos = new Vector3f(getWidth() / 2, 0.5f, 0);
-                wingLeftScale = new Vec2f(getHeight() - 1, getWidth() * 0.75f);
+                wingLeftPos = new Vector3f(1, 0.5f, 0);
+                wingLeftScale = new Vec2f(2, 1.5f);
 
-                wingRightPos = new Vector3f(-getWidth() / 2, 0.5f, 0);
-                wingRightScale = new Vec2f(getHeight() - 1, getWidth() * 0.75f);
+                wingRightPos = new Vector3f(-1, 0.5f, 0);
+                wingRightScale = new Vec2f(2, 1.5f);
 
-                neckPos = new Vector3f(0, getHeight(), 1);
-                headPos = new Vector3f(yawOffset,  getHeight() + 0.1f, 1.9f);
-                tail1Pos = new Vector3f(yawOffset * 0.25f, getHeight() - 1.5f, -getWidth() + 0.4f);
-                tail2Pos = new Vector3f(yawOffset * 0.75f, getHeight() - 2f,  -getWidth() - 0.6f);
-                tail3Pos = new Vector3f(yawOffset * 1.45f, getHeight() - 2.75f , -getWidth() - 1.2f);
+                neckPos = new Vector3f(0, 3, 1);
+                headPos = new Vector3f(yawOffset, 3.1f, 1.9f);
+                tail1Pos = new Vector3f(yawOffset * 0.25f, 1.5f, -1.6f);
+                tail2Pos = new Vector3f(yawOffset * 0.75f, 1.0f, -2.6f);
+                tail3Pos = new Vector3f(yawOffset * 1.45f, 0.25f, -3.2f);
             }
         }
 
@@ -475,9 +475,19 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         wingRight.setScale(wingRightScale);
 
         head.setRelativePos(headPos);
+        head.setScale(1 ,1);
+
         neck.setRelativePos(neckPos);
+        neck.setScale(1 ,1);
+
         tail1.setRelativePos(tail1Pos);
+        tail1.setScale(1 ,1);
+
         tail2.setRelativePos(tail2Pos);
+        tail2.setScale(1 ,1);
+
         tail3.setRelativePos(tail3Pos);
+        tail3.setScale(1 ,1);
+
     }
 }

@@ -8,6 +8,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
+import org.joml.Vector3f;
 
 public class RiverPikehornOnHeadFeatureModel extends SinglePartEntityModel<RiverPikehornEntity> {
     private final ModelPart Tdragon;
@@ -97,6 +98,10 @@ public class RiverPikehornOnHeadFeatureModel extends SinglePartEntityModel<River
     @Override
     public void setAngles(RiverPikehornEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         getPart().traverse().forEach(ModelPart::resetTransform);
+
+        Tdragon.yScale = Tdragon.xScale = Tdragon.zScale = entity.getScale();
+        Tdragon.pivotY -= 4 - entity.getScale() * 4;
+
         entity.updateAnimations();
         setHeadAngle(netHeadYaw, headPitch);
         updateAnimation(entity.sitAnimation, RiverPikehornOnHeadFeatureAnimations.SIT_HEAD, ageInTicks);

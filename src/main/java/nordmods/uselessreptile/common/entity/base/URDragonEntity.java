@@ -311,7 +311,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     @Override
     public EntityDimensions getBaseDimensions(EntityPose pose) {
-        return super.getBaseDimensions(pose).scaled(widthMod, heightMod);
+        return super.getBaseDimensions(pose).scaled(widthMod/getScale(), heightMod/getScale());
     }
 
     @Override
@@ -391,13 +391,13 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public float getWidthModTransSpeed() {
-        return (float) (0.22 * animationSpeed);
+        return (float) (0.22f * animationSpeed * getScale());
     }
     public float getHeightModTransSpeed() {
-        return (float) (0.3 * animationSpeed);
+        return (float) (0.3 * animationSpeed * getScale());
     }
     public float getMountedOffsetTransSpeed() {
-        return (float) (0.125 * animationSpeed);
+        return (float) (0.125 * animationSpeed * getScale());
     }
 
     @Override
@@ -430,6 +430,10 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     protected void setHitboxModifiers(float destinationHeight, float destinationWidth, float destinationMountedOffset) {
+        destinationHeight *= getScale();
+        destinationWidth *= getScale();
+        destinationMountedOffset *= getScale();
+
         float widthMod = getWidthMod();
         float heightMod = getHeightMod();
         float mountedOffset = getMountedOffset();
