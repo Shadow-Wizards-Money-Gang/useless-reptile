@@ -90,7 +90,7 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
         context.enableScissor(x1, y1, x2, y2);
 
         context.getMatrices().translate(centerX, centerY, 100);
-        context.getMatrices().multiplyPositionMatrix((new Matrix4f()).scaling(size, size, -size));
+        context.getMatrices().scale(size, size, -size);
         context.getMatrices().translate(0, entity.getHeight() / 2f + 0.4f, 0);
         context.getMatrices().multiply(RotationAxis.POSITIVE_X.rotationDegrees(-dy * 20 + 180));
         context.getMatrices().multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-dx * 40 + entity.getYaw(tickDelta)));
