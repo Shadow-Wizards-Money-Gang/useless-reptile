@@ -21,5 +21,10 @@
         }
       }
     }
+  },
+  "rewards": {
+    "recipes": [
+      "uselessreptile:flute"
+    ]
   }
 }
