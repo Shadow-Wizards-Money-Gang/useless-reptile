@@ -2,6 +2,7 @@ package nordmods.uselessreptile.mixin.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
+import net.minecraft.entity.player.PlayerEntity;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,9 +18,10 @@ public abstract class CameraMixin {
     public void offset(Args args) {
         if (!URClientConfig.getConfig().enableCameraOffset) return;
 
-        if (MinecraftClient.getInstance().player.getVehicle() instanceof URRideableDragonEntity) {
-            args.set(1, URClientConfig.getConfig().cameraVerticalOffset);
-            args.set(2, URClientConfig.getConfig().cameraHorizontalOffset);
+        PlayerEntity player = MinecraftClient.getInstance().player;
+        if (player.getVehicle() instanceof URRideableDragonEntity dragonEntity) {
+            args.set(1, URClientConfig.getConfig().cameraVerticalOffset * dragonEntity.getScale());
+            args.set(2, URClientConfig.getConfig().cameraHorizontalOffset * dragonEntity.getScale());
         }
     }
 
@@ -27,7 +29,9 @@ public abstract class CameraMixin {
     public double offsetCameraDistance(double desiredCameraDistance) {
         if (!URClientConfig.getConfig().enableCameraOffset) return desiredCameraDistance;
 
-        if (MinecraftClient.getInstance().player.getVehicle() instanceof URRideableDragonEntity) return desiredCameraDistance + URClientConfig.getConfig().cameraDistanceOffset;
+        PlayerEntity player = MinecraftClient.getInstance().player;
+        if (player.getVehicle() instanceof URRideableDragonEntity dragonEntity)
+            return desiredCameraDistance + URClientConfig.getConfig().cameraDistanceOffset  * dragonEntity.getScale();
         else return desiredCameraDistance;
     }
 
