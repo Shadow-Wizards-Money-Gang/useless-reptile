@@ -80,7 +80,9 @@ publishMods {
     file = remapJar.archiveFile
     changelog = project.file("CHANGELOG.md").getText()
     type = BETA
+    displayName = "Useless Reptile ${project.version}"
     modLoaders.add("fabric")
+    //dryRun = true
 
     curseforge {
         projectId = "677634"
