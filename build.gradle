@@ -1,12 +1,9 @@
 plugins {
     id 'fabric-loom' version '1.6-SNAPSHOT'
     id 'maven-publish'
+    id "me.modmuss50.mod-publish-plugin" version "0.5.1"
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
-archivesBaseName = project.archives_base_name
 version = project.mod_version + "-" + project.minecraft_version
 group = project.maven_group
 
@@ -64,18 +61,6 @@ java {
     withSourcesJar()
 }
 
-jar {
-    from("gradle.propertoes") {
-        rename { "${it}_${project.archivesBaseName}_${project.minecraft_version}" }
-    }
-}
-
-publishing {
-    publications {
-    }
-    repositories {
-    }
-}
 loom {
     accessWidenerPath = file("src/main/resources/uselessreptile.accesswidener")
     runs {
@@ -88,5 +73,26 @@ loom {
             vmArg "-Dgeckolib.disable_examples=true"
             programArgs "--username", "Nord_Act"
         }
+    }
+}
+
+publishMods {
+    file = remapJar.archiveFile
+    changelog = project.file("CHANGELOG.md").getText()
+    type = BETA
+    modLoaders.add("fabric")
+
+    curseforge {
+        projectId = "677634"
+        projectSlug = "useless-reptile"
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        minecraftVersions.add(project.property("minecraft_version") as String)
+        requires("fabric-api", "yacl", "geckolib")
+    }
+    modrinth {
+        projectId = "YE4QRt8F"
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        minecraftVersions.add(project.property("minecraft_version") as String)
+        requires("fabric-api", "yacl", "geckolib")
     }
 }
