@@ -5,7 +5,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.biome.Biome;
 import nordmods.uselessreptile.UselessReptile;
@@ -92,8 +91,11 @@ public class DragonVariantUtil {
     public static void assignVariantFromList(URDragonEntity entity, List<DragonVariant> variants) {
         int totalWeight = 0;
         for (DragonVariant variant : variants) totalWeight += variant.weight();
-        if (totalWeight <= 0)
-            throw new RuntimeException("Failed to assign dragon variant due impossible total weight of all variants for " + entity);
+        if (totalWeight <= 0) {
+            UselessReptile.LOGGER.warn("Failed to set variant for {} at {} as none can spawn there. Setting default", entity.getName().getString(), entity.getBlockPos());
+            entity.setVariant(entity.getDefaultVariant());
+            return;
+        }
 
         int roll = entity.getRandom().nextInt(totalWeight);
         int previousBound = 0;

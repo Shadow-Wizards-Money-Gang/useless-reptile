@@ -99,6 +99,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         verticalSpeed = attributes().lightningChaserVerticalSpeed;
         regenerationFromFood = attributes().lightningChaserRegenerationFromFood;
         ticksUntilHeal = 500;
+        defaultVariant = "grey";
     }
 
     public LightningChaserEntity(World world) {

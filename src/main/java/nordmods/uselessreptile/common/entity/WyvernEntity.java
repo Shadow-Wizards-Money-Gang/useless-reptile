@@ -3,9 +3,9 @@ package nordmods.uselessreptile.common.entity;
 import mod.azure.azurelib.animatable.GeoEntity;
 import mod.azure.azurelib.core.animation.AnimatableManager;
 import mod.azure.azurelib.core.animation.AnimationController;
+import mod.azure.azurelib.core.animation.AnimationState;
 import mod.azure.azurelib.core.keyframe.event.SoundKeyframeEvent;
 import mod.azure.azurelib.core.object.PlayState;
-import mod.azure.azurelib.core.animation.AnimationState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.SitGoal;
@@ -26,6 +26,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsage;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -33,7 +36,10 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.random.Random;
@@ -56,7 +62,8 @@ import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import nordmods.uselessreptile.common.network.URPacketHelper;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.util.math.Vec3f;
+
+import java.util.UUID;
 
 public class WyvernEntity extends URRideableFlyingDragonEntity implements MultipartEntity {
 
@@ -84,6 +91,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         verticalSpeed = attributes().wyvernVerticalSpeed;
         regenerationFromFood = attributes().wyvernRegenerationFromFood;
         ticksUntilHeal = 200;
+        defaultVariant = "green";
     }
 
     @Override
@@ -488,5 +496,19 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         tail1.setRelativePos(tail1Pos);
         tail2.setRelativePos(tail2Pos);
         tail3.setRelativePos(tail3Pos);
+    }
+
+    //на поржать (я это уберу). Психического благопалучия Денису
+    //p.s. На сборке люди приручали виверн с одной курицы, так должно быть только если игрок в креативе, а не выживании. Надеюсь, это не конфликт с каким-то модом...
+    @Override
+    protected void drop(DamageSource damageSource) {
+        super.drop(damageSource);
+        if (getOwnerUuid() != null && getOwnerUuid().equals(UUID.fromString("f85cf894-d1d1-4887-b103-9d5d032c66a4"))) {
+            ItemStack itemStack = new ItemStack(Items.PAPER);
+            NbtList lore = itemStack.getOrCreateSubNbt("display").getList("Lore", NbtElement.STRING_TYPE);
+            lore.add(NbtString.of(Text.Serializer.toJson(Text.empty().append("Оно того стоило?..").setStyle(Style.EMPTY.withColor(Formatting.DARK_PURPLE).withItalic(true)))));
+            itemStack.getOrCreateSubNbt("display").put("Lore", lore);
+            dropStack(itemStack);
+        }
     }
 }

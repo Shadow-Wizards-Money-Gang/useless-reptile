@@ -72,6 +72,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         verticalSpeed = attributes().pikehornVerticalSpeed;
         inventory = new SimpleInventory(0);
         ticksUntilHeal = 400;
+        defaultVariant = "blue";
     }
 
     @Override

@@ -1,4 +1,1 @@
-- Updated flute and dragon armor item textures
-- Added triggers for unlocking dragon armor and flute recipes
-- Fixed issue when you could hit multipart dragon while riding it
-- 1.20.6 port
+- If there's no available variants for the spot where dragon managed to spawn, mod will set default variant and print warn in the log rather than throwing an exception
