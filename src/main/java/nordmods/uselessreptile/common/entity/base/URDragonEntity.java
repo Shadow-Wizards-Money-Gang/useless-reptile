@@ -82,6 +82,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected boolean canNavigateInFluids = false;
     protected int ticksUntilHeal = -1;
     private int healTimer = 0;
+    protected String defaultVariant;
     protected final EntityGameEventHandler<URDragonEntity.JukeboxEventListener> jukeboxEventHandler = new EntityGameEventHandler<>(new URDragonEntity.JukeboxEventListener
             (new EntityPositionSource
                     (this, getStandingEyeHeight()), GameEvent.JUKEBOX_PLAY.value().notificationRadius()));
@@ -701,6 +702,10 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     protected int getTicksUntilHeal() {
         return ticksUntilHeal;
+    }
+
+    public String getDefaultVariant() {
+        return defaultVariant;
     }
 
     //I give no fuck how this happened to be so important for spawning
