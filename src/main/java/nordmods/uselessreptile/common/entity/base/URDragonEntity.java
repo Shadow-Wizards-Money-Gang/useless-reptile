@@ -1,7 +1,5 @@
 package nordmods.uselessreptile.common.entity.base;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
@@ -54,7 +52,6 @@ import nordmods.uselessreptile.common.init.URStatusEffects;
 import nordmods.uselessreptile.common.network.InstrumentSoundBoundMessageS2CPacket;
 import nordmods.uselessreptile.common.util.dragon_variant.DragonVariantUtil;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.Animation;
@@ -85,6 +82,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected boolean canNavigateInFluids = false;
     protected int ticksUntilHeal = -1;
     private int healTimer = 0;
+    protected String defaultVariant;
     protected final EntityGameEventHandler<URDragonEntity.JukeboxEventListener> jukeboxEventHandler = new EntityGameEventHandler<>(new URDragonEntity.JukeboxEventListener
             (new EntityPositionSource
                     (this, getStandingEyeHeight()), GameEvent.JUKEBOX_PLAY.getRange()));
@@ -691,6 +689,10 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     protected int getTicksUntilHeal() {
         return ticksUntilHeal;
+    }
+
+    public String getDefaultVariant() {
+        return defaultVariant;
     }
 
     //I give no fuck how this happened to be so important for spawning

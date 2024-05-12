@@ -24,11 +24,10 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
-import nordmods.uselessreptile.common.config.URConfig;
 import net.minecraft.world.WorldAccess;
+import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.*;
@@ -73,6 +72,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         verticalSpeed = attributes().pikehornVerticalSpeed;
         inventory = new SimpleInventory(0);
         ticksUntilHeal = 400;
+        defaultVariant = "blue";
     }
 
     @Override

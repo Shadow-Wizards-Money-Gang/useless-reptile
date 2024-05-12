@@ -84,6 +84,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         verticalSpeed = attributes().wyvernVerticalSpeed;
         regenerationFromFood = attributes().wyvernRegenerationFromFood;
         ticksUntilHeal = 200;
+        defaultVariant = "green";
     }
 
     @Override

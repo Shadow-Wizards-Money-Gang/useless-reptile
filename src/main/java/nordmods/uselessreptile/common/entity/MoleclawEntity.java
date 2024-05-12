@@ -77,6 +77,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         baseTamingProgress = 64;
         regenerationFromFood = attributes().moleclawRegenerationFromFood;
         ticksUntilHeal = 400;
+        defaultVariant = "black";
     }
 
     public static boolean canDragonSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
