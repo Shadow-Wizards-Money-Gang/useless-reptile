@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack;
 import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 import nordmods.uselessreptile.common.entity.ai.goal.common.FlyingDragonCallBackGoal;
 import nordmods.uselessreptile.common.init.URItems;
-import nordmods.uselessreptile.common.items.FluteItem;
+import nordmods.uselessreptile.common.item.FluteItem;
 
 public class PikehornFluteCallGoal extends FlyingDragonCallBackGoal<RiverPikehornEntity> {
 

@@ -37,7 +37,7 @@ import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URTags;
-import nordmods.uselessreptile.common.items.FluteItem;
+import nordmods.uselessreptile.common.item.FluteItem;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -74,7 +74,6 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         verticalSpeed = attributes().pikehornVerticalSpeed;
         inventory = new SimpleInventory(0);
         ticksUntilHeal = 400;
-        defaultVariant = "blue";
     }
 
     @Override

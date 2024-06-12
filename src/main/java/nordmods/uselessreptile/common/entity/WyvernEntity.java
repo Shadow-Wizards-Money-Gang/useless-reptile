@@ -85,7 +85,6 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         verticalSpeed = attributes().wyvernVerticalSpeed;
         regenerationFromFood = attributes().wyvernRegenerationFromFood;
         ticksUntilHeal = 200;
-        defaultVariant = "green";
     }
 
     @Override
@@ -358,12 +357,6 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
             return WyvernScreenHandler.createScreenHandler(syncId, inv, inventory);
         }
         return null;
-    }
-
-    @Override
-    protected void updateEquipment() {
-        updateSaddle();
-        updateBanner();
     }
 
     @Override

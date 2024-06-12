@@ -12,7 +12,7 @@ import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.init.URTags;
-import nordmods.uselessreptile.common.items.DragonArmorItem;
+import nordmods.uselessreptile.common.item.DragonEquipmentItem;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class URDragonScreenHandler extends ScreenHandler {
@@ -45,7 +45,7 @@ public abstract class URDragonScreenHandler extends ScreenHandler {
         if (hasArmor) {
             this.addSlot(new Slot(inventory, 1, 8+54+18, 18) {
                 public boolean canInsert(ItemStack stack) {
-                    if (!(stack.getItem() instanceof DragonArmorItem dragonArmorItem)) return false;
+                    if (!(stack.getItem() instanceof DragonEquipmentItem dragonArmorItem)) return false;
                     return !this.hasStack() && canEquip(dragonArmorItem) && dragonArmorItem.getSlotType() == EquipmentSlot.HEAD;
                 }
                 public int getMaxItemCount() {
@@ -54,7 +54,7 @@ public abstract class URDragonScreenHandler extends ScreenHandler {
             });
             this.addSlot(new Slot(inventory, 2, 8+54+18, 18*2) {
                 public boolean canInsert(ItemStack stack) {
-                    if (!(stack.getItem() instanceof DragonArmorItem dragonArmorItem)) return false;
+                    if (!(stack.getItem() instanceof DragonEquipmentItem dragonArmorItem)) return false;
                     return !this.hasStack() && canEquip(dragonArmorItem) && dragonArmorItem.getSlotType() == EquipmentSlot.CHEST;
                 }
                 public int getMaxItemCount() {
@@ -63,7 +63,7 @@ public abstract class URDragonScreenHandler extends ScreenHandler {
             });
             this.addSlot(new Slot(inventory, 3, 8+54+18, 18*3) {
                 public boolean canInsert(ItemStack stack) {
-                    if (!(stack.getItem() instanceof DragonArmorItem dragonArmorItem)) return false;
+                    if (!(stack.getItem() instanceof DragonEquipmentItem dragonArmorItem)) return false;
                     return !this.hasStack() && canEquip(dragonArmorItem) && dragonArmorItem.getSlotType() == EquipmentSlot.LEGS;
                 }
                 public int getMaxItemCount() {
@@ -140,7 +140,7 @@ public abstract class URDragonScreenHandler extends ScreenHandler {
         return newStack;
     }
 
-    protected boolean canEquip(DragonArmorItem item) {
+    protected boolean canEquip(DragonEquipmentItem item) {
         return new ItemStack(item).isIn(URTags.COMMON_DRAGON_ARMOR);
     }
 

@@ -2,7 +2,10 @@ package nordmods.uselessreptile.common.entity.base;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.*;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.RideableInventory;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -113,19 +116,17 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
         updateSaddle();
     }
 
-    protected void updateSaddle() {
-        if (isTamed() && inventory != null) {
+    private void updateSaddle() {
+        if (inventory != null) {
             ItemStack saddle = inventory.getStack(0);
-            if (hasSaddle()) equipStack(EquipmentSlot.FEET, saddle);
+            equipStack(EquipmentSlot.FEET, saddle);
         }
     }
 
     public boolean hasSaddle() {
-        if (isTamed() && inventory != null) {
+        if (inventory != null) {
             ItemStack saddle = inventory.getStack(0);
-            boolean isSaddle = saddle.getItem() == Items.SADDLE;
-            if (isSaddle) equipStack(EquipmentSlot.FEET, saddle);
-            return isSaddle;
+            return saddle.getItem() == Items.SADDLE;
         } else return false;
     }
 

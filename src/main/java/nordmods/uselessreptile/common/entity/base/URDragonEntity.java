@@ -7,7 +7,6 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -18,8 +17,12 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.InventoryChangedListener;
 import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.*;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.item.PotionItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -50,20 +53,21 @@ import nordmods.uselessreptile.common.entity.ai.pathfinding.DragonNavigation;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import nordmods.uselessreptile.common.init.URStatusEffects;
 import nordmods.uselessreptile.common.network.InstrumentSoundBoundMessageS2CPacket;
+import nordmods.uselessreptile.common.network.URPacketHelper;
 import nordmods.uselessreptile.common.util.dragon_variant.DragonVariantUtil;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.Animation;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
-import software.bernie.geckolib.animation.AnimationState;
 
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
-public abstract class URDragonEntity extends TameableEntity implements GeoEntity, NamedScreenHandlerFactory, AssetCahceOwner {
+public abstract class URDragonEntity extends TameableEntity implements GeoEntity, NamedScreenHandlerFactory, AssetCahceOwner, InventoryChangedListener {
     protected double animationSpeed = 1;
     protected float rotationProgress;
     protected float heightMod = 1;
@@ -82,7 +86,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected boolean canNavigateInFluids = false;
     protected int ticksUntilHeal = -1;
     private int healTimer = 0;
-    protected String defaultVariant;
     protected final EntityGameEventHandler<URDragonEntity.JukeboxEventListener> jukeboxEventHandler = new EntityGameEventHandler<>(new URDragonEntity.JukeboxEventListener
             (new EntityPositionSource
                     (this, getStandingEyeHeight()), GameEvent.JUKEBOX_PLAY.value().notificationRadius()));
@@ -94,6 +97,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         super(entityType, world);
         navigation = new DragonNavigation(this, world);
         lookControl = new DragonLookControl(this);
+        inventory.addListener(this);
     }
 
     @Override
@@ -219,7 +223,10 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             for (int i = 0; i < inv.size(); i++) {
                 inventory.setStack(i, ItemStack.fromNbtOrEmpty(this.getRegistryManager(), inv.getCompound(i)));
             }
+            inventory.addListener(this);
         }
+
+        getAttributeInstance(EntityAttributes.GENERIC_ARMOR).removeModifier(DRAGON_ARMOR_BONUS_ID);
     }
 
     @Override
@@ -308,7 +315,28 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     }
 
-    protected void updateEquipment() {}
+    protected void updateEquipment() {
+        if (inventory != null) {
+            ItemStack head = inventory.getStack(1);
+            equipStack(EquipmentSlot.HEAD, head);
+
+            ItemStack body = inventory.getStack(2);
+            equipStack(EquipmentSlot.CHEST, body);
+
+            ItemStack tail = inventory.getStack(3);
+            equipStack(EquipmentSlot.LEGS, tail);
+        }
+    }
+
+    @Override
+    public void onEquipStack(EquipmentSlot slot, ItemStack oldStack, ItemStack newStack) {
+        boolean empty = newStack.isEmpty() && oldStack.isEmpty();
+        if (!empty && !ItemStack.areItemsAndComponentsEqual(oldStack, newStack) && !firstUpdate) {
+            if (!getWorld().isClient() && isArmorSlot(slot))
+                URPacketHelper.playSound(this, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), getSoundCategory(), 1, 1, 6);
+        }
+        super.onEquipStack(slot, oldStack, newStack);
+    }
 
     @Override
     public EntityDimensions getBaseDimensions(EntityPose pose) {
@@ -504,7 +532,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     @Override
     public void tick() {
         super.tick();
-        updateEquipment();
         updateRotationProgress();
         animationSpeed = calcSpeedMod();
 
@@ -523,15 +550,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     protected boolean isOwnerOrCreative(PlayerEntity player) {return isOwner(player) || player.isCreative();}
-
-    protected void updateArmorBonus(int armorBonus) {
-        if (!getWorld().isClient()) {
-            getAttributeInstance(EntityAttributes.GENERIC_ARMOR).removeModifier(DRAGON_ARMOR_BONUS_ID);
-            if (armorBonus != 0) {
-                getAttributeInstance(EntityAttributes.GENERIC_ARMOR).addTemporaryModifier(new EntityAttributeModifier(DRAGON_ARMOR_BONUS_ID, "Dragon armor bonus", armorBonus, EntityAttributeModifier.Operation.ADD_VALUE));
-            }
-        }
-    }
 
     @SuppressWarnings("SameReturnValue")
     protected <A extends GeoEntity> PlayState loopAnim(String anim, AnimationState<A> event) {
@@ -597,7 +615,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected void updateBanner() {
         if (isTamed() && inventory != null) {
             ItemStack banner = inventory.getStack(4);
-            if (banner.getItem() instanceof BannerItem) equipStack(EquipmentSlot.OFFHAND, banner);
+            equipStack(EquipmentSlot.OFFHAND, banner);
         }
     }
 
@@ -704,8 +722,10 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return ticksUntilHeal;
     }
 
-    public String getDefaultVariant() {
-        return defaultVariant;
+    @Override
+    public void onInventoryChanged(Inventory sender) {
+        updateEquipment();
+        updateBanner();
     }
 
     //I give no fuck how this happened to be so important for spawning

@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.items;
+package nordmods.uselessreptile.common.item;
 
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.client.MinecraftClient;
@@ -19,16 +19,16 @@ import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URSounds;
+import nordmods.uselessreptile.common.item.component.FluteComponent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FluteItem extends Item {
-    public static final String MODE_TAG = "Mode";
+public class FluteItem extends Item { ;
     public FluteItem(Settings settings) {
         super(settings);
         ItemStack itemStack = getDefaultStack();
-        itemStack.set(URItems.FLUTE_MODE_COMPONENT, 0);
+        itemStack.set(URItems.FLUTE_MODE_COMPONENT, FluteComponent.DEFAULT);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class FluteItem extends Item {
                 case 2 -> mode = 0;
                 default -> mode = 1;
             }
-            itemStack.set(URItems.FLUTE_MODE_COMPONENT, mode);
+            itemStack.set(URItems.FLUTE_MODE_COMPONENT, new FluteComponent((byte) mode));
 
             if (world.isClient() && user == MinecraftClient.getInstance().player) {
                 Text text = Text.translatable("tooltip.uselessreptile.flute_mode" + mode);
@@ -91,7 +91,6 @@ public class FluteItem extends Item {
     }
 
     public static int getFluteMode(ItemStack itemStack) {
-        if (itemStack.getComponents().get(URItems.FLUTE_MODE_COMPONENT) == null) itemStack.set(URItems.FLUTE_MODE_COMPONENT, 0);
-        return itemStack.getComponents().get(URItems.FLUTE_MODE_COMPONENT);
+        return itemStack.getComponents().get(URItems.FLUTE_MODE_COMPONENT).mode();
     }
 }

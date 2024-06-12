@@ -48,7 +48,6 @@ import nordmods.uselessreptile.common.gui.LightningChaserScreenHandler;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URTags;
-import nordmods.uselessreptile.common.items.DragonArmorItem;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import nordmods.uselessreptile.common.network.SyncLightningBreathRotationsS2CPacket;
 import org.jetbrains.annotations.Nullable;
@@ -56,9 +55,9 @@ import org.joml.Vector3f;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.animation.AnimationState;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -100,7 +99,6 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         verticalSpeed = attributes().lightningChaserVerticalSpeed;
         regenerationFromFood = attributes().lightningChaserRegenerationFromFood;
         ticksUntilHeal = 500;
-        defaultVariant = "grey";
     }
 
     public LightningChaserEntity(World world) {
@@ -466,33 +464,6 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     @Override
     protected int getTicksUntilHeal() {
         return getWorld().isThundering() ? (int) (super.getTicksUntilHeal() * 0.5) : super.getTicksUntilHeal();
-    }
-
-    @Override
-    protected void updateEquipment() {
-        super.updateEquipment();
-        updateBanner();
-
-        int armorBonus = 0;
-
-        ItemStack head = inventory.getStack(1);
-        ItemStack body = inventory.getStack(2);
-        ItemStack tail = inventory.getStack(3);
-
-        if (head.getItem() instanceof DragonArmorItem helmet) {
-            equipStack(EquipmentSlot.HEAD, head);
-            armorBonus += helmet.getArmorBonus();
-        }
-        if (body.getItem() instanceof DragonArmorItem chestplate) {
-            equipStack(EquipmentSlot.CHEST, body);
-            armorBonus += chestplate.getArmorBonus();
-        }
-        if (tail.getItem() instanceof DragonArmorItem tailArmor) {
-            equipStack(EquipmentSlot.LEGS, tail);
-            armorBonus += tailArmor.getArmorBonus();
-        }
-
-        updateArmorBonus(armorBonus);
     }
 
     @Override

@@ -6,7 +6,7 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import nordmods.uselessreptile.common.init.URScreenHandlers;
 import nordmods.uselessreptile.common.init.URTags;
-import nordmods.uselessreptile.common.items.DragonArmorItem;
+import nordmods.uselessreptile.common.item.DragonEquipmentItem;
 
 public class MoleclawScreenHandler extends URDragonScreenHandler {
     public MoleclawScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory) {
@@ -23,7 +23,7 @@ public class MoleclawScreenHandler extends URDragonScreenHandler {
     }
 
     @Override
-    protected boolean canEquip(DragonArmorItem item) {
+    protected boolean canEquip(DragonEquipmentItem item) {
         return new ItemStack(item).isIn(URTags.MOLECLAW_CAN_EQUIP);
     }
 }
