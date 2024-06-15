@@ -512,6 +512,11 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     @Override
+    public String getDefaultVariant() {
+        return "grey";
+    }
+
+    @Override
     public int getLimitPerChunk() {
         return URConfig.getConfig().lightningChaserMaxGroupSize * 2;
     }

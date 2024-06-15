@@ -385,6 +385,11 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         setRotation(yaw, pitch);
     }
 
+    @Override
+    public String getDefaultVariant() {
+        return "green";
+    }
+
     public void updateChildParts() {
         Vec2f wingLeftScale;
         Vec2f wingRightScale;

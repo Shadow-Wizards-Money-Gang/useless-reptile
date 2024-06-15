@@ -420,6 +420,11 @@ public class MoleclawEntity extends URRideableDragonEntity {
     }
 
     @Override
+    public String getDefaultVariant() {
+        return "black";
+    }
+
+    @Override
     public int getLimitPerChunk() {
         return URConfig.getConfig().moleclawMaxGroupSize * 2;
     }

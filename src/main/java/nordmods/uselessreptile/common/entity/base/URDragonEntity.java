@@ -704,6 +704,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         lookAt(new Vec3d(entity.getX(), entity.getEyeY(), entity.getZ()));
     }
 
+    public abstract String getDefaultVariant();
+
     //making public for sake of debug render
     @Override
     public Box getAttackBox() {

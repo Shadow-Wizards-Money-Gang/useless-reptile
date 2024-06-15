@@ -303,6 +303,11 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     }
 
     @Override
+    public String getDefaultVariant() {
+        return "blue";
+    }
+
+    @Override
     public int getMaxAir() {
         return 1200;
     }
