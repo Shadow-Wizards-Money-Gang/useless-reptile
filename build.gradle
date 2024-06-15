@@ -26,6 +26,9 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
+    flatDir() {
+        dir 'libs'
+    }
 }
 
 dependencies {
@@ -37,7 +40,9 @@ dependencies {
     modImplementation "maven.modrinth:yacl:2.2.0-for-1.19.2"
     modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
     modImplementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
-    modImplementation include ("com.github.NordAct:Primitive-Multipart-Entities:${project.primitive_multipart_entities_version}")
+    //modImplementation include ("com.github.NordAct:Primitive-Multipart-Entities:${project.primitive_multipart_entities_version}")
+    //jitpack refused to work today
+    modImplementation include("nordmods.primitive_multipart_entities:primitive_multipart_entities:1.1.1")
     include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.3.5")))
     modImplementation "mod.azure.azurelib:azurelib-fabric-1.19.2:1.0.41"
     //modImplementation("maven.modrinth:carpet:1.4.128")
