@@ -1,1 +1,2 @@
-- If there's no available variants for the spot where dragon managed to spawn, mod will set default variant and print warn in the log rather than throwing an exception
+- 1.21 port
+- Added Hungarian translation (bombadil6870)
