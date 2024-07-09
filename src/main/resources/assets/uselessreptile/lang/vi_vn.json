@@ -37,6 +37,7 @@
   "tooltip.uselessreptile.flute_mode0": "Chế độ sáo: Gọi",
   "tooltip.uselessreptile.flute_mode1": "Chế độ sáo: Tụ tập cá",
   "tooltip.uselessreptile.flute_mode2": "Chế độ sáo: Tấn công mục tiêu",
+  "tooltip.uselessreptile.can_be_equipped_by": "Có thể được trang bị bởi: %s",
 
   "entity.uselessreptile.wyvern": "Wyvern Đầm lầy",
   "entity.uselessreptile.moleclaw": "Móng Mỏ",
@@ -127,6 +128,8 @@
   "config.uselessreptile.option.undergroundDragonSpawnGroupCapacity": "Dung Lượng Nhóm Sinh Sản Rồng Dưới Lòng Đất",
   "config.uselessreptile.option.lightningChaserThunderstormSpawnTimerCooldown": "Thời Gian Hồi Trước Khi Người Săn Sét Sinh Sản Trong Cơn Bão",
   "config.uselessreptile.option.dragonMadness": "Cơn Điên Của Rồng",
+  "config.uselessreptile.option.moleclawGriefing": "Phá hủy khối bằng Móng Mỏ",
+  "config.uselessreptile.option.lightningChaserGriefing": "Phá hủy khối bằng Người Săn Sét",
 
   "config.uselessreptile.requires_restart.@Tooltip" : "Thay đổi tùy chọn này đòi hỏi phải khởi động lại trò chơi",
   "config.uselessreptile.group.spawnWeight.@Tooltip" : "Trọng số sinh sản cho từng loại rồng. Mỗi tùy chọn cho phép bạn kiểm soát tần suất xuất hiện của rồng cụ thể",
@@ -136,7 +139,7 @@
   "config.uselessreptile.group.dragonAppearance.@Tooltip" : "Các tùy chọn để thay đổi hình dáng của rồng",
   "config.uselessreptile.group.groupSize.@Tooltip" : "Xác định kích thước nhóm của rồng khi chúng sinh sản tự nhiên. Kích thước nhóm tối thiểu luôn phải bằng hoặc nhỏ hơn kích thước tối đa.",
   "config.uselessreptile.group.globalMultipliers.@Tooltip" : "Bội số cho thuộc tính cơ bản cụ thể của TẤT CẢ rồng",
-  "config.uselessreptile.group.dragonAttributes.@Tooltip" : "Thuộc tính cơ bản của rồng. Lưu ý rằng trong trò chơi vanilla, giá trị thuộc tính bị giới hạn trong phạm vi nhất định (có thể được thay đổi bởi các mod khác): \n§6Sát thương: §c[0;2048] \n§6Đẩy lùi: §c[0;5] \n§6Sức khỏe: §c[1;1024] \n§6Giáp: §c[0;30] \n§6Độ cứng giáp: §c[0;20] \n§6Tốc độ di chuyển trên mặt đất và bay: §c[0;1024] \nCác giá trị khác kỹ thuật không phải là thuộc tính và được thêm vào bởi chính mod và không có giới hạn. Thời gian hồi chiêu và thời gian tăng tốc được tính bằng ticks, tốc độ quay - bằng độ. Tốc độ di chuyển được đo bằng mét-corgi",
+  "config.uselessreptile.group.dragonAttributes.@Tooltip": "Giá trị cơ bản của các thuộc tính rồng. Lưu ý rằng các thuộc tính trong trò chơi gốc bị giới hạn trong một phạm vi nhất định (điều này có thể thay đổi bởi các mod khác): \n§6Sát thương: §c[0;2048] \n§6Đẩy lùi: §c[0;5] \n§6Sức khỏe: §c[1;1024] \n§6Giáp: §c[0;30] \n§6Độ cứng của giáp: §c[0;20] \n§6Tốc độ trên mặt đất, khi bay và theo chiều dọc: §c[0;1024] \n§6Tốc độ xoay: §c[0;180] \n§6Thời gian hồi chiêu tấn công: §c[0;2048] \n§6Thời gian tăng tốc: §c[0;2048] \n§6Hồi phục sức khỏe từ thức ăn: §c[0;1024] \n§fThời gian hồi chiêu tấn công và thời gian tăng tốc được đo bằng tích tắc, tốc độ xoay được đo bằng độ. Tốc độ di chuyển được đo bằng sao băng kích thước corgi.",
 
   "config.uselessreptile.option.dragonSpawnWeight.@Tooltip": "Chịu trách nhiệm về tần suất rồng này sinh sản trong thế giới.\nThiết lập này là 0 sẽ vô hiệu hóa sinh sản \n§cGiá trị nhỏ hơn 0 có thể gây ra sự cố",
   "config.uselessreptile.option.blockDropChance.@Tooltip": "Xác định tỷ lệ phần trăm các khối sẽ được thả sau một số cuộc tấn công phá hủy khối của rồng",
@@ -179,6 +182,7 @@
   "config.uselessreptile.option.spawnGroupCapacity.@Tooltip": "Dung lượng tối đa của nhóm này. \nNhóm bao gồm các thực thể sau: %s",
   "config.uselessreptile.option.lightningChaserThunderstormSpawnTimerCooldown.@Tooltip": "Thời gian (tính bằng ticks) phải trôi qua trước khi Người Săn Sét có thể cố gắng sinh sản gần cùng một người chơi",
   "config.uselessreptile.option.dragonMadness.@Tooltip": "Tất cả rồng (chưa thuần hóa) bây giờ tấn công người chơi ngay khi thấy",
+  "config.uselessreptile.option.lightningChaserBaseSpecialAttackCooldown.@Tooltip": "Thời gian hồi chiêu của đòn tấn công sóng xung kích",
 
   "effect.uselessreptile.acid": "Axit",
 
@@ -202,5 +206,21 @@
   "advancement.uselessreptile.use_flute.desc": "Sử dụng Sáo để chỉ huy Pikehorn Sông của bạn",
   "advancement.uselessreptile.tame_lightning_chaser.desc": "Thuần hóa Người Săn Sét bằng cách thách đấu nó trong một trận chiến (Mẹo: bạn sẽ cần một Cây Đinh Ba với Channelling)",
 
-  "tag.item.uselessreptile.moleclaw_helmets": "Mũ Bảo Hiểm Móng Mỏ"
+  "tag.item.uselessreptile.moleclaw_chestplates": "Giáp ngực Móng Mỏ",
+  "tag.item.uselessreptile.moleclaw_tail_armor": "Giáp đuôi Móng Mỏ",
+  "tag.item.uselessreptile.moleclaw_helmets": "Mũ bảo vệ Móng Mỏ",
+  "tag.item.uselessreptile.protects_moleclaw_from_light": "Bảo vệ Móng Mỏ khỏi ánh sáng",
+  "tag.item.uselessreptile.lightning_chaser_chestplates": "Giáp ngực Người Săn Sét",
+  "tag.item.uselessreptile.lightning_chaser_tail_armor": "Giáp đuôi Người Săn Sét",
+  "tag.item.uselessreptile.lightning_chaser_helmets": "Mũ bảo vệ Người Săn Sét",
+
+  "attribute.name.dragon.ground_rotation_speed": "Tốc độ xoay trên mặt đất",
+  "attribute.name.dragon.flying_rotation_speed": "Tốc độ xoay khi bay",
+  "attribute.name.dragon.primary_attack_cooldown": "Thời gian hồi chiêu tấn công chính",
+  "attribute.name.dragon.secondary_attack_cooldown": "Thời gian hồi chiêu tấn công phụ",
+  "attribute.name.dragon.special_attack_cooldown": "Thời gian hồi chiêu tấn công đặc biệt",
+  "attribute.name.dragon.acceleration_duration": "Thời gian tăng tốc",
+  "attribute.name.dragon.regeneration_from_food": "Phục hồi từ thực phẩm",
+  "attribute.name.dragon.vertical_speed": "Tốc độ theo chiều dọc",
+  "attribute.name.moleclaw.mining_level": "Cấp độ khai thác"
 }
