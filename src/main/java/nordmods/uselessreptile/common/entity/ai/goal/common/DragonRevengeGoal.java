@@ -1,7 +1,6 @@
 package nordmods.uselessreptile.common.entity.ai.goal.common;
 
 import net.minecraft.entity.ai.goal.RevengeGoal;
-import net.minecraft.entity.attribute.EntityAttributes;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 public class DragonRevengeGoal extends RevengeGoal {
@@ -16,10 +15,5 @@ public class DragonRevengeGoal extends RevengeGoal {
     public boolean canStart() {
         if (super.canStart()) return mob.canTarget(mob.getAttacker());
         else return false;
-    }
-
-    @Override
-    protected double getFollowRange() {
-        return this.mob.getAttributeValue(EntityAttributes.GENERIC_FOLLOW_RANGE) * 5;
     }
 }

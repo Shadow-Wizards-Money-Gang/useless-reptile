@@ -8,7 +8,6 @@ public class URPacketEvents {
         LiftoffParticlesPacket.init();
         PosSyncPacket.init();
         GUIEntityToRenderPacket.init();
-        InstrumentSoundBoundMessagePacket.init();
         SyncLightningBreathRotationsPacket.init();
     }
 }

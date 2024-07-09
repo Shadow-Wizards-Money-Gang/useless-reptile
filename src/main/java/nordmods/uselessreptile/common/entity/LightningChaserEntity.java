@@ -3,6 +3,9 @@ package nordmods.uselessreptile.common.entity;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.TargetPredicate;
+import net.minecraft.entity.ai.goal.SitGoal;
+import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.UntamedActiveTargetGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -46,7 +49,7 @@ import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
-import nordmods.uselessreptile.common.entity.ai.goal.common.FlyingDragonFlyDownGoal;
+import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserBailOutGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserRevengeGoal;
@@ -109,11 +112,22 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
     @Override
     protected void initGoals() {
-        goalSelector.add(1, new LightningChaserRoamAroundGoal(this));
-        goalSelector.add(1, new LightningChaserBailOutGoal(this));
-        goalSelector.add(2, new LightningChaserAttackGoal(this));
-        goalSelector.add(3, new FlyingDragonFlyDownGoal<>(this, 30));
+        goalSelector.add(1, new SwimGoal(this));
+        goalSelector.add(2, new FlyingDragonCallBackGoal<>(this));
+        goalSelector.add(3, new SitGoal(this));
+        goalSelector.add(4, new DragonConsumeFoodFromInventoryGoal(this));
+        goalSelector.add(5, new LightningChaserAttackGoal(this));
+        goalSelector.add(6, new LightningChaserRoamAroundGoal(this));
+        goalSelector.add(6, new LightningChaserBailOutGoal(this));
+        goalSelector.add(7, new FlyingDragonFlyDownGoal<>(this, 30));
+        goalSelector.add(8, new DragonReturnToHomePoint(this));
+        goalSelector.add(9, new DragonWanderAroundGoal(this));
+        goalSelector.add(10, new FlyingDragonFlyAroundGoal<>(this, 30));
+        goalSelector.add(11, new DragonLookAroundGoal(this));
         targetSelector.add(1, new LightningChaserRevengeGoal(this));
+        targetSelector.add(2, new DragonAttackWithOwnerGoal(this));
+        if (URConfig.getConfig().dragonMadness) targetSelector.add(2, new UntamedActiveTargetGoal<>(this, PlayerEntity.class, true, null));
+
     }
 
     @Override

@@ -78,6 +78,7 @@ public class DragonCallBackGoal extends Goal {
         if (--updateCountdownTicks <= 0) {
             updateCountdownTicks = getTickCount(10);
             entity.getNavigation().startMovingTo(owner, 1);
+            entity.setHomePoint(owner.getBlockPos());
         }
     }
 

@@ -86,11 +86,12 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         goalSelector.add(4, new DragonConsumeFoodFromInventoryGoal(this));
         goalSelector.add(6, new WyvernAttackGoal(this, 512));
         goalSelector.add(7, new FlyingDragonFlyDownGoal<>(this, 30));
-        goalSelector.add(8, new DragonWanderAroundGoal(this));
-        goalSelector.add(8, new FlyingDragonFlyAroundGoal<>(this, 30));
-        goalSelector.add(9, new DragonLookAroundGoal(this));
+        goalSelector.add(8, new DragonReturnToHomePoint(this));
+        goalSelector.add(9, new DragonWanderAroundGoal(this));
+        goalSelector.add(9, new FlyingDragonFlyAroundGoal<>(this, 30));
+        goalSelector.add(10, new DragonLookAroundGoal(this));
         targetSelector.add(6, new UntamedActiveTargetGoal<>(this, ChickenEntity.class, true, null));
-        targetSelector.add(5, new DragonAttackWithOwnerGoal<>(this));
+        targetSelector.add(5, new DragonAttackWithOwnerGoal(this));
         targetSelector.add(4, new DragonRevengeGoal(this));
         if (URConfig.getConfig().dragonMadness) targetSelector.add(5, new UntamedActiveTargetGoal<>(this, PlayerEntity.class, true, null));
     }

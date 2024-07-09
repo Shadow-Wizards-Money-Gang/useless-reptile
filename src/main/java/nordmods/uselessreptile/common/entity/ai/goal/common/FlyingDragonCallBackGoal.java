@@ -32,6 +32,7 @@ public class FlyingDragonCallBackGoal<T extends URDragonEntity & FlyingDragon> e
         if (--updateCountdownTicks <= 0) {
             updateCountdownTicks = getTickCount(10);
             entity.getNavigation().startMovingTo(owner, 1);
+            entity.setHomePoint(owner.getBlockPos());
         }
     }
 }

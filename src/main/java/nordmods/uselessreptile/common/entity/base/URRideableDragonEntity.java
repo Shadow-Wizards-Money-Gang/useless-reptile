@@ -104,10 +104,12 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
         }
         if (getControllingPassenger() == null) updateInputs(false, false, false, false, false);
 
-        if (getWorld() instanceof ServerWorld world && canBeControlledByRider())
+        if (getWorld() instanceof ServerWorld world && canBeControlledByRider()) {
+            setHomePoint(getBlockPos());
             for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) {
                 PosSyncS2CPacket.send(player, this);
             }
+        }
     }
 
     @Override

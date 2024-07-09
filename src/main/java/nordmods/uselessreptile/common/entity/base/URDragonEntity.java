@@ -31,7 +31,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -39,6 +38,8 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.random.Random;
@@ -59,7 +60,6 @@ import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URStatusEffects;
 import nordmods.uselessreptile.common.init.URTags;
-import nordmods.uselessreptile.common.network.InstrumentSoundBoundMessageS2CPacket;
 import nordmods.uselessreptile.common.network.URPacketHelper;
 import nordmods.uselessreptile.common.util.dragon_spawn.DragonSpawn;
 import nordmods.uselessreptile.common.util.dragon_spawn.DragonSpawnUtil;
@@ -87,9 +87,9 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected boolean canNavigateInFluids = false;
     protected int ticksUntilHeal = -1;
     private int healTimer = 0;
+    private BlockPos homePoint = BlockPos.ORIGIN;
     protected final EntityGameEventHandler<URDragonEntity.JukeboxEventListener> jukeboxEventHandler = new EntityGameEventHandler<>(new URDragonEntity.JukeboxEventListener
-            (new EntityPositionSource
-                    (this, getStandingEyeHeight()), GameEvent.JUKEBOX_PLAY.value().notificationRadius()));
+            (new EntityPositionSource(this, getStandingEyeHeight()), GameEvent.JUKEBOX_PLAY.value().notificationRadius()));
     protected @Nullable BlockPos jukeboxPos;
     protected SimpleInventory inventory = new SimpleInventory(URDragonScreenHandler.maxStorageSize);
 
@@ -208,9 +208,11 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
         if (!isTamed()) tag.putInt("TamingProgress", getTamingProgress());
         else {
-            tag.putBoolean("Sitting", getIsSitting());
             tag.putString("BoundedInstrumentSound", getBoundedInstrumentSound());
+            int[] coords = {getHomePoint().getX(), getHomePoint().getY(), getHomePoint().getZ()};
+            tag.putIntArray("HomePoint", coords);
         }
+        tag.putBoolean("Sitting", getIsSitting());
         if (inventory != null && isTamed()) {
             final NbtList inv = new NbtList();
             for (int i = 0; i < inventory.size(); i++) {
@@ -226,7 +228,11 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         dataTracker.set(VARIANT, tag.getString("Variant"));
 
         if (!isTamed()) setTamingProgress(tag.getByte("TamingProgress"));
-        else setBoundedInstrumentSound(tag.getString("BoundedInstrumentSound"));
+        else {
+            setBoundedInstrumentSound(tag.getString("BoundedInstrumentSound"));
+            int[] coords = tag.getIntArray("HomePoint");
+            setHomePoint(new BlockPos(coords[0], coords[1], coords[2]));
+        }
 
         setIsSitting(tag.getBoolean("Sitting"));
         if (tag.contains("Inventory")) {
@@ -264,7 +270,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                 .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS)
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED)
                 .add(EntityAttributes.GENERIC_FLYING_SPEED)
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
+                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 160)
                 .add(EntityAttributes.GENERIC_JUMP_STRENGTH)
                 .add(URAttributes.DRAGON_VERTICAL_SPEED)
                 .add(URAttributes.DRAGON_ACCELERATION_DURATION)
@@ -281,6 +287,20 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     @Override
     public PassiveEntity createChild(ServerWorld world, PassiveEntity entity) {
         return null;
+    }
+
+    public BlockPos getHomePoint() {
+        return homePoint;
+    }
+
+    public void setHomePoint(BlockPos homePoint) {
+        this.homePoint = homePoint;
+    }
+
+    @Override
+    public void setOwner(PlayerEntity entity) {
+        super.setOwner(entity);
+        setHomePoint(getBlockPos());
     }
 
     protected class JukeboxEventListener implements GameEventListener {
@@ -395,10 +415,10 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                 String sound = getInstrument(itemStack);
                 if (!getBoundedInstrumentSound().equals(sound)) setBoundedInstrumentSound(sound);
                 else setBoundedInstrumentSound("");
-                //Takes instrument tag "namespace:key" and converts it into "instrument.namespace.key" aka translation key if sound is bounded
                 Text instrumentSound = Text.translatable(getBoundedInstrumentSound().isEmpty() ?
-                        "other.uselessreptile.none" : getInstrumentSoundKey(getBoundedInstrumentSound()));
-                if (player instanceof ServerPlayerEntity serverPlayer) InstrumentSoundBoundMessageS2CPacket.send(serverPlayer, this, instrumentSound);
+                        "other.uselessreptile.none" : getInstrumentSoundKey(Identifier.of(getBoundedInstrumentSound())));
+                if (!getWorld().isClient()) player.sendMessage(Text.translatable("other.uselessreptile.sound_respond", getName(), instrumentSound), true);
+                if (getWorld().isClient()) player.playSound(SoundEvents.BLOCK_COMPARATOR_CLICK, 0.2f, 2);
                 return ActionResult.SUCCESS;
             }
 
@@ -418,11 +438,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return itemStack.isOf(Items.POTION) || itemStack.isOf(Items.STICK) || isInstrument(itemStack) || isFavoriteFood(itemStack);
     }
 
-    private String getInstrumentSoundKey(String sound) {
-        int pos = sound.indexOf(":");
-        String key = sound.substring(pos + 1);
-        String namespace = sound.substring(0, pos);
-        return "instrument." + namespace + "." + key;
+    private String getInstrumentSoundKey(Identifier sound) {
+        return Util.createTranslationKey("instrument", sound);
     }
 
     public boolean isInstrument(ItemStack itemStack) {
@@ -613,6 +630,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     @Override
     public boolean canTarget(LivingEntity target) {
         if (target == null) return false;
+        if (isSitting()) return false;
         if (target instanceof TameableEntity tameable && tameable.getOwner() == getOwner()) return false;
         return super.canTarget(target);
     }

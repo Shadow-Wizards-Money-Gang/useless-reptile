@@ -245,8 +245,8 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         goalSelector.add(8, new FlyingDragonFlyAroundGoal<>(this, 30));
         goalSelector.add(9, new DragonLookAroundGoal(this));
         targetSelector.add(3, (new DragonRevengeGoal(this, new Class[0])).setGroupRevenge(new Class[0]));
-        targetSelector.add(4, new DragonAttackWithOwnerGoal<>(this));
-        targetSelector.add(4, new PikehornFluteTargetGoal<>(this, LivingEntity.class));
+        targetSelector.add(4, new DragonAttackWithOwnerGoal(this));
+        targetSelector.add(4, new PikehornFluteTargetGoal(this));
         targetSelector.add(5, new DragonTrackOwnerAttackerGoal(this));
         if (URConfig.getConfig().dragonMadness) targetSelector.add(4, new UntamedActiveTargetGoal<>(this, PlayerEntity.class, true, null));
     }

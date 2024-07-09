@@ -11,11 +11,11 @@ import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.item.FluteItem;
 
-public class PikehornFluteTargetGoal<T extends LivingEntity> extends ActiveTargetGoal<T> {
+public class PikehornFluteTargetGoal extends ActiveTargetGoal<LivingEntity> {
 
     private final RiverPikehornEntity mob;
-    public PikehornFluteTargetGoal(RiverPikehornEntity mob, Class<T> targetClass) {
-        super(mob, targetClass, false);
+    public PikehornFluteTargetGoal(RiverPikehornEntity mob) {
+        super(mob, LivingEntity.class, false);
         this.mob = mob;
     }
 

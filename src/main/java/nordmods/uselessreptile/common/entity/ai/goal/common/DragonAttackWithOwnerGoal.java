@@ -1,12 +1,10 @@
 package nordmods.uselessreptile.common.entity.ai.goal.common;
 
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.AttackWithOwnerGoal;
-import net.minecraft.entity.attribute.EntityAttributes;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 
-public class DragonAttackWithOwnerGoal<T extends LivingEntity> extends AttackWithOwnerGoal {
+public class DragonAttackWithOwnerGoal extends AttackWithOwnerGoal {
 
     private final URDragonEntity mob;
 
@@ -16,7 +14,8 @@ public class DragonAttackWithOwnerGoal<T extends LivingEntity> extends AttackWit
     }
 
     @Override
-    protected double getFollowRange() {
-        return this.mob.getAttributeValue(EntityAttributes.GENERIC_FOLLOW_RANGE) * 5;
+    public boolean canStart() {
+        if (super.canStart()) return mob.canTarget(mob.getAttacker());
+        else return false;
     }
 }
