@@ -231,7 +231,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         else {
             setBoundedInstrumentSound(tag.getString("BoundedInstrumentSound"));
             int[] coords = tag.getIntArray("HomePoint");
-            setHomePoint(new BlockPos(coords[0], coords[1], coords[2]));
+            if (coords.length == 0) setHomePoint(getBlockPos());
+            else setHomePoint(new BlockPos(coords[0], coords[1], coords[2]));
         }
 
         setIsSitting(tag.getBoolean("Sitting"));

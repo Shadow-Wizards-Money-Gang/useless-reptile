@@ -81,7 +81,8 @@ public class LightningChaserAttackGoal extends Goal {
             entity.getNavigation().stop();
             entity.getMoveControl().moveBack();
             if (target instanceof PlayerEntity player && yDiff < player.getAttributeValue(EntityAttributes.PLAYER_ENTITY_INTERACTION_RANGE)
-                    || target instanceof MobEntity mob && mob.getAttackBox().intersects(entity.getBoundingBox().expand(2))) {
+                    || target instanceof MobEntity mob && mob.getAttackBox().intersects(entity.getBoundingBox().expand(2))
+                    || entity.getLastAttacker() instanceof MobEntity attacker && attacker.getAttackBox().intersects(entity.getBoundingBox().expand(2))) {
                 if (!entity.isFlying()) { //try jump/back off
                     entity.forceFlightNextTick();
                     Vec3d vec3d = entity.getRotationVector(MathHelper.clamp(-entity.getPitch(), -10, 10), entity.getYaw() - 180);
