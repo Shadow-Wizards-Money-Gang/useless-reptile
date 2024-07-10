@@ -1,6 +1,7 @@
 package nordmods.uselessreptile.common.util.dragon_spawn;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
@@ -40,11 +41,15 @@ public class DragonSpawnUtil {
         return false;
     }
 
-    public static void assignVariantFromList(URDragonEntity entity, List<DragonSpawn> variants) {
+    public static void assignVariantFromList(URDragonEntity entity, List<DragonSpawn> variants, SpawnReason spawnReason) {
         int totalWeight = 0;
         for (DragonSpawn variant : variants) totalWeight += variant.conditions().weight();
+        boolean canWarn = spawnReason == SpawnReason.NATURAL
+                || spawnReason == SpawnReason.EVENT
+                || spawnReason == SpawnReason.CHUNK_GENERATION
+                || spawnReason == SpawnReason.BREEDING;
         if (totalWeight <= 0) {
-            UselessReptile.LOGGER.warn("Failed to set variant for {} at {} as none can spawn there. Setting default", entity.getName().getString(), entity.getBlockPos());
+            if (canWarn) UselessReptile.LOGGER.warn("Failed to set variant for {} at {} as none can spawn there. Setting default", entity.getName().getString(), entity.getBlockPos());
             entity.setVariant(entity.getDefaultVariant());
             return;
         }

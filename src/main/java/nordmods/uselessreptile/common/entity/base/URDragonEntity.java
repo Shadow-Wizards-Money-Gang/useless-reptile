@@ -257,7 +257,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
         entityData = new PassiveData(false);
         setTamingProgress(baseTamingProgress);
-        DragonSpawnUtil.assignVariantFromList(this, DragonSpawnUtil.getAvailableVariants(world, this));
+        DragonSpawnUtil.assignVariantFromList(this, DragonSpawnUtil.getAvailableVariants(world, this), spawnReason);
         return super.initialize(world, difficulty, spawnReason, entityData);
     }
 

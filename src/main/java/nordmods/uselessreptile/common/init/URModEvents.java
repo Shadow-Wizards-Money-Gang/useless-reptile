@@ -9,6 +9,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.Heightmap;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.LightningChaserEntity;
@@ -31,6 +32,7 @@ public class URModEvents {
         //Lightning Chaser spawn event
         ServerTickEvents.START_WORLD_TICK.register(world -> {
             if (world instanceof LightningChaserSpawnTimer worldTimer && world.isThundering()) {
+                if (!world.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)) return;
                 if (worldTimer.useless_reptile$getTimer() > 0) {
                     worldTimer.useless_reptile$setTimer(worldTimer.useless_reptile$getTimer() - 1);
                     return;
@@ -40,7 +42,7 @@ public class URModEvents {
                     if (player.getY() < 60) continue;
                     if (playerTimer.useless_reptile$getTimer() > 0) continue;
                     if (URConfig.getConfig().lightningChaserThunderstormSpawnChance >= player.getRandom().nextFloat() * 100) {
-                        double cos = Math.cos(Math.toRadians(player.getHeadYaw() + 180));
+                        double cos = Math.cos(Math.toRadians(player.getHeadYaw() + 180)); //Lightning Chaser will always spawn behind the player
                         double sin = Math.sin(Math.toRadians(player.getHeadYaw() + 180));
                         BlockPos pos = player.getBlockPos();
                         BlockPos spawnPos = new BlockPos((int) (pos.getX() + sin * 128),

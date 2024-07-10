@@ -366,4 +366,9 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     public int getLimitPerChunk() {
         return URConfig.getConfig().pikehornMaxGroupSize * 2;
     }
+
+    @Override
+    public boolean isArmorSlot(EquipmentSlot slot) {
+        return false;
+    }
 }
