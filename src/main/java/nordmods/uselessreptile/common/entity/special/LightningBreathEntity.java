@@ -100,7 +100,7 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
             List<FallingBlockEntity> fallingBlockEntities = new ArrayList<>();
             for (BlockPos blockPos : blocks) {
                 BlockState blockState = getWorld().getBlockState(blockPos);
-                if (!dragon.isBlockProtected(blockPos)) continue;
+                if (dragon.isBlockProtected(blockPos)) continue;
                 float hardness = blockState.getHardness(getWorld(), blockPos);
                 if (hardness < 0) continue;
                 harnessLimit -= hardness;

@@ -289,7 +289,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         if (hasStatusEffect(StatusEffects.STRENGTH)) maxMiningLevel += getStatusEffect(StatusEffects.STRENGTH).getAmplifier() + 1;
         if (hasStatusEffect(StatusEffects.WEAKNESS)) maxMiningLevel -= getStatusEffect(StatusEffects.WEAKNESS).getAmplifier() + 1;
         for (BlockPos blockPos : blocks) {
-            if (!isBlockProtected(blockPos)) continue;
+            if (isBlockProtected(blockPos)) continue;
 
             BlockState blockState = getWorld().getBlockState(blockPos);
             float miningLevel = MoleclawGetBlockMiningLevelEvent.EVENT.invoker().getMiningLevel(blockState);

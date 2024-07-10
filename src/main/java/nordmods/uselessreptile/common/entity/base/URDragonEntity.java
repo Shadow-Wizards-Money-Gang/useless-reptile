@@ -778,7 +778,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         PlayerEntity rider = getOwner() instanceof URRideableDragonEntity dragon && dragon.canBeControlledByRider() ?
                 (PlayerEntity) getControllingPassenger() : null;
         GameProfile gameProfile = rider != null ? rider.getGameProfile() : CommonProtection.UNKNOWN;
-        return !blockState.isIn(URTags.DRAGON_UNBREAKABLE) && CommonProtection.canBreakBlock(getWorld(), blockPos, gameProfile, rider);
+        return blockState.isIn(URTags.DRAGON_UNBREAKABLE) || CommonProtection.canBreakBlock(getWorld(), blockPos, gameProfile, rider);
     }
 
     public boolean canBreakBlocks() {
