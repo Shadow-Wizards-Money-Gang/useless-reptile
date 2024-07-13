@@ -13,6 +13,7 @@
     "common.SpawnGroupMixin"
   ],
   "client": [
+    "client.AbstractInventoryScreenMixin",
     "client.CameraMixin",
     "client.EntityMixin",
     "client.EntityRenderDispathcerMixin",
