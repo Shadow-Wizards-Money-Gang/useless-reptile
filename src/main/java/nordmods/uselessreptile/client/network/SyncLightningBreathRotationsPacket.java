@@ -10,7 +10,8 @@ public class SyncLightningBreathRotationsPacket {
         ClientPlayNetworking.registerGlobalReceiver(SyncLightningBreathRotationsS2CPacket.PACKET_ID, (packet, context) -> {
                 for (int id : packet.beamIDs()) {
                     Entity entity = context.player().getWorld().getEntityById(id);
-                    if (!(entity instanceof LightningBreathEntity)) continue;
+                    if (!(entity instanceof LightningBreathEntity lightningBreathEntity)) continue;
+                    if (id == packet.beamIDs()[0]) lightningBreathEntity.setBeamLength(packet.beamIDs().length);
                     entity.setPitch(packet.pitch());
                     entity.setYaw(packet.yaw());
                 }

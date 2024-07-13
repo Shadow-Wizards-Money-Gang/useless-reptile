@@ -90,17 +90,14 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
                 onEntityHit(entityHitResult);
             }
 
-            if (!(getOwner() instanceof URDragonEntity dragon) || !dragon.canBreakBlocks()) {
-                discard();
-                return;
-            }
+            if (getOwner() instanceof URDragonEntity dragon && !dragon.canBreakBlocks()) return;
 
             Iterable<BlockPos> blocks = BlockPos.iterateOutwards(getBlockPos(), 2, 1, 2);
             float harnessLimit = 20;
             List<FallingBlockEntity> fallingBlockEntities = new ArrayList<>();
             for (BlockPos blockPos : blocks) {
                 BlockState blockState = getWorld().getBlockState(blockPos);
-                if (dragon.isBlockProtected(blockPos)) continue;
+                if (getOwner() instanceof URDragonEntity dragon && dragon.isBlockProtected(blockPos)) continue;
                 float hardness = blockState.getHardness(getWorld(), blockPos);
                 if (hardness < 0) continue;
                 harnessLimit -= hardness;
@@ -129,7 +126,6 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
                 Vec3d velocity = getBlockPos().toCenterPos().subtract(fallingBlockEntity.getBlockPos().toCenterPos()).add(0, 1, 0).normalize();
                 fallingBlockEntity.setVelocity(velocity);
             });
-            discard();
         } else discard();
     }
 

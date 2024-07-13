@@ -37,7 +37,7 @@ public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreat
             if (lightningBreathBolt == null) {
                 if (!(entity.getOwner() instanceof LightningChaserEntity owner)) return;
                 lightningBreathBolt = new LightningBreathEntity.LightningBreathBolt();
-                float offset = length / (4f + i * 2);
+                float offset = length / (8f + i);
                 Vector3f headPos = LightningChaserEntityRenderer.headPos.get(owner.getUuid());
                 if (headPos == null) return;
                 //because actual owner's position and lightning breath's one are never the same, and we technically render lightning breath here...
@@ -104,6 +104,5 @@ public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreat
         }
         matrices.pop();
     }
-
 }
 

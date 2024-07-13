@@ -6,6 +6,7 @@
     "common.AbstractBlockMixin",
     "common.ItemMixin",
     "common.LightningEntityMixin",
+    "common.LivingEntityMixin",
     "common.PlayerEntityMixin",
     "common.ServerPlayerEntityMixin",
     "common.ServerWorldMixin",

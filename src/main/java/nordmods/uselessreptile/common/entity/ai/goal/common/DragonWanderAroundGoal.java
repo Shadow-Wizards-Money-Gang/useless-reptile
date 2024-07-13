@@ -1,8 +1,8 @@
 package nordmods.uselessreptile.common.entity.ai.goal.common;
 
 import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
+import nordmods.uselessreptile.common.entity.base.FlyingDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 
 public class DragonWanderAroundGoal extends WanderAroundFarGoal {
 
@@ -15,8 +15,9 @@ public class DragonWanderAroundGoal extends WanderAroundFarGoal {
 
     @Override
     public boolean canStart() {
-        if (this.mob.isDancing()) return false;
-        if (this.mob instanceof URRideableFlyingDragonEntity flyingDragon)
+        if (mob.isDancing()) return false;
+        if (mob.getIsSitting()) return false;
+        if (mob instanceof FlyingDragon flyingDragon)
             if (flyingDragon.isFlying()) return false;
         return super.canStart();
     }

@@ -740,7 +740,11 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     public float getYawWithAdjustment() {
         float yaw = getYaw();
-        if (!hasControllingPassenger() && getTarget() != null) return yaw; //making it easier for dum-dum to aim on its own
+        if (!hasControllingPassenger() && getTarget() != null) {
+            float targetYaw = getLookControl().getTargetYaw().orElse(0f);
+            float difference = Math.clamp((yaw - targetYaw) % 360, -getRotationSpeed(), getRotationSpeed());
+            return yaw + difference; //making it easier for dum-dum to aim on its own
+        }
         return (yaw - getNormalizedRotationProgress() * getYawProgressLimit()) % 360;
     }
 
