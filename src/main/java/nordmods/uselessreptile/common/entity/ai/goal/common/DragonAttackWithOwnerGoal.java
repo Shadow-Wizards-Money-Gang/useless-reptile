@@ -15,7 +15,8 @@ public class DragonAttackWithOwnerGoal extends AttackWithOwnerGoal {
 
     @Override
     public boolean canStart() {
-        if (super.canStart()) return mob.canTarget(mob.getAttacker());
+        if (super.canStart())
+            return mob.canTarget(mob.getOwner().getAttacking());
         else return false;
     }
 }

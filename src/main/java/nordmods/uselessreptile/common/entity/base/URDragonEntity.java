@@ -629,7 +629,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     @Override
-    public boolean canTarget(LivingEntity target) {
+    public boolean canTarget(@Nullable LivingEntity target) {
         if (target == null) return false;
         if (isSitting()) return false;
         if (target instanceof TameableEntity tameable && tameable.getOwner() == getOwner()) return false;
