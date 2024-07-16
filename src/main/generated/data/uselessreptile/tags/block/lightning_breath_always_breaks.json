@@ -1,0 +1,30 @@
+{
+  "values": [
+    {
+      "id": "#minecraft:leaves",
+      "required": false
+    },
+    {
+      "id": "#minecraft:replaceable",
+      "required": false
+    },
+    {
+      "id": "#minecraft:flowers",
+      "required": false
+    },
+    {
+      "id": "#minecraft:wool_carpets",
+      "required": false
+    },
+    {
+      "id": "#minecraft:wool",
+      "required": false
+    },
+    "minecraft:moss_block",
+    "minecraft:moss_carpet",
+    {
+      "id": "#minecraft:snow",
+      "required": false
+    }
+  ]
+}

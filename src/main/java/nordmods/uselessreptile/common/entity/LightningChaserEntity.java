@@ -1,6 +1,5 @@
 package nordmods.uselessreptile.common.entity;
 
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.SitGoal;
@@ -64,7 +63,6 @@ import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URGameEvents;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
-import nordmods.uselessreptile.common.network.SyncLightningBreathRotationsS2CPacket;
 import nordmods.uselessreptile.common.network.URPacketHelper;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -75,7 +73,6 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 
-import java.util.ArrayList;
 import java.util.function.BiConsumer;
 
 public class LightningChaserEntity extends URRideableFlyingDragonEntity implements MultipartEntity {
@@ -439,38 +436,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
     public void shoot() {
         float yaw = getYawWithAdjustment();
-        Vec3d rot = getRotationVector(getPitch(), yaw);
-        ArrayList<Integer> ids = new ArrayList<>();
-        LightningBreathEntity firstSegment = null;
-
-        for (int i = 1; i <= LightningBreathEntity.MAX_LENGTH; i++) {
-            LightningBreathEntity lightningBreathEntity = new LightningBreathEntity(getWorld(), this);
-            lightningBreathEntity.setPosition(head.getPos().add(rot.multiply(i)).add(0,  isFlying() ? -0.6 : -1.25, 0));
-            lightningBreathEntity.setVelocity(Vec3d.ZERO);
-            lightningBreathEntity.setOwner(this);
-            getWorld().spawnEntity(lightningBreathEntity);
-            if (i == 1) firstSegment = lightningBreathEntity;
-
-            ids.add(lightningBreathEntity.getId());
-
-            boolean collides = !getWorld().isBlockSpaceEmpty(lightningBreathEntity, lightningBreathEntity.getBoundingBox().shrink(0.5f, 0.5f, 0.5f)) ||
-                    !getWorld().getOtherEntities(lightningBreathEntity, lightningBreathEntity.getBoundingBox(), entity -> {
-                        LivingEntity owner = getOwner();
-                        if (entity instanceof Tameable tameable && tameable.getOwner() == owner) return false;
-                        if (getControllingPassenger() == entity) return false;
-                        return entity instanceof LivingEntity;
-                    }).isEmpty();
-            if (collides) break;
-        }
-
-        firstSegment.setBeamLength(ids.size());
-
-        int[] array = new int[ids.size()];
-        for (int i = 0; i < ids.size(); i++) array[i] = ids.get(i);
-
-        if (getWorld() instanceof ServerWorld world)
-            for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos()))
-                SyncLightningBreathRotationsS2CPacket.send(player, array, getPitch(), yaw);
+        LightningBreathEntity.createBeam(this, getPitch(), yaw, head.getPos().add(0,  isFlying() ? -0.6 : -1.25, 0));
     }
 
     public float getYawProgressLimit() {

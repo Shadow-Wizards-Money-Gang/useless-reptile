@@ -1,5 +1,6 @@
 package nordmods.uselessreptile.common.entity.special;
 
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
@@ -10,16 +11,22 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
+import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URStatusEffects;
+import nordmods.uselessreptile.common.init.URTags;
+import nordmods.uselessreptile.common.network.SyncLightningBreathRotationsS2CPacket;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -93,13 +100,18 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
             if (getOwner() instanceof URDragonEntity dragon && !dragon.canBreakBlocks()) return;
 
             Iterable<BlockPos> blocks = BlockPos.iterateOutwards(getBlockPos(), 2, 1, 2);
-            float harnessLimit = 20;
+            float harnessLimit = 3;
             List<FallingBlockEntity> fallingBlockEntities = new ArrayList<>();
             for (BlockPos blockPos : blocks) {
                 BlockState blockState = getWorld().getBlockState(blockPos);
                 if (getOwner() instanceof URDragonEntity dragon && dragon.isBlockProtected(blockPos)) continue;
                 float hardness = blockState.getHardness(getWorld(), blockPos);
                 if (hardness < 0) continue;
+                if (hardness == 0 || blockState.isIn(URTags.LIGHTNING_BREATH_ALWAYS_BREAKS)) {
+                    boolean shouldDrop = getRandom().nextDouble() * 100 <= URConfig.getConfig().blockDropChance;
+                    getWorld().breakBlock(blockPos, shouldDrop, this);
+                    continue;
+                }
                 harnessLimit -= hardness;
                 if (harnessLimit < 0) break;
                 FallingBlockEntity fallingBlockEntity = FallingBlockEntity.spawnFromBlock(getWorld(), blockPos, blockState);
@@ -123,9 +135,15 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
             }
 
             sorted.forEach(fallingBlockEntity -> {
-                Vec3d velocity = getBlockPos().toCenterPos().subtract(fallingBlockEntity.getBlockPos().toCenterPos()).add(0, 1, 0).normalize();
+                Vec3d velocity = getBlockPos()
+                        .toCenterPos()
+                        .subtract(fallingBlockEntity.getBlockPos().toCenterPos())
+                        .add(getRandom().nextFloat() - 0.5f, 1, getRandom().nextFloat() - 0.5f)
+                        .normalize()
+                        .multiply(0.75);
                 fallingBlockEntity.setVelocity(velocity);
             });
+            if (!sorted.isEmpty()) discard();
         } else discard();
     }
 
@@ -169,6 +187,46 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
     @Override
     public float getDamageScaling() {
         return 2;
+    }
+
+    public static void createBeam(@NotNull Entity owner, float pitch, float yaw, Vec3d startPos) {
+        Vec3d rot = owner.getRotationVector(pitch, yaw);
+        ArrayList<Integer> ids = new ArrayList<>();
+        LightningBreathEntity firstSegment = null;
+        World world = owner.getWorld();
+
+        for (int i = 1; i <= LightningBreathEntity.MAX_LENGTH; i++) {
+            LightningBreathEntity lightningBreathEntity = new LightningBreathEntity(world, owner);
+            lightningBreathEntity.setPosition(startPos.add(rot.multiply(i)));
+            lightningBreathEntity.setVelocity(Vec3d.ZERO);
+            lightningBreathEntity.setOwner(owner);
+            world.spawnEntity(lightningBreathEntity);
+            if (i == 1) firstSegment = lightningBreathEntity;
+
+            ids.add(lightningBreathEntity.getId());
+
+            Box box = lightningBreathEntity.getBoundingBox().shrink(0.5f, 0.5f, 0.5f);
+            boolean collides = BlockPos.stream(box).noneMatch(pos -> {
+                BlockState blockState = world.getBlockState(pos);
+                return blockState.isIn(URTags.LIGHTNING_BREATH_ALWAYS_BREAKS) || blockState.getHardness(world, pos) == 0;
+            }) || !world.getOtherEntities(lightningBreathEntity, lightningBreathEntity.getBoundingBox(), entity -> {
+                LivingEntity ownerOwner = lightningBreathEntity.getOwner() instanceof TameableEntity tameable ? tameable.getOwner() : null;
+                if (entity instanceof Tameable tameable && tameable.getOwner() != null && tameable.getOwner() == ownerOwner)
+                    return false;
+                if (owner.getControllingPassenger() == entity) return false;
+                return entity instanceof LivingEntity;
+            }).isEmpty();
+            if (collides) break;
+        }
+
+        firstSegment.setBeamLength(ids.size());
+
+        int[] array = new int[ids.size()];
+        for (int i = 0; i < ids.size(); i++) array[i] = ids.get(i);
+
+        if (world instanceof ServerWorld serverWorld)
+            for (ServerPlayerEntity player : PlayerLookup.tracking(serverWorld, owner.getBlockPos()))
+                SyncLightningBreathRotationsS2CPacket.send(player, array, pitch, yaw);
     }
 
     public static class LightningBreathBolt {

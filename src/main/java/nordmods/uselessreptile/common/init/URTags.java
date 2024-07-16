@@ -11,6 +11,7 @@ import nordmods.uselessreptile.UselessReptile;
 
 public class URTags {
     public static final TagKey<Block> DRAGON_UNBREAKABLE = register(RegistryKeys.BLOCK, "dragon_unbreakable");
+    public static final TagKey<Block> LIGHTNING_BREATH_ALWAYS_BREAKS = register(RegistryKeys.BLOCK, "lightning_breath_always_breaks");
 
     public static final TagKey<Biome> WYVERN_SPAWN_BLACKLIST = register(RegistryKeys.BIOME,"wyvern_spawn_blacklist");
     public static final TagKey<Biome> RIVER_PIKEHORN_SPAWN_BLACKLIST = register(RegistryKeys.BIOME,"river_pikehorn_spawn_blacklist");
