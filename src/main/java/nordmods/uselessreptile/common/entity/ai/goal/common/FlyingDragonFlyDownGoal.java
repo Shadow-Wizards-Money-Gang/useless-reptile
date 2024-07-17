@@ -46,9 +46,8 @@ public class FlyingDragonFlyDownGoal<T extends URDragonEntity & FlyingDragon> ex
                 }));
 
         BlockPos spot = closest.orElse(null);
-        if (spot == null) {
-            spot = findRandomAirSpot();
-        }
+        if (spot == null) spot = findRandomAirSpot();
+        else mob.setHomePoint(spot);
         return spot;
     }
 
