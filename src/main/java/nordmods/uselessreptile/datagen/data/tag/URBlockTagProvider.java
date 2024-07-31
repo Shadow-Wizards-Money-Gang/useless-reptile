@@ -26,6 +26,7 @@ public class URBlockTagProvider extends FabricTagProvider.BlockTagProvider {
                 .addOptionalTag(BlockTags.WOOL)
                 .add(Blocks.MOSS_BLOCK)
                 .add(Blocks.MOSS_CARPET)
-                .addOptionalTag(BlockTags.SNOW);
+                .addOptionalTag(BlockTags.SNOW)
+                .add(Blocks.MUSHROOM_STEM, Blocks.BROWN_MUSHROOM_BLOCK, Blocks.RED_MUSHROOM_BLOCK);
     }
 }

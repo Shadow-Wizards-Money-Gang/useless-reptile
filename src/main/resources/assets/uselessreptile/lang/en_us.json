@@ -185,6 +185,7 @@
     "config.uselessreptile.option.lightningChaserBaseSpecialAttackCooldown.@Tooltip": "Shockwave attack cooldown",
 
     "effect.uselessreptile.acid": "Acid",
+    "effect.uselessreptile.shock": "Shock",
 
     "death.attack.acid": "%1$s melted",
     "death.attack.acid.player": "%1$s was melted by %2$s",

@@ -185,6 +185,7 @@
     "config.uselessreptile.option.lightningChaserBaseSpecialAttackCooldown.@Tooltip": "Перезарядка атаки шоковой волной",
 
     "effect.uselessreptile.acid": "Кислота",
+    "effect.uselessreptile.shock": "Шок",
 
     "death.attack.acid": "%1$s расплавился",
     "death.attack.acid.player": "%1$s был расплавлен %2$s",
