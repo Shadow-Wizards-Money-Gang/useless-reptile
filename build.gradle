@@ -38,6 +38,10 @@ dependencies {
     modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
     modImplementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
     modImplementation include ("com.github.NordAct:Primitive-Multipart-Entities:${project.primitive_multipart_entities_version}")
+
+    //for testing
+    modImplementation "maven.modrinth:sodium:mc1.21-0.5.11"
+    //modImplementation "maven.modrinth:iris:1.7.3+1.21"
 }
 
 processResources {
@@ -75,13 +79,8 @@ sourceSets {
 loom {
     accessWidenerPath = file("src/main/resources/uselessreptile.accesswidener")
     runs {
-        server {
-            server()
-            vmArg "-Dgeckolib.disable_examples=true"
-        }
         client {
             client()
-            vmArg "-Dgeckolib.disable_examples=true"
             vmArg '-Dfabric-tag-conventions-v2.missingTagTranslationWarning=VERBOSE'
 
             name "Data Generation Client"

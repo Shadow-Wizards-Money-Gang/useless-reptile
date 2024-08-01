@@ -6,6 +6,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import nordmods.uselessreptile.client.renderer.base.URDragonRenderer;
 import nordmods.uselessreptile.client.renderer.layers.DragonMainHandItemLayer;
+import nordmods.uselessreptile.client.renderer.special.RiverPikehornOnHeadFeatureRenderer;
 import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 
 public class RiverPikehornEntityRenderer extends URDragonRenderer<RiverPikehornEntity> {
@@ -15,10 +16,11 @@ public class RiverPikehornEntityRenderer extends URDragonRenderer<RiverPikehornE
         shadowRadius = 0.4f;
     }
 
-    //todo come up with a way of redering geo model rather than entity model
     @Override
     public void render(RiverPikehornEntity entity, float entityYaw, float partialTick, MatrixStack poseStack, VertexConsumerProvider bufferSource, int packedLight) {
-        if (entity.getVehicle() instanceof PlayerEntity) return;
+        if (entity.getVehicle() instanceof PlayerEntity) {
+            if (RiverPikehornOnHeadFeatureRenderer.ON_HEAD.contains(entity.getUuid())) return;
+        }
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 }

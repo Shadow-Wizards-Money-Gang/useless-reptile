@@ -5,13 +5,9 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
-import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Items;
-import net.minecraft.util.crash.CrashException;
-import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
@@ -52,13 +48,14 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable> extends G
             PASSENGERS.remove(passenger.getUuid());
 
             Vec3d vec3d = passenger.getVehicleAttachmentPos(animatable.owner);
-            matrixStackIn.translate(vec3d.x * 1/animatable.owner.getScale(), -vec3d.y * 1/animatable.owner.getScale(), vec3d.z * 1/animatable.owner.getScale());
+            float scale = 1/animatable.owner.getScale();
+            matrixStackIn.translate(vec3d.x * scale, -vec3d.y * scale, vec3d.z * scale);
             RenderUtil.translateToPivotPoint(matrixStackIn, bone);
             float yaw = MathHelper.lerpAngleDegrees(partialTick, animatable.owner.prevBodyYaw, animatable.owner.bodyYaw);
             matrixStackIn.multiply(RotationAxis.NEGATIVE_Y.rotationDegrees(180f - yaw));
-            matrixStackIn.scale(1/animatable.owner.getScale(), 1/animatable.owner.getScale(),1/animatable.owner.getScale());
+            matrixStackIn.scale(scale, scale, scale);
 
-            renderEntity(passenger, partialTick, matrixStackIn, bufferSource, packedLight);
+            renderPassenger(passenger, partialTick, matrixStackIn, bufferSource, packedLight);
 
             PASSENGERS.add(passenger.getUuid());
             matrixStackIn.pop();
@@ -66,19 +63,11 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable> extends G
     }
 
 
-    public <E extends Entity> void renderEntity(E entityIn, float partialTicks, MatrixStack matrixStack, VertexConsumerProvider bufferIn, int packedLight) {
+    private <E extends Entity> void renderPassenger(E entityIn, float partialTicks, MatrixStack matrixStack, VertexConsumerProvider bufferIn, int packedLight) {
         boolean isFirstPerson = MinecraftClient.getInstance().options.getPerspective().isFirstPerson();
         ClientPlayerEntity clientPlayer = MinecraftClient.getInstance().player;
         if (isFirstPerson && entityIn == clientPlayer) return;
 
-        EntityRenderer<? super E> render;
-        EntityRenderDispatcher manager = MinecraftClient.getInstance().getEntityRenderDispatcher();
-
-        render = manager.getRenderer(entityIn);
-        try {
-            render.render(entityIn, 0, partialTicks, matrixStack, bufferIn, packedLight);
-        } catch (Throwable throwable1) {
-            throw new CrashException(CrashReport.create(throwable1, "Rendering entity in world"));
-        }
+        nordmods.uselessreptile.client.util.RenderUtil.renderEntity(entityIn, partialTicks, matrixStack, bufferIn, packedLight);
     }
 }

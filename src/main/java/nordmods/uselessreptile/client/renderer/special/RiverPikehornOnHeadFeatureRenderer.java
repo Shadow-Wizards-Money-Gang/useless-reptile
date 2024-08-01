@@ -1,54 +1,51 @@
 package nordmods.uselessreptile.client.renderer.special;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.EntityModelLoader;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import nordmods.uselessreptile.client.model.special.RiverPikehornOnHeadFeatureModel;
-import nordmods.uselessreptile.client.renderer.RiverPikehornEntityRenderer;
+import net.minecraft.util.math.RotationAxis;
+import net.minecraft.util.math.Vec3d;
+import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 
-public class RiverPikehornOnHeadFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
+import java.util.HashSet;
+import java.util.UUID;
 
-    private final RiverPikehornOnHeadFeatureModel model;
+public class RiverPikehornOnHeadFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
+    public static final HashSet<UUID> ON_HEAD = new HashSet<>();
+
     public RiverPikehornOnHeadFeatureRenderer(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> context, EntityModelLoader loader) {
         super(context);
-        model = new RiverPikehornOnHeadFeatureModel(loader.getModelPart(RiverPikehornOnHeadFeatureModel.PIKEHORN_ON_HEAD_MODEL));
     }
 
+    //todo: fix rendering when riding other dragons
     @Override
     public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
         if (entity.getFirstPassenger() instanceof RiverPikehornEntity dragon) {
             if (dragon.isInvisible()) return;
+
             matrices.push();
-            getContextModel().head.rotate(matrices);
-            model.setAngles(dragon, limbAngle, limbDistance, dragon.age, yaw(dragon.headYaw, entity.headYaw), MathHelper.clamp(dragon.getPitch() % 360 - entity.getPitch() % 360, -20, 20));
-            model.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityCutout(getDragonTexture(dragon))), light, OverlayTexture.DEFAULT_UV, 16777215);
+            ON_HEAD.remove(dragon.getUuid());
+
+            ModelPart head = getContextModel().head;
+            head.rotate(matrices);
+            matrices.multiply(RotationAxis.POSITIVE_Y.rotation(head.yaw - MathHelper.wrapDegrees(entity.getYaw(tickDelta)) * MathHelper.RADIANS_PER_DEGREE));
+
+            float scale = 1 / entity.getScale();
+            Vec3d vec3d = dragon.getVehicleAttachmentPos(entity);
+            matrices.translate(vec3d.x * scale, -0.25 * 1/scale, vec3d.z * scale);
+            matrices.scale(scale, -scale, -scale);
+
+            RenderUtil.renderEntity(dragon, tickDelta, matrices, vertexConsumers, light);
+
+            ON_HEAD.add(dragon.getUuid());
             matrices.pop();
         }
-    }
-
-    private Identifier getDragonTexture(RiverPikehornEntity dragon) {
-        RiverPikehornEntityRenderer render;
-        EntityRenderDispatcher manager = MinecraftClient.getInstance().getEntityRenderDispatcher();
-        render = (RiverPikehornEntityRenderer) manager.getRenderer(dragon);
-
-        return render.getGeoModel().getTextureResource(dragon);
-    }
-
-    private float yaw(float entityYaw, float ownerYaw) {
-        float a = entityYaw % 360;
-        float b = ownerYaw % 360;
-        if (b < 0) b += 360;
-        return MathHelper.clamp(MathHelper.wrapDegrees(a - b), -45, 45);
     }
 }

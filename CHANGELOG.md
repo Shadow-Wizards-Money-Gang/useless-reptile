@@ -1,2 +1,23 @@
-- 1.21 port
-- Added Hungarian translation (bombadil6870)
+- Added Lightning Chaser (as playable dragon). It can sometimes appear during thunderstorms near random player as long as it's on surface
+- Added Shock status effect. It can be only inflicted by Lightning Chaser's attacks
+- Added tags for respective armor slots for all dragons that can wear armor, so custom items can be added
+- New spawning system:
+  - If there's no available variants for spot, game won't attempt to spawn a dragon
+  - Spawn entries are now defined in individual files
+  - There can be several entries for same variant
+  - File names for entries don't matter
+  - All entries are stored in `dragon_spawns` folder in folders named after dragon's id
+  - Now you can pass allowed and banned blocks as spawn conditions
+  - Ids and tags are now listed in similar manner as in vanilla tags
+- Removed block tags that were responsible for blocks on which specific types of dragons could spawn
+- Removed biome whitelist tags for dragons
+- Rotation speeds, vertical speed, acceleration time, attack cooldowns are all now stored as attributes
+- Added attribute for Moleclaw's mining level
+- Added event to define mining level for blocks
+- Items that can be equipped as armor for dragons now will have special tooltip
+- Added item tag to define which items can protect Moleclaw from light
+- Now if tamed dragon that doesn't follow you was left around some spot without being put in sit mode, it'll move only around this spot, so it won't run to Brazil leaving you behind
+- Reduced required distance for River Pikehorn to start follow you
+- You now can dismount River Pikehorn on your head even if you got an item in your hand (block placing action still will be prioritized)
+- River Pikehorns are now immune to suffocation damage if they are riding the player
+- Fixed potion giving to dragons

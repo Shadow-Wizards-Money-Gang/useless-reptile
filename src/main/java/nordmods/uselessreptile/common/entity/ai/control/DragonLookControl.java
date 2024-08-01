@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public class DragonLookControl extends LookControl {
     protected final URDragonEntity entity;
+    private boolean lockRotation;
     public DragonLookControl(URDragonEntity entity) {
         super(entity);
         this.entity = entity;
@@ -41,6 +42,7 @@ public class DragonLookControl extends LookControl {
 
     @Override
     public void tick() {
+        if (lockRotation) return;
         if (lookAtTimer > 0) {
             --lookAtTimer;
             float pitch = getTargetPitch().orElse(0f);
@@ -61,5 +63,9 @@ public class DragonLookControl extends LookControl {
     @Override
     public Optional<Float> getTargetYaw() {
         return super.getTargetYaw();
+    }
+
+    public void setLockRotation(boolean state) {
+        lockRotation = state;
     }
 }

@@ -24,7 +24,6 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.config.URConfig;
@@ -45,16 +44,11 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 
 public class RiverPikehornEntity extends URFlyingDragonEntity {
-
-    private int glideTimer = 100;
-    private boolean shouldGlide;
     private final int huntCooldown = 3000;
     private int huntTimer = huntCooldown;
     public boolean forceTargetInWater = false;
     private final int eatCooldown = 200;
     private int eatTimer = eatCooldown;
-    public final net.minecraft.entity.AnimationState blinkAnimation = new net.minecraft.entity.AnimationState();
-    public final net.minecraft.entity.AnimationState sitAnimation = new net.minecraft.entity.AnimationState();
 
     public RiverPikehornEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
@@ -99,6 +93,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     }
     private <A extends GeoEntity> PlayState mainController(AnimationState<A> event) {
         event.getController().setAnimationSpeed(animationSpeed);
+        if (hasVehicle()) return loopAnim("sit.head", event);
         if (isFlying()) {
             if (isMoving() || event.isMoving()) {
                 if (getTiltState() == 1) return loopAnim("fly.straight.up", event);
@@ -119,6 +114,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     private <A extends GeoEntity> PlayState turnController(AnimationState<A> event) {
         byte turnState = getTurningState();
         event.getController().setAnimationSpeed(animationSpeed);
+
         if (isFlying() && (isMoving() || event.isMoving()) && !isSecondaryAttack() && !isMovingBackwards()) {
             if (turnState == 1) return loopAnim("turn.fly.left", event);
             if (turnState == 2) return loopAnim("turn.fly.right", event);
@@ -177,19 +173,6 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         else setHitboxModifiers(0.8f, 0.8f, 0);
 
         dropLootToOwner();
-        if (getVehicle() instanceof PlayerEntity player) {
-            float yaw = getHeadYaw();
-            float centerYaw =  MathHelper.wrapDegrees(yaw - player.bodyYaw);
-            float resultYaw = MathHelper.clamp(centerYaw, -90.0F, 90.0F);
-            float yawToApply = yaw + resultYaw - centerYaw;
-            setHeadYaw(yawToApply);
-        }
-
-        if (getWorld().isClient()) {
-            glideTimer--;
-            shouldGlide = glideTimer < 0 && getAccelerationDuration()/getMaxAccelerationDuration() > 0.9;
-            if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
-        }
 
         if (!isTamed()) {
             if (huntTimer > 0 && !isHunting()) huntTimer--;
@@ -221,6 +204,25 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
             setFlying(true);
         }
         else setSwimming(false);
+
+        if (getVehicle() instanceof PlayerEntity player) {
+            getLookControl().setLockRotation(true);
+            if (getWorld().isClient()) {
+                prevHeadYaw = getHeadYaw();
+                prevBodyYaw = getBodyYaw();
+                prevYaw = getYaw();
+
+                setHeadYaw(player.getHeadYaw());
+                setBodyYaw(player.getBodyYaw());
+                setYaw(player.getYaw());
+
+                byte turnState = 0;
+                float diff = prevHeadYaw - getHeadYaw();
+                if (diff > 0) turnState = 1;
+                if (diff < 0) turnState = 2;
+                setTurningState(turnState);
+            }
+        } else getLookControl().setLockRotation(false);
     }
 
     public static DefaultAttributeContainer.Builder createPikehornAttributes() {
@@ -323,11 +325,6 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     }
 
     @Override
-    public float getRotationSpeed() {
-        return super.getRotationSpeed() * (isTouchingWater() ? 4 : 1);
-    }
-
-    @Override
     protected float getMovementSpeedModifier() {
         return super.getMovementSpeedModifier() / (isTouchingWater() ? 2 : 1);
     }
@@ -360,13 +357,8 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     }
 
     @Override
-    public Vec3d getPassengerRidingPos(Entity passenger) {
-        return super.getPassengerRidingPos(passenger).add(0, 0.275, 0);
-    }
-
-    public void updateAnimations() {
-        sitAnimation.setRunning(true, age);
-        blinkAnimation.setRunning(true, age);
+    public Vec3d getVehicleAttachmentPos(Entity vehicle) {
+        return super.getVehicleAttachmentPos(vehicle).add(0, 0.125, 0);
     }
 
     @Override
