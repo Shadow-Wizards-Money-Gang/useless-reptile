@@ -91,7 +91,8 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     @Override
     public void tick() {
         super.tick();
-        if (getWorld().isClient() && getControllingPassenger() == MinecraftClient.getInstance().player) {
+        LivingEntity rider = getControllingPassenger();
+        if (getWorld().isClient() && rider == MinecraftClient.getInstance().player) {
             boolean isSprintPressed = MinecraftClient.getInstance().options.sprintKey.isPressed();
             boolean isMoveForwardPressed = MinecraftClient.getInstance().options.forwardKey.isPressed();
             boolean isJumpPressed = MinecraftClient.getInstance().options.jumpKey.isPressed();
@@ -102,7 +103,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
             isSecondaryAttackPressed = URKeybinds.secondaryAttackKey.isPressed();
             isPrimaryAttackPressed = URKeybinds.primaryAttackKey.isPressed();
         }
-        if (getControllingPassenger() == null) updateInputs(false, false, false, false, false);
+        if (rider == null) updateInputs(false, false, false, false, false);
 
         if (getWorld() instanceof ServerWorld world && canBeControlledByRider()) {
             setHomePoint(getBlockPos());
