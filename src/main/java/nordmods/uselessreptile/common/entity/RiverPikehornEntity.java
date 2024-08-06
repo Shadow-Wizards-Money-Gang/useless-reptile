@@ -208,16 +208,10 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         if (getVehicle() instanceof PlayerEntity player) {
             getLookControl().setLockRotation(true);
             if (getWorld().isClient()) {
-                prevHeadYaw = getHeadYaw();
-                prevBodyYaw = getBodyYaw();
                 prevYaw = getYaw();
-
-                setHeadYaw(player.getHeadYaw());
-                setBodyYaw(player.getBodyYaw());
                 setYaw(player.getYaw());
-
                 byte turnState = 0;
-                float diff = prevHeadYaw - getHeadYaw();
+                float diff = prevYaw - getYaw();
                 if (diff > 0) turnState = 1;
                 if (diff < 0) turnState = 2;
                 setTurningState(turnState);
@@ -358,7 +352,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
 
     @Override
     public Vec3d getVehicleAttachmentPos(Entity vehicle) {
-        return super.getVehicleAttachmentPos(vehicle).add(0, 0.125, 0);
+        return super.getVehicleAttachmentPos(vehicle).add(0, vehicle.getHeight() - vehicle.getEyeHeight(vehicle.getPose()) - 0.001, 0);
     }
 
     @Override

@@ -43,7 +43,7 @@ public class UREntities {
     }
 
     private static <T extends Entity> EntityType<T> register(String id, EntityType.Builder<T> builder) {
-        return Registry.register(Registries.ENTITY_TYPE, UselessReptile.id(id), builder.build());
+        return Registry.register(Registries.ENTITY_TYPE, UselessReptile.id(id), builder.build(null));
     }
 
     private static <T extends Entity> EntityType.Builder<T> getBuilder(SpawnGroup spawnGroup, EntityType.EntityFactory<T> entity, float width, float height, boolean disableSummon, boolean fireImmune) {
