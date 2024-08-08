@@ -13,7 +13,7 @@
 - Removed biome whitelist tags for dragons
 - Rotation speeds, vertical speed, acceleration time, attack cooldowns are all now stored as attributes
 - Added attribute for Moleclaw's mining level
-- Added event to define mining level for blocks
+- Added event to define mining level for blocks that is used by Moleclaw
 - Items that can be equipped as armor for dragons now will have special tooltip
 - Added item tag to define which items can protect Moleclaw from light
 - Now if tamed dragon that doesn't follow you was left around some spot without being put in sit mode, it'll move only around this spot, so it won't run to Brazil leaving you behind
@@ -21,3 +21,8 @@
 - You now can dismount River Pikehorn on your head even if you got an item in your hand (block placing action still will be prioritized)
 - River Pikehorns are now immune to suffocation damage if they are riding the player
 - Fixed potion giving to dragons
+- River Pikehorn model on head now displays correctly if it was changed
+- Improved rendering of dragon passengers
+
+### Known Issues:
+- Glowing layer doesn't display with shaders turned on

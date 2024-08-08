@@ -135,7 +135,7 @@ public class URMobAttributesConfig {
     @SerialEntry
     public float lightningChaserGroundSpeed = 0.25f;
     @SerialEntry
-    public float lightningChaserFlyingSpeed = 0.8f;
+    public float lightningChaserFlyingSpeed = 0.9f;
     @SerialEntry
     public int lightningChaserBaseSecondaryAttackCooldown = 30;
     @SerialEntry

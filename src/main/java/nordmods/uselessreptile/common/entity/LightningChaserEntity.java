@@ -262,10 +262,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
     public static final TrackedData<Boolean> SURRENDERED = DataTracker.registerData(LightningChaserEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public boolean hasSurrendered() {return dataTracker.get(SURRENDERED);}
-    public void setSurrendered(boolean state) {
-        dataTracker.set(SURRENDERED, state);
-        setIsSitting(state);
-    }
+    public void setSurrendered(boolean state) {dataTracker.set(SURRENDERED, state);}
 
     @Override
     public void writeCustomDataToNbt(NbtCompound tag) {
@@ -355,10 +352,9 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
         updateThunderstormBonus();
 
-        if (!isTamed() && !shouldBailOut) {
-            if (hasSurrendered()) if (age % 200 == 0) heal(2);
+        if (!shouldBailOut) {
             if (isChallenger) {
-                if (getTarget() == null) {
+                if (getTarget() == null && !isTamed()) {
                     if (bailOutTimer > 0) bailOutTimer--;
                     else {
                         setSurrendered(false);
@@ -366,7 +362,10 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                     }
                 }
             } else if (getHealth() / getMaxHealth() > 0.5) setSurrendered(false);
-            setIsSitting(hasSurrendered());
+            if (hasSurrendered()) {
+                if (age % 200 == 0) heal(2);
+                setIsSitting(true);
+            }
         }
 
         updateChildParts();

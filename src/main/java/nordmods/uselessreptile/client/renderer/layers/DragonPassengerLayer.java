@@ -8,8 +8,6 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Items;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -51,8 +49,6 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable> extends G
             float scale = 1/animatable.owner.getScale();
             matrixStackIn.translate(vec3d.x * scale, -vec3d.y * scale, vec3d.z * scale);
             RenderUtil.translateToPivotPoint(matrixStackIn, bone);
-            float yaw = MathHelper.lerpAngleDegrees(partialTick, animatable.owner.prevBodyYaw, animatable.owner.bodyYaw);
-            matrixStackIn.multiply(RotationAxis.NEGATIVE_Y.rotationDegrees(180f - yaw));
             matrixStackIn.scale(scale, scale, scale);
 
             renderPassenger(passenger, partialTick, matrixStackIn, bufferSource, packedLight);

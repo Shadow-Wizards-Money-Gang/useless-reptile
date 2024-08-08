@@ -107,6 +107,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
 
         if (getWorld() instanceof ServerWorld world && canBeControlledByRider()) {
             setHomePoint(getBlockPos());
+            //TODO: fix position desync
             for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) {
                 PosSyncS2CPacket.send(player, this);
             }

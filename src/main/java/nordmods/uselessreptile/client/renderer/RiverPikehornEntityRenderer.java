@@ -1,5 +1,6 @@
 package nordmods.uselessreptile.client.renderer;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
@@ -20,8 +21,9 @@ public class RiverPikehornEntityRenderer extends URDragonRenderer<RiverPikehornE
 
     @Override
     public void render(RiverPikehornEntity entity, float entityYaw, float partialTick, MatrixStack poseStack, VertexConsumerProvider bufferSource, int packedLight) {
-        if (entity.getVehicle() instanceof PlayerEntity) {
+        if (entity.getVehicle() instanceof PlayerEntity player) {
             if (RiverPikehornOnHeadFeatureRenderer.ON_HEAD.contains(entity.getUuid())) return;
+            else if (MinecraftClient.getInstance().player == player && MinecraftClient.getInstance().options.getPerspective().isFirstPerson()) return;
         }
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }

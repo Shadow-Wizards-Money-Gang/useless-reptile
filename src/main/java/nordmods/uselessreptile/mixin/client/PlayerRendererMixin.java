@@ -20,6 +20,6 @@ public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractC
 
     @Inject(method = "<init>(Lnet/minecraft/client/render/entity/EntityRendererFactory$Context;Z)V", at = @At("TAIL"))
     private void addPikehornOnHead(EntityRendererFactory.Context ctx, boolean slim, CallbackInfo ci) {
-        addFeature(new RiverPikehornOnHeadFeatureRenderer(this, ctx.getModelLoader()));
+        addFeature(new RiverPikehornOnHeadFeatureRenderer(this));
     }
 }

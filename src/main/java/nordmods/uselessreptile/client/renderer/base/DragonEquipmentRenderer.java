@@ -1,6 +1,5 @@
 package nordmods.uselessreptile.client.renderer.base;
 
-import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -16,7 +15,6 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoObjectRenderer;
 
 public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAnimatable> {
@@ -76,14 +74,5 @@ public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAn
         poseStack.translate(0, -0.01, 0);
         super.applyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
         poseStack.pop();
-    }
-
-    @Override
-    public void renderRecursively(MatrixStack poseStack, DragonEquipmentAnimatable animatable, GeoBone bone, RenderLayer renderType, VertexConsumerProvider bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
-                                  int packedOverlay, int colour) {
-        //TODO: aaaand it's back
-        if (buffer instanceof BufferBuilder builder && !builder.building) buffer = bufferSource.getBuffer(renderType);
-
-        super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
     }
 }
