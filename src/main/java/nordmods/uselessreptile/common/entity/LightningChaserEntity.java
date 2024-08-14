@@ -365,6 +365,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
             if (hasSurrendered()) {
                 if (age % 200 == 0) heal(2);
                 setIsSitting(true);
+                removeAllPassengers();
             }
         }
 
@@ -510,6 +511,12 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
             }
         }
         return super.interactMob(player, hand);
+    }
+
+    @Override
+    public boolean startRiding(Entity entity, boolean force) {
+        if (hasSurrendered()) return false;
+        return super.startRiding(entity, force);
     }
 
     @Override
