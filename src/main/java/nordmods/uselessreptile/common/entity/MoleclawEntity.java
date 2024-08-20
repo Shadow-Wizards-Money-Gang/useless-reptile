@@ -45,7 +45,6 @@ import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -72,8 +71,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
     }
 
     public static boolean canDragonSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        if (world.getChunk(pos).getInhabitedTime() > 12000) return false;
-        if (world.getLightLevel(LightType.SKY, pos) > 7 || world.getLightLevel(LightType.BLOCK, pos) > 7) return false;
+        if (world.getLightLevel(LightType.SKY, pos) > 0 || world.getLightLevel(LightType.BLOCK, pos) > 0) return false;
         return URDragonEntity.canDragonSpawn(type, world, spawnReason, pos, random);
     }
 
@@ -231,7 +229,6 @@ public class MoleclawEntity extends URRideableDragonEntity {
         }
     }
 
-    @Nullable
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
         if (!getWorld().isClient()) GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
