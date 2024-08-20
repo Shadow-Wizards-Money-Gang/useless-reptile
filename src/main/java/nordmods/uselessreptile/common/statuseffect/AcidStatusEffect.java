@@ -26,14 +26,11 @@ public class AcidStatusEffect extends URStatusEffect {
         if (entity.getEquippedStack(EquipmentSlot.CHEST).isEmpty()) armorUnequipped++;
         if (entity.getEquippedStack(EquipmentSlot.LEGS).isEmpty()) armorUnequipped++;
         if (entity.getEquippedStack(EquipmentSlot.FEET).isEmpty()) armorUnequipped++;
-        if (entity.getWorld().getTickOrder() % 10 == 0) {
-            entity.damage(entity.getDamageSources().create(URDamageTypes.ACID),
-                    amplifier * (1 + armorUnequipped) / 3f);
+
+        if (entity.damage(entity.getDamageSources().create(URDamageTypes.ACID), amplifier * (1 + armorUnequipped) / 3f)) {
+            entity.damageArmor(entity.getDamageSources().create(URDamageTypes.ACID), amplifier * (1 + armorUnequipped) * 2);
             URPacketHelper.playSound(entity, URSounds.ACID_BURN, SoundCategory.AMBIENT, 1, 1, 5);
         }
-        if (entity.getWorld().getTickOrder() % 20 == 0) entity.damageArmor(
-                entity.getDamageSources().create(URDamageTypes.ACID),
-                amplifier * (1 + armorUnequipped) * 2);
 
         return true;
     }
