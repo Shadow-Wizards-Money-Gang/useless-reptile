@@ -30,4 +30,10 @@ public class PikehornFluteCallGoal extends FlyingDragonCallBackGoal<RiverPikehor
 
         return player.getItemCooldownManager().isCoolingDown(URItems.FLUTE) && (mainCanGather || offhandCanGather);
     }
+
+    @Override
+    public void start() {
+        super.start();
+        entity.stopHunt();
+    }
 }
