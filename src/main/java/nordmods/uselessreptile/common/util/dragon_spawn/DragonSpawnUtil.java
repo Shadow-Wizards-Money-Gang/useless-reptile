@@ -21,9 +21,9 @@ public class DragonSpawnUtil {
         RegistryEntry<Biome> biome = world.getBiome(blockPos);
 
         for (Codecs.TagEntryId tagEntryId : list) {
-            if (tagEntryId.tag())
+            if (tagEntryId.tag()) {
                 if (biome.isIn(TagKey.of(RegistryKeys.BIOME, tagEntryId.id()))) return true;
-                else if (biome.matchesId(tagEntryId.id())) return true;
+            } else if (biome.matchesId(tagEntryId.id())) return true;
         }
 
         return false;
@@ -33,9 +33,9 @@ public class DragonSpawnUtil {
         RegistryEntry<Block> block = world.getBlockState(blockPos.down()).getRegistryEntry();
 
         for (Codecs.TagEntryId tagEntryId : list) {
-            if (tagEntryId.tag())
+            if (tagEntryId.tag()) {
                 if (block.isIn(TagKey.of(RegistryKeys.BLOCK, tagEntryId.id()))) return true;
-                else if (block.matchesId(tagEntryId.id())) return true;
+            } else if (block.matchesId(tagEntryId.id())) return true;
         }
 
         return false;

@@ -100,7 +100,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     public LightningChaserEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
         experiencePoints = 20;
-        baseTamingProgress = 5;
+        baseTamingProgress = 3;
         pitchLimitGround = 50;
         pitchLimitAir = 20;
         ticksUntilHeal = 500;
@@ -228,6 +228,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         if (!isFlying() && isSecondaryAttack()) return playAnim( "attack.melee" + getAttackType(), event);
         if (isPrimaryAttack()) {
             if (isFlying()) {
+                if (isSpecialAttack()) return playAnim("attack.range.fly.shockwave", event);
                 if ((isMoving() || event.isMoving()) && !isMovingBackwards()) return playAnim("attack.range.fly", event);
                 return playAnim("attack.range.fly.idle", event);
             }
@@ -408,7 +409,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     @Override
     public boolean damage(DamageSource damageSource, float amount) {
         boolean toReturn = super.damage(damageSource, amount);
-        if (getHealth() / getMaxHealth() < 0.3 && !hasSurrendered()) {
+        if (getHealth() / getMaxHealth() < 0.3 && !hasSurrendered() && (getTamingProgress() <= 0 || isTamed())) {
             if (!isDead()) setHealth(getMaxHealth() * 0.3f);
             setInAirTimer(getMaxInAirTimer());
             setTarget(null);

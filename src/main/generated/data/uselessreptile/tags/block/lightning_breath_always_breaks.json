@@ -25,6 +25,9 @@
     {
       "id": "#minecraft:snow",
       "required": false
-    }
+    },
+    "minecraft:mushroom_stem",
+    "minecraft:brown_mushroom_block",
+    "minecraft:red_mushroom_block"
   ]
 }
