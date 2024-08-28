@@ -227,7 +227,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         super.readCustomDataFromNbt(tag);
         dataTracker.set(VARIANT, tag.getString("Variant"));
 
-        if (!isTamed()) setTamingProgress(tag.getByte("TamingProgress"));
+        if (!isTamed()) setTamingProgress(tag.getInt("TamingProgress"));
         else {
             setBoundedInstrumentSound(tag.getString("BoundedInstrumentSound"));
             int[] coords = tag.getIntArray("HomePoint");

@@ -23,6 +23,8 @@
 - Fixed potion giving to dragons
 - River Pikehorn model on head now displays correctly if it was changed
 - Improved rendering of dragon passengers
+- Fixed bug that caused Swamp Wyverns being tamable with just 1 chicken in survival
 
 ### Known Issues:
 - Glowing layer doesn't display with shaders turned on
+- When Lightning Chaser has surrendered, it takes 2 clicks to actually claim it

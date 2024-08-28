@@ -1,5 +1,5 @@
-Example datapack.
-Adds spawns for custom variants of Swamp Wyvern and River Pikehorn.
+Example datapack.\
+Adds spawns for custom variants of Swamp Wyvern and River Pikehorn and custom equipment in forms of helmets for Moleclaw.
 
 Swamp Wyvern:
 - Barren Orange (`barren_orange`) and Barren Brown (`barren_brown`) - can be found in badlands, orange spawns below Y 80, brown - above Y 80. Brown one also spawns in savanna with no altitude restrictions
@@ -26,3 +26,15 @@ Fields:
 To add spawn entry, you have to at least specify `name` and `weight`. You probably also should add `allowed_biomes` if you don't want to end up with your custom variant spawning absolutely everywhere (although this field is optional).
 File names for spawn entries don't matter. You also can create subfolders within folder of the dragon for which you are adding spawns.
 Note: if game is unable to find any variants that can spawn at specific spot, game will not spawn the dragon at all.
+
+Tag list for dragon equipment:
+
+|      Dragon      |                   Item tag                    |        Equipment piece         |
+|:----------------:|:---------------------------------------------:|:------------------------------:|
+|     Moleclaw     |       `uselessreptile:moleclaw_helmets`       |             Helmet             |
+|     Moleclaw     |     `uselessreptile:moleclaw_chestplates`     |           Chestplate           |
+|     Moleclaw     |     `uselessreptile:moleclaw_tail_armor`      |           Tail Armor           |
+|     Moleclaw     | `uselessreptile:protects_moleclaw_from_light` | Helmet (With light protection) |
+| Lightning Chaser |   `uselessreptile:lightning_chaser_helmets`   |             Helmet             |
+| Lightning Chaser | `uselessreptile:lightning_chaser_chestplates` |           Chestplate           |
+| Lightning Chaser | `uselessreptile:lightning_chaser_tail_armor`  |           Tail Armor           |
