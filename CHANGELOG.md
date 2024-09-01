@@ -24,6 +24,8 @@
 - River Pikehorn model on head now displays correctly if it was changed
 - Improved rendering of dragon passengers
 - Fixed bug that caused Swamp Wyverns being tamable with just 1 chicken in survival
+- Added Saddle, Raw Chicken, Bucket of Tropical Fish and Beetroot to the mod item tab
+- Moleclaw will no longer panic sliding its butt on the ground if it was left sitting
 
 ### Known Issues:
 - Glowing layer doesn't display with shaders turned on
