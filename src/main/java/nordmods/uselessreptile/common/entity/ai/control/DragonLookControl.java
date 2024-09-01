@@ -45,14 +45,15 @@ public class DragonLookControl extends LookControl {
         if (lockRotation) return;
         if (lookAtTimer > 0) {
             --lookAtTimer;
-            float pitch = getTargetPitch().orElse(0f);
-            float yaw = getTargetYaw().orElse(0f);
-            entity.setRotation(yaw, pitch);
+            getTargetYaw().ifPresent(yaw -> {
+                float pitch = getTargetPitch().orElse(0f);
+                entity.setRotation(yaw, pitch);
+            });
         } else {
-            entity.setHeadYaw(changeAngle(entity.getHeadYaw(),entity.getBodyYaw(), entity.getMaxHeadRotation()));
+            entity.setHeadYaw(changeAngle(entity.getHeadYaw(),entity.getBodyYaw(), entity.getRotationSpeed()));
         }
 
-        entity.setHeadYaw(MathHelper.clampAngle(entity.getHeadYaw(),entity.getBodyYaw(), entity.getMaxHeadRotation()));
+        entity.setHeadYaw(MathHelper.clampAngle(entity.getHeadYaw(),entity.getBodyYaw(), entity.getRotationSpeed()));
     }
 
     @Override

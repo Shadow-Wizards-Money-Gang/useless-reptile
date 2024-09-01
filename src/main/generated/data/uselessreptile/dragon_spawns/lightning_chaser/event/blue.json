@@ -7,7 +7,7 @@
       "#minecraft:air"
     ],
     "altitude": {
-      "min": 64
+      "min": 62
     },
     "weight": 9
   },

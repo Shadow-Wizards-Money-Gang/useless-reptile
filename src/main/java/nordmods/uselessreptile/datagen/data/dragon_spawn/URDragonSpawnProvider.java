@@ -85,7 +85,7 @@ public class URDragonSpawnProvider implements DataProvider {
                 .setVariant("blue")
                 .setWeight(9)
                 .addAllowedBiomeTag(ConventionalBiomeTags.IS_OCEAN)
-                .setMinAltitude(64)
+                .setMinAltitude(62)
                 .addAllowedBlockTag(BlockTags.ANIMALS_SPAWNABLE_ON)
                 .addAllowedBlockTag(BlockTags.BASE_STONE_OVERWORLD)
                 .addAllowedBlock(Blocks.GRAVEL.getRegistryEntry().registryKey())
@@ -95,7 +95,7 @@ public class URDragonSpawnProvider implements DataProvider {
                 .setVariant("brown")
                 .setWeight(9)
                 .addAllowedBiomeTag(ConventionalBiomeTags.IS_DRY)
-                .setMinAltitude(64)
+                .setMinAltitude(62)
                 .addAllowedBlockTag(BlockTags.ANIMALS_SPAWNABLE_ON)
                 .addAllowedBlockTag(BlockTags.BASE_STONE_OVERWORLD)
                 .addAllowedBlock(Blocks.GRAVEL.getRegistryEntry().registryKey())
@@ -107,7 +107,7 @@ public class URDragonSpawnProvider implements DataProvider {
                 .addAllowedBiomeTag(ConventionalBiomeTags.IS_OVERWORLD)
                 .addBannedBiomeTag(ConventionalBiomeTags.IS_OCEAN)
                 .addBannedBiomeTag(ConventionalBiomeTags.IS_DRY)
-                .setMinAltitude(64)
+                .setMinAltitude(62)
                 .addAllowedBlockTag(BlockTags.ANIMALS_SPAWNABLE_ON)
                 .addAllowedBlockTag(BlockTags.BASE_STONE_OVERWORLD)
                 .addAllowedBlock(Blocks.GRAVEL.getRegistryEntry().registryKey())
@@ -117,7 +117,7 @@ public class URDragonSpawnProvider implements DataProvider {
                 .setVariant("purple")
                 .setWeight(1)
                 .addAllowedBiomeTag(ConventionalBiomeTags.IS_OVERWORLD)
-                .setMinAltitude(64)
+                .setMinAltitude(62)
                 .addAllowedBlockTag(BlockTags.ANIMALS_SPAWNABLE_ON)
                 .addAllowedBlockTag(BlockTags.BASE_STONE_OVERWORLD)
                 .addAllowedBlock(Blocks.GRAVEL.getRegistryEntry().registryKey())
@@ -127,7 +127,7 @@ public class URDragonSpawnProvider implements DataProvider {
                 .setVariant("blue")
                 .setWeight(9)
                 .addAllowedBiomeTag(ConventionalBiomeTags.IS_OCEAN)
-                .setMinAltitude(64)
+                .setMinAltitude(62)
                 .addAllowedBlockTag(BlockTags.AIR)
                 .build();
 
@@ -135,7 +135,7 @@ public class URDragonSpawnProvider implements DataProvider {
                 .setVariant("brown")
                 .setWeight(9)
                 .addAllowedBiomeTag(ConventionalBiomeTags.IS_DRY)
-                .setMinAltitude(64)
+                .setMinAltitude(62)
                 .addAllowedBlockTag(BlockTags.AIR)
                 .build();
 
@@ -145,7 +145,7 @@ public class URDragonSpawnProvider implements DataProvider {
                 .addAllowedBiomeTag(ConventionalBiomeTags.IS_OVERWORLD)
                 .addBannedBiomeTag(ConventionalBiomeTags.IS_OCEAN)
                 .addBannedBiomeTag(ConventionalBiomeTags.IS_DRY)
-                .setMinAltitude(64)
+                .setMinAltitude(62)
                 .addAllowedBlockTag(BlockTags.AIR)
                 .build();
 
@@ -153,7 +153,7 @@ public class URDragonSpawnProvider implements DataProvider {
                 .setVariant("purple")
                 .setWeight(1)
                 .addAllowedBiomeTag(ConventionalBiomeTags.IS_OVERWORLD)
-                .setMinAltitude(64)
+                .setMinAltitude(62)
                 .addAllowedBlockTag(BlockTags.AIR)
                 .build();
 
@@ -207,7 +207,7 @@ public class URDragonSpawnProvider implements DataProvider {
                 .addAllowedBlockTag(BlockTags.ANIMALS_SPAWNABLE_ON)
                 .addAllowedBlockTag(BlockTags.SAND)
                 .addAllowedBlock(Blocks.GRAVEL.getRegistryEntry().registryKey())
-                .setMinAltitude(64)
+                .setMinAltitude(62)
                 .build();
         DragonSpawn.addSpawn(UREntities.RIVER_PIKEHORN_ENTITY, spawn);
     }
