@@ -5,6 +5,9 @@ Useless Reptile is a Fabric mod that aimed to bring some dragons into your world
 [Discord Server](https://discord.gg/JjYE4vEf3s)\
 Currently supported game versions: 1.21+
 
+## Showcase
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/x5ysfiDE4rk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
 ## Dependencies
 [Geckolib](https://modrinth.com/mod/geckolib), [YetAnotherConfigLib](https://modrinth.com/mod/yacl) and [Fabric API](https://modrinth.com/mod/fabric-api) are **required**.
 For mod versions below 0.3.0 [Cloth Config API](https://modrinth.com/mod/cloth-config) is required instead of YetAnotherConfigLib.
@@ -39,7 +42,11 @@ Both shockwave and lightning breath inflict shock effect that decreases attack a
 - Rideable dragons can equip **banners** and display them as long as saddle is presented.
 
 ### Controls
- TODO
+- W/S - forward/backwards
+- Left ctrl - fly down (can be rebinded)
+- G - primary attack/ability (can be rebinded)
+- R - secondary attack/ability (can be rebinded)
+Rideable dragons cannot move sideways
 
 ### Custom dragon variants, equipment and spawns
 You can add custom dragon variants and dragon equipment via power of data and resource packs, that Mojang gladly made very useful for mod makers too.\

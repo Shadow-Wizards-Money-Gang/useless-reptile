@@ -11,7 +11,7 @@ Moleclaw:
 River Pikehorn
 - Striped (`striped`)
 
-Showcases how to add custom variants and override equipment models per variant.
+Showcases how to add custom variants and override equipment models per variant and also how to add glowing layer.
 File name - name of the variant. Variant file must be placed in folder named after dragon's id, which must be in `dragon_model_data` folder.
 Swamp Wyvern and Moleclaw variants showcase how to use `equipment_model_overrides` and add glowing layer to the model of both equipment and dragon itself. River Pikehorn variant shows how to add variant that only has different texture from default ones.
 
@@ -36,5 +36,7 @@ Fields for equipment model data:
 - `item` - item id for which model is defined
 - `model_data` - model data of equipment
 
-If equipment data is defined in equipment model data, it'll be available for all dragons independently of their variant. If it's defined as equipment model override, it'll be available only for this variant. If model data for specific item is defined in equipment model data and override, override one will be used
+If equipment data is defined in equipment model data, it'll be available for all dragons independently of their variant. If it's defined as equipment model override, it'll be available only for this variant. If model data for specific item is defined in equipment model data and override, override one will be used.
+
+To add glowing layer to either dragon or equipment, add texture named after texture used by the model with `_glowing` suffix alongside said texture. I.e. if texture named `end.png`, to add glowing layer you have to add texture named `end_glowing.png` in the same folder where `end.png` is.
 
