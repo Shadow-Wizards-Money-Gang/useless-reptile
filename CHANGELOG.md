@@ -1,31 +1,4 @@
-- Added Lightning Chaser (as playable dragon). It can sometimes appear during thunderstorms near random player as long as it's on surface
-- Added Shock status effect. It can be only inflicted by Lightning Chaser's attacks
-- Added tags for respective armor slots for all dragons that can wear armor, so custom items can be added
-- New spawning system:
-  - If there's no available variants for spot, game won't attempt to spawn a dragon
-  - Spawn entries are now defined in individual files
-  - There can be several entries for same variant
-  - File names for entries don't matter
-  - All entries are stored in `dragon_spawns` folder in folders named after dragon's id
-  - Now you can pass allowed and banned blocks as spawn conditions
-  - Ids and tags are now listed in similar manner as in vanilla tags
-- Removed block tags that were responsible for blocks on which specific types of dragons could spawn
-- Removed biome whitelist tags for dragons
-- Rotation speeds, vertical speed, acceleration time, attack cooldowns are all now stored as attributes
-- Added attribute for Moleclaw's mining level
-- Added event to define mining level for blocks that is used by Moleclaw
-- Items that can be equipped as armor for dragons now will have special tooltip
-- Added item tag to define which items can protect Moleclaw from light
-- Now if tamed dragon that doesn't follow you was left around some spot without being put in sit mode, it'll move only around this spot, so it won't run to Brazil leaving you behind
-- Reduced required distance for River Pikehorn to start follow you
-- You now can dismount River Pikehorn on your head even if you got an item in your hand (block placing action still will be prioritized)
-- River Pikehorns are now immune to suffocation damage if they are riding the player
-- Fixed potion giving to dragons
-- River Pikehorn model on head now displays correctly if it was changed
-- Improved rendering of dragon passengers
-- Fixed bug that caused Swamp Wyverns being tamable with just 1 chicken in survival
-- Added Saddle, Raw Chicken, Bucket of Tropical Fish and Beetroot to the mod item tab
-- Moleclaw will no longer panic sliding its butt on the ground if it was left sitting
+- Fixed crash when either Lightning Chaser or Swamp Wyvern tried to shoot
 
 ### Known Issues:
 - Glowing layer doesn't display with shaders turned on
