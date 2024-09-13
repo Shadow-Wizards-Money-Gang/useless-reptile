@@ -1,6 +1,6 @@
-- Fixed crash when either Lightning Chaser or Swamp Wyvern tried to shoot
+- Fixed issue caused other mods that add new layers to player model to display those incorrectly when River Pikehorn was on player's head
+- Fixed glowing layer not working with shaders on
+- Fixed Swamp Wyvern's easter egg variant "jeb_" not being applicable via nametag
 
 ### Known Issues:
-- Glowing layer doesn't display with shaders turned on
-- When Lightning Chaser has surrendered, it takes 2 clicks to actually claim it
 - Dragon rotations in some scenarios may be very out of sync with the server

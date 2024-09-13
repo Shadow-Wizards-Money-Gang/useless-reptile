@@ -51,7 +51,7 @@ public class URDragonModelDataProvider implements DataProvider {
     protected void addEntries() {
         addEntry(UREntities.WYVERN_ENTITY, "green", true);
         addEntry(UREntities.WYVERN_ENTITY, "brown", true);
-        addEntry(UREntities.WYVERN_ENTITY, "jeb_", true);
+        addEntry(UREntities.WYVERN_ENTITY, "jeb_", true, true);
 
         addEntry(UREntities.MOLECLAW_ENTITY, "black", false);
         addEntry(UREntities.MOLECLAW_ENTITY, "brown", false);
@@ -73,13 +73,17 @@ public class URDragonModelDataProvider implements DataProvider {
         addEntry(UREntities.RIVER_PIKEHORN_ENTITY, "dark_teal", true);
     }
 
-    protected void addEntry(EntityType<? extends URDragonEntity> type, String variant, boolean cull) {
+    protected void addEntry(EntityType<? extends URDragonEntity> type, String variant, boolean cull, boolean nametagAccessibe) {
         Identifier id = EntityType.getId(type);
         Identifier texture = Identifier.of(id.getNamespace(), "textures/entity/" + id.getPath() + "/" + variant +".png");
         Identifier model = Identifier.of(id.getNamespace(), "geo/entity/" + id.getPath() + "/" + id.getPath() +".geo.json");
         Identifier animation = Identifier.of(id.getNamespace(), "animations/entity/" + id.getPath() + "/" + id.getPath() +".animation.json");
-        DragonModelData dragonModelData = new DragonModelData(new ModelData(texture, Optional.of(model), Optional.of(animation), cull, false), Optional.empty(), false);
+        DragonModelData dragonModelData = new DragonModelData(new ModelData(texture, Optional.of(model), Optional.of(animation), cull, false), Optional.empty(), nametagAccessibe);
         DragonModelData.add(EntityType.getId(type).getPath(), variant, dragonModelData);
+    }
+
+    protected void addEntry(EntityType<? extends URDragonEntity> type, String variant, boolean cull) {
+        addEntry(type, variant, cull, false);
     }
 
     @Override

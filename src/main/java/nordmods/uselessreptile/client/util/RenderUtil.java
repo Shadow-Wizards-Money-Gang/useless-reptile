@@ -14,8 +14,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class RenderUtil {
-    public static final int WHITE = 16777215;
-
     public static void renderQuad(
             Matrix4f positionMatrix, MatrixStack.Entry normalMatrix, VertexConsumer vertices,
             Vector3f v0, Vector3f v1, Vector3f v2, Vector3f v3,

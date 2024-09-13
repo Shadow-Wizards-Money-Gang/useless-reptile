@@ -6,12 +6,12 @@ import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.util.AssetCache;
 import nordmods.uselessreptile.client.util.AssetCahceOwner;
-import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.client.util.ResourceUtil;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
+import software.bernie.geckolib.util.Color;
 
 public class URGlowingLayer<T extends GeoAnimatable & AssetCahceOwner> extends GeoRenderLayer<T> {
     public URGlowingLayer(GeoRenderer<T> renderer) {
@@ -37,7 +37,7 @@ public class URGlowingLayer<T extends GeoAnimatable & AssetCahceOwner> extends G
         RenderLayer renderLayer =  RenderLayer.getEyes(id);
         getRenderer().reRender(model, matrixStackIn, bufferSource, animatable, renderLayer,
                 bufferSource.getBuffer(renderLayer), partialTick, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV,
-                RenderUtil.WHITE);
+                Color.WHITE.getColor());
     }
 
     protected Identifier getGlowingTexture(T animatable) {

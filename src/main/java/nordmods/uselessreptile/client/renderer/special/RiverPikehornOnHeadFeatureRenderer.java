@@ -25,6 +25,7 @@ public class RiverPikehornOnHeadFeatureRenderer extends FeatureRenderer<Abstract
         if (entity.getFirstPassenger() instanceof RiverPikehornEntity dragon) {
             if (dragon.isInvisible()) return;
             ON_HEAD.remove(dragon.getUuid());
+            matrices.push();
 
             ModelPart head = getContextModel().head;
             head.rotate(matrices);
@@ -36,6 +37,7 @@ public class RiverPikehornOnHeadFeatureRenderer extends FeatureRenderer<Abstract
 
             RenderUtil.renderEntity(dragon, tickDelta, matrices, vertexConsumers, light);
 
+            matrices.pop();
             ON_HEAD.add(dragon.getUuid());
         }
     }

@@ -3,6 +3,5 @@
     "animation": "uselessreptile:animations/entity/wyvern/wyvern.animation.json",
     "model": "uselessreptile:geo/entity/wyvern/wyvern.geo.json",
     "texture": "uselessreptile:textures/entity/wyvern/jeb_.png"
-  },
-  "nametag_accessible": false
+  }
 }
