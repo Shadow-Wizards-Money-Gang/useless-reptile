@@ -5,12 +5,12 @@ Feel free to learn something or point and laugh at my code... and hate me for ho
 This project (Useless Reptile) is All Rights Reserved. It means you can't just take it and use for whatever you want without my (Nord_Act aka NordAct) permission, especially assets.
 
 You are allowed:
-- Make monetized videos and streams with the mod 
-- Use mod for modpacks
+- Make monetized videos and streams with the mod
+- Use mod for modpacks (excluding ones distributed exclusively in pay-2-play model (i.e. requiring user to buy Patreon subscription in order to play the modpack), **I'll count that as attempt to profit of my work**, not talking about that it's also technically against Minecraft EULA)
 - Make submods, addons for the mod or any other project that relies on this mod and publish them, as long as this project is not a modified version of this mod
 - Redistribute modified versions of assets within resource packs for this mod
 - Partially use the code for your project from this one (by this I mean just don't rip off the
-whole thing, at least mind what you copy)
+  whole thing, at least mind what you copy)
 - Make modified versions of the mod for **private use** (don't publicly distribute those)
 
 This repository exists purely for visibility of the source code. Don't expect much action here.
