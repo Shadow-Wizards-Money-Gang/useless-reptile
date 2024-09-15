@@ -3,8 +3,10 @@ package nordmods.uselessreptile.client.renderer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.RotationAxis;
 import nordmods.uselessreptile.client.renderer.base.URDragonRenderer;
 import nordmods.uselessreptile.client.renderer.layers.DragonMainHandItemLayer;
 import nordmods.uselessreptile.client.renderer.special.RiverPikehornOnHeadFeatureRenderer;
@@ -26,13 +28,13 @@ public class RiverPikehornEntityRenderer extends URDragonRenderer<RiverPikehornE
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 
-    //@Override
-    //protected void applyRotations(RiverPikehornEntity animatable, MatrixStack poseStack, float ageInTicks, float rotationYaw, float partialTick, float nativeScale) {
-    //    if (animatable.getVehicle() instanceof PlayerEntity) {
-    //        if (LivingEntityRenderer.shouldFlipUpsideDown(animatable)) {
-    //            poseStack.translate(0, (animatable.getHeight() + 0.1f) / nativeScale, 0);
-    //            poseStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180f));
-    //        }
-    //    } else super.applyRotations(animatable, poseStack, ageInTicks, rotationYaw, partialTick, nativeScale);
-    //}
+    @Override
+    protected void applyRotations(RiverPikehornEntity animatable, MatrixStack poseStack, float ageInTicks, float rotationYaw, float partialTick, float nativeScale) {
+        if (animatable.getVehicle() instanceof PlayerEntity) {
+            if (LivingEntityRenderer.shouldFlipUpsideDown(animatable)) {
+                poseStack.translate(0, (animatable.getHeight() + 0.1f) / nativeScale, 0);
+                poseStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180f));
+            }
+        } else super.applyRotations(animatable, poseStack, ageInTicks, rotationYaw, partialTick, nativeScale);
+    }
 }
