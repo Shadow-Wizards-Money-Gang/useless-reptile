@@ -10,21 +10,26 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.*;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.*;
+import net.minecraft.registry.tag.InstrumentTags;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.item.DragonEquipmentItem;
 import nordmods.uselessreptile.common.item.FluteItem;
+import nordmods.uselessreptile.common.item.VortexHornItem;
 import nordmods.uselessreptile.common.item.component.FluteComponent;
+import nordmods.uselessreptile.common.item.component.URDragonDataStorageComponent;
 
 import java.util.function.UnaryOperator;
 
 public class URItems {
-    public static final ComponentType<FluteComponent> FLUTE_MODE_COMPONENT = register("flute_mode", builder -> builder.codec(FluteComponent.CODEC).packetCodec(FluteComponent.PACKET_CODEC));
+    public static final ComponentType<FluteComponent> FLUTE_MODE_COMPONENT = register("flute_mode",
+            builder -> builder.codec(FluteComponent.CODEC).packetCodec(FluteComponent.PACKET_CODEC));
+    public static final ComponentType<URDragonDataStorageComponent> DRAGON_STORAGE_COMPONENT = register("dragon_storage",
+            builder -> builder.codec(URDragonDataStorageComponent.CODEC).packetCodec(URDragonDataStorageComponent.PACKET_CODEC));
+
 
     public static final Item WYVERN_SKIN = new Item(new Item.Settings());
     public static final DragonEquipmentItem DRAGON_HELMET_IRON = createDragonArmorItem(EquipmentSlot.HEAD, 2, 0);
@@ -44,6 +49,10 @@ public class URItems {
     public static final Item RIVER_PIKEHORN_SPAWN_EGG = new SpawnEggItem(UREntities.RIVER_PIKEHORN_ENTITY,2910895, 1457243, new Item.Settings());
     public static final Item LIGHTNING_CHASER_SPAWN_EGG = new SpawnEggItem(UREntities.LIGHTNING_CHASER_ENTITY,4145472, 10922151, new Item.Settings());
     public static final FluteItem FLUTE = new FluteItem(new Item.Settings().maxCount(1).component(FLUTE_MODE_COMPONENT, FluteComponent.DEFAULT));
+    public static final VortexHornItem IRON_VORTEX_HORN = new VortexHornItem(new Item.Settings().maxCount(1).component(DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT), 1);
+    public static final VortexHornItem GOLD_VORTEX_HORN = new VortexHornItem(new Item.Settings().maxCount(1).component(DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT), 3);
+    public static final VortexHornItem DIAMOND_VORTEX_HORN = new VortexHornItem(new Item.Settings().maxCount(1).component(DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT), 6);
+    public static final VortexHornItem NETHERITE_VORTEX_HORN = new VortexHornItem(new Item.Settings().maxCount(1).component(DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT), 12);
 
     public static final RegistryKey<ItemGroup> UR_ITEM_GROUP = RegistryKey.of(RegistryKeys.ITEM_GROUP, UselessReptile.id("item_group"));
 
@@ -66,6 +75,10 @@ public class URItems {
         register(WYVERN_SPAWN_EGG, "wyvern_spawn_egg");
         register(LIGHTNING_CHASER_SPAWN_EGG, "lightning_chaser_spawn_egg");
         register(FLUTE, "flute");
+        register(IRON_VORTEX_HORN, "iron_vortex_horn");
+        register(GOLD_VORTEX_HORN, "gold_vortex_horn");
+        register(DIAMOND_VORTEX_HORN, "diamond_vortex_horn");
+        register(NETHERITE_VORTEX_HORN, "netherite_vortex_horn");
 
         Registry.register(Registries.ITEM_GROUP, UR_ITEM_GROUP, FabricItemGroup.builder()
                 .icon(() -> new ItemStack(WYVERN_SKIN))
@@ -95,6 +108,18 @@ public class URItems {
             c.add(DRAGON_TAIL_ARMOR_DIAMOND);
             c.add(WYVERN_SKIN);
             c.add(FLUTE);
+            c.getContext().lookup().getOptionalWrapper(RegistryKeys.INSTRUMENT).ifPresent((wrapper) -> {
+                addInstruments(c, wrapper, URItems.IRON_VORTEX_HORN, InstrumentTags.GOAT_HORNS, ItemGroup.StackVisibility.PARENT_AND_SEARCH_TABS);
+            });
+            c.getContext().lookup().getOptionalWrapper(RegistryKeys.INSTRUMENT).ifPresent((wrapper) -> {
+                addInstruments(c, wrapper, URItems.GOLD_VORTEX_HORN, InstrumentTags.GOAT_HORNS, ItemGroup.StackVisibility.PARENT_AND_SEARCH_TABS);
+            });
+            c.getContext().lookup().getOptionalWrapper(RegistryKeys.INSTRUMENT).ifPresent((wrapper) -> {
+                addInstruments(c, wrapper, URItems.DIAMOND_VORTEX_HORN, InstrumentTags.GOAT_HORNS, ItemGroup.StackVisibility.PARENT_AND_SEARCH_TABS);
+            });
+            c.getContext().lookup().getOptionalWrapper(RegistryKeys.INSTRUMENT).ifPresent((wrapper) -> {
+                addInstruments(c, wrapper, URItems.NETHERITE_VORTEX_HORN, InstrumentTags.GOAT_HORNS, ItemGroup.StackVisibility.PARENT_AND_SEARCH_TABS);
+            });
         });
     }
 
@@ -116,6 +141,12 @@ public class URItems {
 
     private static <T> ComponentType<T> register(String id, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
         return Registry.register(Registries.DATA_COMPONENT_TYPE, UselessReptile.id(id), (builderOperator.apply(ComponentType.builder())).build());
+    }
+
+    public static void addInstruments(ItemGroup.Entries entries, RegistryWrapper<Instrument> registryWrapper, Item item, TagKey<Instrument> instrumentTag, ItemGroup.StackVisibility visibility) {
+        registryWrapper.getOptional(instrumentTag).ifPresent((entryList) ->
+                entryList.stream().map((instrument) ->
+                        GoatHornItem.getStackForInstrument(item, instrument)).forEach((stack) -> entries.add(stack, visibility)));
     }
 }
 

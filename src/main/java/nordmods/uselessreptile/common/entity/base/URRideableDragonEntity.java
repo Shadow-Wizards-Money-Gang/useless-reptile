@@ -115,16 +115,10 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     }
 
     @Override
-    protected void updateEquipment() {
+    public void updateEquipment() {
         super.updateEquipment();
-        updateSaddle();
-    }
-
-    private void updateSaddle() {
-        if (inventory != null) {
-            ItemStack saddle = inventory.getStack(0);
-            equipStack(EquipmentSlot.FEET, saddle);
-        }
+        ItemStack saddle = inventory.getStack(0);
+        equipStack(EquipmentSlot.FEET, saddle);
     }
 
     public boolean hasSaddle() {

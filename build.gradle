@@ -25,6 +25,9 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
+    flatDir() {
+        dir 'libs'
+    }
 }
 
 dependencies {
@@ -38,10 +41,6 @@ dependencies {
     modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
     modImplementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
     modImplementation include ("com.github.NordAct:Primitive-Multipart-Entities:${project.primitive_multipart_entities_version}")
-
-    //for testing
-    //modImplementation "maven.modrinth:sodium:mc1.21-0.5.11"
-    //modImplementation "maven.modrinth:camera-utils:fabric-1.21-1.0.14"
 }
 
 processResources {

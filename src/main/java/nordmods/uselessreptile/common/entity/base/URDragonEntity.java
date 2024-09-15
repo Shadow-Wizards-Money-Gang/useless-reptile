@@ -60,6 +60,7 @@ import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URStatusEffects;
 import nordmods.uselessreptile.common.init.URTags;
+import nordmods.uselessreptile.common.item.VortexHornItem;
 import nordmods.uselessreptile.common.network.URPacketHelper;
 import nordmods.uselessreptile.common.util.dragon_spawn.DragonSpawn;
 import nordmods.uselessreptile.common.util.dragon_spawn.DragonSpawnUtil;
@@ -356,7 +357,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     }
 
-    protected void updateEquipment() {
+    public void updateEquipment() {
         if (inventory != null) {
             ItemStack head = inventory.getStack(1);
             equipStack(EquipmentSlot.HEAD, head);
@@ -366,6 +367,9 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
             ItemStack tail = inventory.getStack(3);
             equipStack(EquipmentSlot.LEGS, tail);
+
+            ItemStack banner = inventory.getStack(4);
+            equipStack(EquipmentSlot.OFFHAND, banner);
         }
     }
 
@@ -412,7 +416,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                 return ActionResult.SUCCESS;
             }
 
-            if (isInstrument(itemStack) && !player.isSneaking()) {
+            if (isInstrument(itemStack) && !player.isSneaking() && !(itemStack.getItem() instanceof VortexHornItem)) {
                 String sound = getInstrument(itemStack);
                 if (!getBoundedInstrumentSound().equals(sound)) setBoundedInstrumentSound(sound);
                 else setBoundedInstrumentSound("");
@@ -447,7 +451,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return itemStack.getComponents().contains(DataComponentTypes.INSTRUMENT);
     }
 
-    public String getInstrument(ItemStack itemStack) {
+    public static String getInstrument(ItemStack itemStack) {
+        if (!itemStack.getComponents().contains(DataComponentTypes.INSTRUMENT)) return "";
         return itemStack.getComponents().get(DataComponentTypes.INSTRUMENT).getIdAsString();
     }
 
@@ -661,13 +666,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         }
     }
 
-    protected void updateBanner() {
-        if (isTamed() && inventory != null) {
-            ItemStack banner = inventory.getStack(4);
-            equipStack(EquipmentSlot.OFFHAND, banner);
-        }
-    }
-
     public boolean isFavoriteFood(ItemStack itemStack){
         return false;
     }
@@ -802,7 +800,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     @Override
     public void onInventoryChanged(Inventory sender) {
         updateEquipment();
-        updateBanner();
     }
 
     //I have no idea how this happened to be so important for spawning
