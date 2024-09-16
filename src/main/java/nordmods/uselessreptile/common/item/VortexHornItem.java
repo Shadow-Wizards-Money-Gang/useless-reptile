@@ -5,6 +5,7 @@ import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.*;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
@@ -12,18 +13,22 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.InstrumentTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.init.URItems;
+import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.item.component.URDragonDataStorageComponent;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -41,20 +46,28 @@ public class VortexHornItem extends GoatHornItem {
     }
 
     public ActionResult useOnEntity(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand) {
+        if (getPartParent(user) instanceof URDragonEntity dragon) entity = dragon;
         if (entity instanceof URDragonEntity dragon && dragon.getOwner() == user && !user.isSneaking()) {
             if (tryCollectDragon(stack, user, dragon, hand)) {
-                user.playSound(SoundEvents.ITEM_BOTTLE_FILL); //TODO
+                user.stopUsingItem();
+                user.playSound(URSounds.VORTEX_HORN_SUCK_IN);
                 return ActionResult.SUCCESS;
             }
         }
         return super.useOnEntity(stack, user, entity, hand);
     }
 
+    //TODO fix multipart entity rotation desyncs
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack = user.getStackInHand(hand);
         if (user.isSneaking()) {
             if (tryMassCatchOrRelease(stack, user, world, hand)) return TypedActionResult.success(stack);
+        }
+        if (getPartParent(user) instanceof URDragonEntity dragon) {
+            useOnEntity(stack, user, dragon, hand);
+            user.stopUsingItem();
+            return TypedActionResult.success(stack);
         }
         return super.use(world, user, hand);
     }
@@ -66,7 +79,10 @@ public class VortexHornItem extends GoatHornItem {
             World world = context.getWorld();
             Hand hand = context.getHand();
             if (user.isSneaking()) {
-                if (tryMassCatchOrRelease(stack, user, world, hand)) return ActionResult.SUCCESS;
+                if (tryMassCatchOrRelease(stack, user, world, hand)) {
+                    user.stopUsingItem();
+                    return ActionResult.SUCCESS;
+                }
             }
             BlockPos pos = context.getBlockPos();
             BlockState blockState = world.getBlockState(pos);
@@ -74,7 +90,8 @@ public class VortexHornItem extends GoatHornItem {
             if (!blockState.getCollisionShape(world, pos).isEmpty()) pos = pos.offset(direction);
 
             if (tryCreateDragon(stack, user, world, hand, pos)) {
-                user.playSound(SoundEvents.ITEM_BOTTLE_EMPTY); //TODO
+                user.stopUsingItem();
+                user.playSound(URSounds.VORTEX_HORN_SPIT_OUT);
                 return ActionResult.SUCCESS;
             }
         }
@@ -100,7 +117,7 @@ public class VortexHornItem extends GoatHornItem {
             URDragonDataStorageComponent dataComponent = stack.get(URItems.DRAGON_STORAGE_COMPONENT);
             if (dataComponent != null) {
                 for (int i = 0; i < dataComponent.entityData().size(); i++) tryCreateDragon(stack, user, world, hand, user.getBlockPos());
-                user.playSound(SoundEvents.ITEM_BUCKET_EMPTY); //TODO
+                user.playSound(URSounds.VORTEX_HORN_SPIT_OUT);
                 return true;
             }
         } else {
@@ -108,13 +125,13 @@ public class VortexHornItem extends GoatHornItem {
             for (URDragonEntity dragon : dragons) {
                 if (!tryCollectDragon(stack, user, dragon, hand)) break;
             }
-            user.playSound(SoundEvents.ITEM_BUCKET_FILL); //TODO
+            user.playSound(URSounds.VORTEX_HORN_SUCK_IN);
             return true;
         }
         return false;
     }
 
-    protected boolean tryCollectDragon(ItemStack stack, PlayerEntity user, URDragonEntity dragon, Hand hand) {
+    protected boolean tryCollectDragon(ItemStack stack, PlayerEntity user, Entity dragon, Hand hand) {
         if (getCurrentCapacity(stack) >= getMaxCapacity()) return false;
 
         dragon.stopRiding();
@@ -163,25 +180,33 @@ public class VortexHornItem extends GoatHornItem {
         return false;
     }
 
-    protected void spawnCloud(URDragonEntity dragon) {
+    protected void spawnCloud(Entity dragon) {
         MinecraftServer server = dragon.getServer();
         if (server != null) {
             double x = dragon.getX();
             double y = dragon.getY();
             double z = dragon.getZ();
+            float offsetY = dragon.getHeight() / 2f;
+            float offsetXZ = dragon.getWidth() / 2f;
             ParticleS2CPacket packet = new ParticleS2CPacket(ParticleTypes.CLOUD, false,
-                    x, y, z,
-                    dragon.getWidth() / 2, dragon.getHeight(), dragon.getWidth() / 2, 0.05f, 20);
-            server.getPlayerManager().sendToAround(null, x, y, z, 128, dragon.getWorld().getRegistryKey(), packet);
+                    x, y, z, offsetXZ , offsetY, offsetXZ, 0, 20);
+            server.getPlayerManager().sendToAround(null, x, y + offsetY, z, 128, dragon.getWorld().getRegistryKey(), packet);
         }
     }
 
-    protected int getCurrentCapacity(ItemStack stack) {
+    protected int getCurrentCapacity(ItemStack stack) { //TODO capacity per dragon
         if (stack.getComponents().contains(URItems.DRAGON_STORAGE_COMPONENT)) {
             URDragonDataStorageComponent dataComponent = stack.get(URItems.DRAGON_STORAGE_COMPONENT);
             if (dataComponent != null) return dataComponent.entityData().size();
         }
         return 0;
+    }
+
+    @Nullable
+    protected URDragonEntity getPartParent(PlayerEntity user) {
+        HitResult hitResult = ProjectileUtil.getCollision(user, entity -> entity instanceof URDragonPart, user.getEntityInteractionRange());
+        if (hitResult.getType() == HitResult.Type.ENTITY && ((EntityHitResult)hitResult).getEntity() instanceof URDragonPart part) return part.owner;
+        return null;
     }
 
     protected int getMaxCapacity() {

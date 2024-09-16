@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/goat_horn",
+  "textures": {
+    "layer0": "uselessreptile:item/diamond_vortex_horn"
+  }
+}

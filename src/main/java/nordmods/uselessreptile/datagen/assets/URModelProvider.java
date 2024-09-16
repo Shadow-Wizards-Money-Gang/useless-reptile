@@ -34,6 +34,11 @@ public class URModelProvider extends FabricModelProvider {
         itemModelGenerator.register(URItems.RIVER_PIKEHORN_SPAWN_EGG, item("template_spawn_egg"));
 
         itemModelGenerator.register(URItems.WYVERN_SKIN, Models.GENERATED);
+        itemModelGenerator.register(URItems.VORTEX_HORN, item("goat_horn", TextureKey.LAYER0));
+        itemModelGenerator.register(URItems.IRON_VORTEX_HORN, item("goat_horn", TextureKey.LAYER0));
+        itemModelGenerator.register(URItems.GOLD_VORTEX_HORN, item("goat_horn", TextureKey.LAYER0));
+        itemModelGenerator.register(URItems.DIAMOND_VORTEX_HORN, item("goat_horn", TextureKey.LAYER0));
+        itemModelGenerator.register(URItems.NETHERITE_VORTEX_HORN, item("goat_horn", TextureKey.LAYER0));
 
         registerDragonArmorModel(itemModelGenerator.writer, URItems.DRAGON_CHESTPLATE_IRON, UselessReptile.id("item/armor/dragon/armor_iron_body"));
         registerDragonArmorModel(itemModelGenerator.writer, URItems.DRAGON_CHESTPLATE_GOLD, UselessReptile.id("item/armor/dragon/armor_gold_body"));

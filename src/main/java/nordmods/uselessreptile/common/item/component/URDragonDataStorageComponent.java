@@ -10,7 +10,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.world.World;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -59,7 +58,7 @@ public record URDragonDataStorageComponent(List<NbtComponent> entityData) {
             "IsFlying",
             "leash");
 
-    public static NbtComponent createData(URDragonEntity entity) {
+    public static NbtComponent createData(Entity entity) {
         NbtCompound nbtCompound = new NbtCompound();
         entity.saveSelfNbt(nbtCompound);
         Objects.requireNonNull(nbtCompound);
@@ -71,7 +70,6 @@ public record URDragonDataStorageComponent(List<NbtComponent> entityData) {
         Objects.requireNonNull(nbtComponent);
         NbtCompound nbtCompound = nbtComponent.copyNbt();
         IGNORED_NBT.forEach(nbtCompound::remove);
-        Entity entity = EntityType.loadEntityWithPassengers(nbtCompound, world, (entityx) -> entityx);
-        return entity;
+        return EntityType.loadEntityWithPassengers(nbtCompound, world, (entityx) -> entityx);
     }
 }

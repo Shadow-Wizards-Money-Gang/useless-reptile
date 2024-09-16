@@ -31,6 +31,11 @@
     "item.uselessreptile.river_pikehorn_spawn_egg": "River Pikehorn Spawn Egg",
     "item.uselessreptile.lightning_chaser_spawn_egg": "Lightning Chaser Spawn Egg",
     "item.uselessreptile.flute": "Flute",
+    "item.uselessreptile.vortex_horn": "Vortex Horn",
+    "item.uselessreptile.iron_vortex_horn": "Iron Vortex Horn",
+    "item.uselessreptile.gold_vortex_horn": "Golden Vortex Horn",
+    "item.uselessreptile.diamond_vortex_horn": "Diamond Vortex Horn",
+    "item.uselessreptile.netherite_vortex_horn": "Netherite Vortex Horn",
 
     "tooltip.uselessreptile.hidden": "Hold Left Shift for more info",
     "tooltip.uselessreptile.flute": "Can be used to command River Pikehorns.\nRight-click in air while crouching to change mode",
