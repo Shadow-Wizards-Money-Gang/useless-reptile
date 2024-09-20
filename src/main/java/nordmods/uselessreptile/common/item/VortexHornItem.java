@@ -1,13 +1,17 @@
 package nordmods.uselessreptile.common.item;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.*;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.InstrumentTags;
@@ -15,6 +19,7 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.EntityHitResult;
@@ -33,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class VortexHornItem extends GoatHornItem {
     private final int maxCapacity;
@@ -69,7 +75,9 @@ public class VortexHornItem extends GoatHornItem {
             user.stopUsingItem();
             return TypedActionResult.success(stack);
         }
-        return super.use(world, user, hand);
+        TypedActionResult<ItemStack> result = super.use(world, user, hand);
+        user.getItemCooldownManager().set(this, 0);
+        return result;
     }
 
     @Override
@@ -103,7 +111,23 @@ public class VortexHornItem extends GoatHornItem {
         if (stack.getComponents().contains(URItems.DRAGON_STORAGE_COMPONENT)) {
             URDragonDataStorageComponent dataComponent = stack.get(URItems.DRAGON_STORAGE_COMPONENT);
             if (dataComponent != null) {
-                tooltip.add(Text.literal(getCurrentCapacity(stack) + " / " + maxCapacity));
+                boolean full = getCurrentCapacity(stack) >= maxCapacity;
+                tooltip.add(Text.translatable("tooltip.uselessreptile.vortex_horn.capacity",getCurrentCapacity(stack) , maxCapacity).formatted(full ? Formatting.YELLOW : Formatting.GRAY));
+                if (!InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), InputUtil.GLFW_KEY_LEFT_SHIFT)) tooltip.add(Text.translatable("tooltip.uselessreptile.hidden").formatted(Formatting.DARK_GRAY));
+                else {
+                    tooltip.add(Text.translatable("tooltip.uselessreptile.vortex_horn.contained_dragons"));
+                    for (NbtComponent nbtComponent : dataComponent.entityData()) {
+                        NbtCompound nbt = nbtComponent.copyNbt();
+                        if (nbtComponent.contains("CustomName")) {
+                            String string = nbt.getString("CustomName");
+                            tooltip.add(Text.Serialization.fromJson(string, MinecraftClient.getInstance().player.getRegistryManager()));
+                        } else {
+                            String string = nbt.getString("id");
+                            Optional<EntityType<?>> entityType = EntityType.get(string);
+                            tooltip.add(entityType.map(value -> Text.translatable(value.getTranslationKey())).orElseGet(() -> Text.literal("ERROR").formatted(Formatting.RED)));
+                        }
+                    }
+                }
             }
             tooltip.add(Text.empty());
         }
@@ -133,6 +157,8 @@ public class VortexHornItem extends GoatHornItem {
 
     protected boolean tryCollectDragon(ItemStack stack, PlayerEntity user, Entity dragon, Hand hand) {
         if (getCurrentCapacity(stack) >= getMaxCapacity()) return false;
+
+        if (user.getWorld().isClient()) return true;
 
         dragon.stopRiding();
         dragon.removeAllPassengers();

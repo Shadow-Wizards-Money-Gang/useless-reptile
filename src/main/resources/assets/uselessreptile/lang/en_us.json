@@ -43,6 +43,8 @@
     "tooltip.uselessreptile.flute_mode1": "Flute mode: Gather Fish",
     "tooltip.uselessreptile.flute_mode2": "Flute mode: Attack Target",
     "tooltip.uselessreptile.can_be_equipped_by": "Can be equipped by: %s",
+    "tooltip.uselessreptile.vortex_horn.capacity": "Capacity: %s / %s",
+    "tooltip.uselessreptile.vortex_horn.contained_dragons": "Dragons inside:",
 
     "entity.uselessreptile.wyvern": "Swamp Wyvern",
     "entity.uselessreptile.moleclaw": "Moleclaw",

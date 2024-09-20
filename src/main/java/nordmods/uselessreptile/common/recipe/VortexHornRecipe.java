@@ -9,6 +9,7 @@ import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.world.World;
+import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URRecipeSerializers;
 
 public class VortexHornRecipe extends SpecialCraftingRecipe {
@@ -39,7 +40,7 @@ public class VortexHornRecipe extends SpecialCraftingRecipe {
                                 if (!stack.isOf(Items.BREEZE_ROD)) return false;
                             }
                             case 1 -> {
-                                if (!stack.contains(DataComponentTypes.INSTRUMENT)) return false;
+                                if (!stack.isOf(Items.GOAT_HORN)) return false;
                             }
                         }
                     }
@@ -53,7 +54,7 @@ public class VortexHornRecipe extends SpecialCraftingRecipe {
     public ItemStack craft(CraftingRecipeInput input, RegistryWrapper.WrapperLookup lookup) {
         ItemStack instrument = getInstrumentStack(input);
         if (!instrument.isEmpty()) {
-            ItemStack result = Items.STICK.getDefaultStack();
+            ItemStack result = URItems.VORTEX_HORN.getDefaultStack();
             result.set(DataComponentTypes.INSTRUMENT, instrument.get(DataComponentTypes.INSTRUMENT));
             return result;
         }
