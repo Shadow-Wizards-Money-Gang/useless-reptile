@@ -55,6 +55,8 @@ public class URRecipeProvider extends FabricRecipeProvider {
                 .input(URItems.WYVERN_SKIN)
                 .criterion("has_material", conditionsFromItem(URItems.WYVERN_SKIN))
                 .offerTo(exporter);
+
+
     }
 
     private static void offerDragonHelmetRecipe(RecipeExporter exporter, ItemConvertible output, ItemConvertible input) {
