@@ -3,9 +3,7 @@ package nordmods.uselessreptile.datagen.data;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
-import net.minecraft.data.server.recipe.RecipeExporter;
-import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
-import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.*;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.book.RecipeCategory;
@@ -56,7 +54,49 @@ public class URRecipeProvider extends FabricRecipeProvider {
                 .criterion("has_material", conditionsFromItem(URItems.WYVERN_SKIN))
                 .offerTo(exporter);
 
+        VortexHornRecipeJsonBuilder.create(RecipeCategory.TOOLS, URItems.VORTEX_HORN)
+                .input('R', Items.BREEZE_ROD)
+                .input('H', Items.GOAT_HORN)
+                .pattern(" R ")
+                .pattern("RHR")
+                .pattern(" R ")
+                .criterion("has_material", conditionsFromItem(Items.GOAT_HORN))
+                .offerTo(exporter);
 
+        VortexHornRecipeJsonBuilder.create(RecipeCategory.TOOLS, URItems.IRON_VORTEX_HORN)
+                .input('R', Items.BREEZE_ROD)
+                .input('H', URItems.VORTEX_HORN)
+                .input('I', ConventionalItemTags.IRON_INGOTS)
+                .input('B', ConventionalItemTags.STORAGE_BLOCKS_IRON)
+                .pattern("RBR")
+                .pattern("IHI")
+                .pattern("RBR")
+                .criterion("has_material", conditionsFromItem(Items.GOAT_HORN))
+                .offerTo(exporter);
+
+        VortexHornRecipeJsonBuilder.create(RecipeCategory.TOOLS, URItems.GOLD_VORTEX_HORN)
+                .input('R', Items.BREEZE_ROD)
+                .input('H', URItems.IRON_VORTEX_HORN)
+                .input('I', ConventionalItemTags.GOLD_INGOTS)
+                .input('B', ConventionalItemTags.STORAGE_BLOCKS_GOLD)
+                .pattern("RBR")
+                .pattern("IHI")
+                .pattern("RBR")
+                .criterion("has_material", conditionsFromItem(Items.GOAT_HORN))
+                .offerTo(exporter);
+
+        VortexHornRecipeJsonBuilder.create(RecipeCategory.TOOLS, URItems.DIAMOND_VORTEX_HORN)
+                .input('R', Items.BREEZE_ROD)
+                .input('H', URItems.GOLD_VORTEX_HORN)
+                .input('I', ConventionalItemTags.DIAMOND_GEMS)
+                .input('B', ConventionalItemTags.STORAGE_BLOCKS_DIAMOND)
+                .pattern("RBR")
+                .pattern("IHI")
+                .pattern("RBR")
+                .criterion("has_material", conditionsFromItem(Items.GOAT_HORN))
+                .offerTo(exporter);
+
+        RecipeProvider.offerNetheriteUpgradeRecipe(exporter, URItems.DIAMOND_VORTEX_HORN, RecipeCategory.TOOLS, URItems.NETHERITE_VORTEX_HORN);
     }
 
     private static void offerDragonHelmetRecipe(RecipeExporter exporter, ItemConvertible output, ItemConvertible input) {

@@ -31,9 +31,6 @@
     ],
     "fabric-datagen": [
       "nordmods.uselessreptile.datagen.UselessReptileDataGenerator"
-    ],
-    "emi": [
-      "nordmods.uselessreptile.integration.EmiIntegration"
     ]
   },
   "mixins": [

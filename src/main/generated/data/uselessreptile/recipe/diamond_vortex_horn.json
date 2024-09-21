@@ -1,0 +1,27 @@
+{
+  "type": "uselessreptile:vortex_horn",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "tag": "c:storage_blocks/diamond"
+    },
+    "H": {
+      "item": "uselessreptile:gold_vortex_horn"
+    },
+    "I": {
+      "tag": "c:gems/diamond"
+    },
+    "R": {
+      "item": "minecraft:breeze_rod"
+    }
+  },
+  "pattern": [
+    "RBR",
+    "IHI",
+    "RBR"
+  ],
+  "result": {
+    "count": 1,
+    "id": "uselessreptile:diamond_vortex_horn"
+  }
+}
