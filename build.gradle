@@ -14,6 +14,14 @@ repositories {
     maven { url 'https://maven.isxander.dev/releases' }
     maven { url "https://maven.nucleoid.xyz/" }
     maven { url 'https://jitpack.io' }
+    maven {
+        name = "TerraformersMC"
+        url = "https://maven.terraformersmc.com/"
+    }
+    maven {
+        name = "Jared's maven"
+        url = "https://maven.blamejared.com/"
+    }
     exclusiveContent {
         forRepository {
             maven {
@@ -41,6 +49,9 @@ dependencies {
     modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
     modImplementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
     modImplementation include ("com.github.NordAct:Primitive-Multipart-Entities:${project.primitive_multipart_entities_version}")
+
+    modCompileOnly "dev.emi:emi-fabric:${project.emi_version}:api"
+    modLocalRuntime "dev.emi:emi-fabric:${project.emi_version}"
 }
 
 processResources {
