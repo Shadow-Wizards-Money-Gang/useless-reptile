@@ -52,8 +52,8 @@ public class URItems {
     public static final VortexHornItem VORTEX_HORN = new VortexHornItem(new Item.Settings().maxCount(1).component(DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT), 1);
     public static final VortexHornItem IRON_VORTEX_HORN = new VortexHornItem(new Item.Settings().maxCount(1).component(DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT), 3);
     public static final VortexHornItem GOLD_VORTEX_HORN = new VortexHornItem(new Item.Settings().maxCount(1).component(DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT), 5);
-    public static final VortexHornItem DIAMOND_VORTEX_HORN = new VortexHornItem(new Item.Settings().maxCount(1).component(DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT), 8);
-    public static final VortexHornItem NETHERITE_VORTEX_HORN = new VortexHornItem(new Item.Settings().maxCount(1).component(DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT), 12);
+    public static final VortexHornItem DIAMOND_VORTEX_HORN = new VortexHornItem(new Item.Settings().maxCount(1).component(DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT), 7);
+    public static final VortexHornItem NETHERITE_VORTEX_HORN = new VortexHornItem(new Item.Settings().maxCount(1).component(DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT), 14);
 
     public static final RegistryKey<ItemGroup> UR_ITEM_GROUP = RegistryKey.of(RegistryKeys.ITEM_GROUP, UselessReptile.id("item_group"));
 

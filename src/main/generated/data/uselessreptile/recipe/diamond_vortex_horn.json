@@ -2,9 +2,6 @@
   "type": "uselessreptile:vortex_horn",
   "category": "equipment",
   "key": {
-    "B": {
-      "tag": "c:storage_blocks/diamond"
-    },
     "H": {
       "item": "uselessreptile:gold_vortex_horn"
     },
@@ -16,9 +13,9 @@
     }
   },
   "pattern": [
-    "RBR",
-    "IHI",
-    "RBR"
+    "IRI",
+    "RHR",
+    "IRI"
   ],
   "result": {
     "count": 1,
