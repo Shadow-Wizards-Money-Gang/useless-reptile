@@ -802,6 +802,10 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         updateEquipment();
     }
 
+    public int vortexHornCapacity() {
+        return 1;
+    }
+
     //I have no idea how this happened to be so important for spawning
     @Override
     public float getPathfindingFavor(BlockPos pos, WorldView world) {

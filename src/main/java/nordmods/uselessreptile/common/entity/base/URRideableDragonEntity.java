@@ -140,4 +140,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
         setRotation(rider.getYaw(), rider.getPitch());
     }
 
+    public int vortexHornCapacity() {
+        return 3;
+    }
 }
