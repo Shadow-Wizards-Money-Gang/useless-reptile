@@ -36,10 +36,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
+import net.minecraft.util.*;
 import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.random.Random;
@@ -55,6 +52,7 @@ import nordmods.uselessreptile.client.util.AssetCahceOwner;
 import nordmods.uselessreptile.client.util.DragonAssetCache;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.control.DragonLookControl;
+import nordmods.uselessreptile.common.entity.ai.control.LandDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import nordmods.uselessreptile.common.init.URAttributes;
@@ -98,6 +96,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         super(entityType, world);
         navigation = new DragonNavigation(this, world);
         lookControl = new DragonLookControl(this);
+        moveControl = new LandDragonMoveControl<>(this);
         inventory.addListener(this);
     }
 
