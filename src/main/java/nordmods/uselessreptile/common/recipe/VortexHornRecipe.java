@@ -13,7 +13,10 @@ import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.RegistryWrapper;
+import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URRecipeSerializers;
+import nordmods.uselessreptile.common.item.component.URDragonDataStorageComponent;
+import nordmods.uselessreptile.common.item.component.VortexHornCapacityComponent;
 
 public class VortexHornRecipe extends ShapedRecipe {
     private final RawShapedRecipe raw;
@@ -29,6 +32,8 @@ public class VortexHornRecipe extends ShapedRecipe {
         if (!instrument.isEmpty()) {
             ItemStack result = getResult(lookup);
             result.set(DataComponentTypes.INSTRUMENT, instrument.get(DataComponentTypes.INSTRUMENT));
+            result.set(URItems.DRAGON_STORAGE_COMPONENT, instrument.getOrDefault(URItems.DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT));
+            result.set(URItems.VORTEX_HORN_CAPACITY_COMPONENT, instrument.getOrDefault(URItems.VORTEX_HORN_CAPACITY_COMPONENT, VortexHornCapacityComponent.DEFAULT));
             return result;
         }
         return ItemStack.EMPTY;

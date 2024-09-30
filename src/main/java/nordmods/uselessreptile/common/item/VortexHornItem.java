@@ -145,7 +145,7 @@ public class VortexHornItem extends GoatHornItem {
         }
         if (leastCapacity <= 0 || getCurrentCapacity(stack) + leastCapacity >= getMaxCapacity()) {
             URDragonDataStorageComponent dataComponent = stack.get(URItems.DRAGON_STORAGE_COMPONENT);
-            if (dataComponent != null) {
+            if (dataComponent != null && getCurrentCapacity(stack) > 0) {
                 for (int i = 0; i < dataComponent.entityData().size(); i++) tryCreateDragon(stack, user, world, hand, user.getBlockPos());
                 user.playSound(URSounds.VORTEX_HORN_SPIT_OUT);
                 return true;
