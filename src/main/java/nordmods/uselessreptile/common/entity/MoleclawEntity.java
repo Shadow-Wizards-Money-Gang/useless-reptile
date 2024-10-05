@@ -214,7 +214,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         if (canBeControlledByRider()) {
             PlayerEntity rider = (PlayerEntity) getControllingPassenger();
 
-            float f1 = MathHelper.clamp(rider.forwardSpeed, -forwardSpeed, forwardSpeed);
+            double landSpeed = rider.forwardSpeed * getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
 
             if (isSprintPressed()) setSprinting(true);
             setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
@@ -222,8 +222,8 @@ public class MoleclawEntity extends URRideableDragonEntity {
             setRotation(rider);
             setPitch(MathHelper.clamp(rider.getPitch(), -getPitchLimit(), getPitchLimit()));
             if (isJumpPressed() && isOnGround()) jump();
-
-            super.travel(new Vec3d(0, movementInput.y, f1));
+            //adding some extra small number to Y velocity so on client it checks isOnGround() correctly
+            super.travel(new Vec3d(0, movementInput.y  - 0.001, landSpeed));
         } else {
             super.travel(movementInput);
         }

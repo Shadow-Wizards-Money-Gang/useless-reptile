@@ -1,5 +1,6 @@
 package nordmods.uselessreptile.common.entity.base;
 
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
@@ -13,14 +14,16 @@ import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.network.packet.s2c.play.VehicleMoveS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.client.init.URKeybinds;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
-import nordmods.uselessreptile.common.network.PosSyncS2CPacket;
+import nordmods.uselessreptile.common.network.KeyInputC2SPacket;
 
 public abstract class URRideableDragonEntity extends URDragonEntity implements RideableInventory {
     public boolean isSecondaryAttackPressed = false;
@@ -92,25 +95,39 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     public void tick() {
         super.tick();
         LivingEntity rider = getControllingPassenger();
+        if (rider == null) updateInputs(false, false, false, false, false);
+
+        if (getWorld() instanceof ServerWorld world && canBeControlledByRider()) {
+            setHomePoint(getBlockPos());
+            //05.10.24 - I'm done trying to fix this desync. I give no clue why it even happens
+            for (ServerPlayerEntity player : PlayerLookup.around(world, getBlockPos(), 512)) {
+                if (player.getVehicle() == this) continue;
+                world.sendToPlayerIfNearby(player, true, getX(), getY(), getZ(), new VehicleMoveS2CPacket(this));
+            }
+        }
+    }
+
+    @Override
+    protected void tickControlled(PlayerEntity rider, Vec3d movementInput) {
+        super.tickControlled(rider, movementInput);
         if (getWorld().isClient() && rider == MinecraftClient.getInstance().player) {
             boolean isSprintPressed = MinecraftClient.getInstance().options.sprintKey.isPressed();
             boolean isMoveForwardPressed = MinecraftClient.getInstance().options.forwardKey.isPressed();
             boolean isJumpPressed = MinecraftClient.getInstance().options.jumpKey.isPressed();
             boolean isMoveBackPressed = MinecraftClient.getInstance().options.backKey.isPressed();
             boolean isDownPressed = URKeybinds.flyDownKey.isUnbound() ? isSprintPressed : URKeybinds.flyDownKey.isPressed();
-            updateInputs(isMoveForwardPressed, isMoveBackPressed, isJumpPressed, isDownPressed, isSprintPressed);
-
             isSecondaryAttackPressed = URKeybinds.secondaryAttackKey.isPressed();
             isPrimaryAttackPressed = URKeybinds.primaryAttackKey.isPressed();
-        }
-        if (rider == null) updateInputs(false, false, false, false, false);
 
-        if (getWorld() instanceof ServerWorld world && canBeControlledByRider()) {
-            setHomePoint(getBlockPos());
-            //TODO: fix position desync
-            for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) {
-                PosSyncS2CPacket.send(player, this);
-            }
+            ClientPlayNetworking.send(
+                    new KeyInputC2SPacket(isJumpPressed,
+                            isMoveForwardPressed,
+                            isMoveBackPressed,
+                            isSprintPressed,
+                            isSecondaryAttackPressed,
+                            isPrimaryAttackPressed,
+                            isDownPressed,
+                            getId()));
         }
     }
 

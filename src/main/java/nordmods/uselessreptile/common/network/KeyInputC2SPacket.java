@@ -18,11 +18,13 @@ public record KeyInputC2SPacket(boolean jump, boolean forward, boolean back, boo
     public static void init() {
         ServerPlayNetworking.registerGlobalReceiver(PACKET_ID, (packet, context) -> {
             Entity entity = context.player().getWorld().getEntityById(packet.id);
-            if (entity instanceof URRideableDragonEntity dragon) {
+            if (entity instanceof URRideableDragonEntity dragon && context.player().getVehicle() == entity) {
                 dragon.isSecondaryAttackPressed = packet.secondaryAttack;
                 dragon.isPrimaryAttackPressed = packet.primaryAttack;
-
                 dragon.updateInputs(packet.forward, packet.back, packet.jump, packet.down, packet.sprint);
+            } else {
+                if (entity != null) UselessReptile.LOGGER.warn("{} tried to send key input packet for {} (UUID:{}) while not controlling it", context.player().getName().getString(), entity.getName().getString(), entity.getUuid().toString());
+                else UselessReptile.LOGGER.warn("{} tried to send key input packet for an invalid entity", context.player().getName().getString());
             }
         });
     }
