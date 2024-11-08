@@ -3,7 +3,6 @@ package nordmods.uselessreptile.client.util.model_data;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.client.util.model_data.base.DragonModelData;
 import nordmods.uselessreptile.client.util.model_data.base.EquipmentModelData;
@@ -20,7 +19,7 @@ public class ModelDataUtil {
         String dragonID = dragon.getDragonID();
         Map<String, DragonModelData> dragonModelDataMap = DragonModelData.dragonModelDataHolder.get(dragonID);
         DragonModelData dragonModelData;
-        if (!viaNametag || URClientConfig.getConfig().disableNamedEntityModels) dragonModelData = dragonModelDataMap.get(dragon.getVariant());
+        if (!viaNametag) dragonModelData = dragonModelDataMap.get(dragon.getVariant());
         else {
             DragonModelData temp = dragonModelDataMap.get(ResourceUtil.parseName(dragon));
             if (temp != null && temp.nametagAccessible()) dragonModelData = temp;
@@ -32,7 +31,7 @@ public class ModelDataUtil {
     @Nullable
     public static DragonModelData getDragonModelData(URDragonEntity dragon) {
         DragonModelData dragonModelData
-                = URClientConfig.getConfig().disableNamedEntityModels || dragon.getCustomName() == null ? null : getDragonModelData(dragon, true);
+                = dragon.getCustomName() == null ? null : getDragonModelData(dragon, true);
         if (dragonModelData == null) dragonModelData = getDragonModelData(dragon, false);
         return dragonModelData;
     }

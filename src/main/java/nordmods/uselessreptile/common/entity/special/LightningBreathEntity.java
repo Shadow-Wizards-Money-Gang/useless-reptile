@@ -22,14 +22,12 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
-import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URTags;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class LightningBreathEntity extends ProjectileEntity {
@@ -83,8 +81,7 @@ public class LightningBreathEntity extends ProjectileEntity {
                 onEntityHit(entityHitResult);
             }
 
-            boolean shouldBreakBlocks = getOwner() instanceof URDragonEntity dragon && dragon.isTamed() ?
-                    URConfig.getConfig().allowDragonGriefing.canTamedBreak() : URConfig.getConfig().allowDragonGriefing.canUntamedBreak();
+            boolean shouldBreakBlocks = true;
             if (getWorld().isClient() || !(shouldBreakBlocks && getWorld().getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING))) return;
 
             boolean blockCollision = false;

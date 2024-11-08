@@ -5,7 +5,6 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Heightmap;
-import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.LightningChaserEntity;
 import nordmods.uselessreptile.common.network.URPacketHelper;
 import nordmods.uselessreptile.common.util.LightningChaserSpawnTimer;
@@ -24,7 +23,7 @@ public class UREvents {
                     if (!(player instanceof LightningChaserSpawnTimer playerTimer)) continue;
                     if (player.getY() < 60) continue;
                     if (playerTimer.getTimer() > 0) continue;
-                    if (URConfig.getConfig().lightningChaserThunderstormSpawnChance >= player.getRandom().nextFloat() * 100) {
+                    if (10 >= player.getRandom().nextFloat() * 100) {
                         double cos = Math.cos(Math.toRadians(player.getHeadYaw() + 180));
                         double sin = Math.sin(Math.toRadians(player.getHeadYaw() + 180));
                         BlockPos pos = player.getBlockPos();
@@ -40,7 +39,7 @@ public class UREvents {
                                     pos.getZ());
                             URPacketHelper.playSound(lightningChaser, URSounds.LIGHTNING_CHASER_DISTANT_ROAR, lightningChaser.getSoundCategory(), 1, 1, 1);
                         }
-                        playerTimer.setTimer(URConfig.getConfig().lightningChaserThunderstormSpawnTimerCooldown);
+                        playerTimer.setTimer(24000);
                         break;
                     }
                 }

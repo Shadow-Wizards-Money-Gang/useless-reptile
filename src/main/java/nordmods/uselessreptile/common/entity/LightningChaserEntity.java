@@ -36,8 +36,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
-import nordmods.uselessreptile.common.config.URConfig;
-import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserRevengeGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserRoamAroundGoal;
@@ -90,16 +88,16 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         super(entityType, world);
         experiencePoints = 20;
 
-        baseSecondaryAttackCooldown = attributes().lightningChaserBaseSecondaryAttackCooldown;
-        basePrimaryAttackCooldown = attributes().lightningChaserBasePrimaryAttackCooldown;
-        baseAccelerationDuration = attributes().lightningChaserBaseAccelerationDuration;
+        baseSecondaryAttackCooldown = 30;
+        basePrimaryAttackCooldown = 30;
+        baseAccelerationDuration = 800;
         baseTamingProgress = 5;
         pitchLimitGround = 50;
         pitchLimitAir = 20;
-        rotationSpeedGround = attributes().lightningChaserRotationSpeedGround;
-        rotationSpeedAir = attributes().lightningChaserRotationSpeedAir;
-        verticalSpeed = attributes().lightningChaserVerticalSpeed;
-        regenerationFromFood = attributes().lightningChaserRegenerationFromFood;
+        rotationSpeedGround = 9;
+        rotationSpeedAir = 7;
+        verticalSpeed = 0.3f;
+        regenerationFromFood = 4;
         ticksUntilHeal = 500;
         defaultVariant = "grey";
     }
@@ -224,13 +222,13 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
     public static DefaultAttributeContainer.Builder createLightningChaserAttributes() {
         return TameableEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, attributes().lightningChaserDamage * attributes().dragonDamageMultiplier)
-                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, attributes().lightningChaserKnockback * URMobAttributesConfig.getConfig().dragonKnockbackMultiplier)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, attributes().lightningChaserHealth * attributes().dragonHealthMultiplier)
-                .add(EntityAttributes.GENERIC_ARMOR, attributes().lightningChaserArmor * attributes().dragonArmorMultiplier)
-                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, attributes().lightningChaserArmorToughness * attributes().dragonArmorToughnessMultiplier)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, attributes().lightningChaserGroundSpeed * attributes().dragonGroundSpeedMultiplier)
-                .add(EntityAttributes.GENERIC_FLYING_SPEED, attributes().lightningChaserFlyingSpeed * attributes().dragonFlyingSpeedMultiplier)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6F)
+                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.3f)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 70.0f)
+                .add(EntityAttributes.GENERIC_ARMOR, 6f)
+                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, 6.0f)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25f)
+                .add(EntityAttributes.GENERIC_FLYING_SPEED, 0.8f)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
     }
 
@@ -548,7 +546,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
     @Override
     public int getLimitPerChunk() {
-        return URConfig.getConfig().lightningChaserMaxGroupSize * 2;
+        return 2;
     }
 
     @Override

@@ -35,8 +35,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
-import nordmods.uselessreptile.common.config.URConfig;
-import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.wyvern.WyvernAttackGoal;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
@@ -73,16 +71,16 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         super(entityType, world);
         experiencePoints = 20;
 
-        baseSecondaryAttackCooldown = attributes().wyvernBaseSecondaryAttackCooldown;
-        basePrimaryAttackCooldown = attributes().wyvernBasePrimaryAttackCooldown;
-        baseAccelerationDuration = attributes().wyvernBaseAccelerationDuration;
+        baseSecondaryAttackCooldown = 30;
+        basePrimaryAttackCooldown = 80;
+        baseAccelerationDuration = 400;
         baseTamingProgress = 128;
         pitchLimitGround = 50;
         pitchLimitAir = 20;
-        rotationSpeedGround = attributes().wyvernRotationSpeedGround;
-        rotationSpeedAir = attributes().wyvernRotationSpeedAir;
-        verticalSpeed = attributes().wyvernVerticalSpeed;
-        regenerationFromFood = attributes().wyvernRegenerationFromFood;
+        rotationSpeedGround = 8;
+        rotationSpeedAir = 4;
+        verticalSpeed = 0.4f;
+        regenerationFromFood = 3f;
         ticksUntilHeal = 200;
         defaultVariant = "green";
     }
@@ -101,18 +99,18 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         targetSelector.add(6, new UntamedActiveTargetGoal<>(this, ChickenEntity.class, true, null));
         targetSelector.add(5, new DragonAttackWithOwnerGoal<>(this));
         targetSelector.add(4, new DragonRevengeGoal(this));
-        if (URConfig.getConfig().dragonMadness) targetSelector.add(5, new UntamedActiveTargetGoal<>(this, PlayerEntity.class, true, null));
+        if (false) targetSelector.add(5, new UntamedActiveTargetGoal<>(this, PlayerEntity.class, true, null));
     }
 
     public static DefaultAttributeContainer.Builder createWyvernAttributes() {
         return TameableEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, attributes().wyvernDamage * attributes().dragonDamageMultiplier)
-                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, attributes().wyvernKnockback * URMobAttributesConfig.getConfig().dragonKnockbackMultiplier)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, attributes().wyvernHealth * attributes().dragonHealthMultiplier)
-                .add(EntityAttributes.GENERIC_ARMOR, attributes().wyvernArmor * attributes().dragonArmorMultiplier)
-                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, attributes().wyvernArmorToughness * attributes().dragonArmorToughnessMultiplier)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, attributes().wyvernGroundSpeed * attributes().dragonGroundSpeedMultiplier)
-                .add(EntityAttributes.GENERIC_FLYING_SPEED, attributes().wyvernFlyingSpeed * attributes().dragonFlyingSpeedMultiplier)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 4.5f)
+                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.3f)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 50)
+                .add(EntityAttributes.GENERIC_ARMOR, 4.0f)
+                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, 2.0f)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.2f)
+                .add(EntityAttributes.GENERIC_FLYING_SPEED, 0.7f)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
     }
 
@@ -382,7 +380,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     @Override
     public int getLimitPerChunk() {
-        return URConfig.getConfig().wyvernMaxGroupSize * 2;
+        return 2;
     }
 
     @Override

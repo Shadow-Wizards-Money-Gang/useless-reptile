@@ -44,7 +44,6 @@ import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.event.listener.GameEventListener;
 import nordmods.uselessreptile.client.util.AssetCahceOwner;
 import nordmods.uselessreptile.client.util.DragonAssetCache;
-import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.pathfinding.DragonLookControl;
 import nordmods.uselessreptile.common.entity.ai.pathfinding.DragonNavigation;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
@@ -681,10 +680,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     public Box getSecondaryAttackBox() {
         return null;
-    }
-
-    protected static URMobAttributesConfig attributes() {
-        return URMobAttributesConfig.getConfig();
     }
 
     protected int getTicksUntilHeal() {

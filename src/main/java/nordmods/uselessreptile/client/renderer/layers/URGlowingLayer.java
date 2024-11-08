@@ -3,7 +3,6 @@ package nordmods.uselessreptile.client.renderer.layers;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.util.AssetCache;
 import nordmods.uselessreptile.client.util.AssetCahceOwner;
 import nordmods.uselessreptile.client.util.ResourceUtil;
@@ -19,8 +18,6 @@ public class URGlowingLayer<T extends GeoAnimatable & AssetCahceOwner> extends G
     public void render(MatrixStack matrixStackIn, T animatable, BakedGeoModel model, RenderLayer renderType,
                        VertexConsumerProvider bufferSource, VertexConsumer buffer, float partialTick,
                        int packedLight, int packedOverlay) {
-        if (URClientConfig.getConfig().disableEmissiveTextures) return;
-
         AssetCache assetCache = animatable.getAssetCache();
         if (!ResourceUtil.isResourceReloadFinished) {
             assetCache.setGlowLayerLocationCache(null);

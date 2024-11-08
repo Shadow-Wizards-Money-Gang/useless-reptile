@@ -14,7 +14,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
-import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.init.*;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -73,7 +72,7 @@ public class AcidBlastEntity extends PersistentProjectileEntity implements GeoEn
     protected void onEntityHit(EntityHitResult entityHitResult) {
         if (getWorld().isClient()) return;
         Entity target = entityHitResult.getEntity();
-        target.damage(target.getDamageSources().create(URDamageTypes.ACID, getOwner()),2 * URMobAttributesConfig.getConfig().dragonDamageMultiplier);
+        target.damage(target.getDamageSources().create(URDamageTypes.ACID, getOwner()),2 * 1F);
         spawnEffectCloud();
         playSound(URSounds.ACID_SPLASH, 1, 1);
         super.onEntityHit(entityHitResult);

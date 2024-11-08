@@ -6,7 +6,6 @@ import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.Perspective;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,7 +16,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class LivingEntityMixin {
     @Inject(method = "onDismounted", at = @At("HEAD"))
     private void setFirstPersonPerspective(Entity vehicle, CallbackInfo ci) {
-        if (!URClientConfig.getConfig().autoThirdPerson) return;
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) return;
         GameOptions gameOptions = MinecraftClient.getInstance().options;

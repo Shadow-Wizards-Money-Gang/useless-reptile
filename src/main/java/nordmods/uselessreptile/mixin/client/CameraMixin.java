@@ -2,7 +2,6 @@ package nordmods.uselessreptile.mixin.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
-import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,19 +14,15 @@ public abstract class CameraMixin {
 
     @ModifyArgs(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Camera;moveBy(DDD)V"))
     public void offset(Args args) {
-        if (!URClientConfig.getConfig().enableCameraOffset) return;
-
         if (MinecraftClient.getInstance().player.getVehicle() instanceof URRideableDragonEntity) {
-            args.set(1, URClientConfig.getConfig().cameraVerticalOffset);
-            args.set(2, URClientConfig.getConfig().cameraHorizontalOffset);
+            args.set(1, 0);
+            args.set(2, -1.5);
         }
     }
 
     @ModifyArg(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Camera;clipToSpace(D)D"))
     public double offsetCameraDistance(double desiredCameraDistance) {
-        if (!URClientConfig.getConfig().enableCameraOffset) return desiredCameraDistance;
-
-        if (MinecraftClient.getInstance().player.getVehicle() instanceof URRideableDragonEntity) return desiredCameraDistance + URClientConfig.getConfig().cameraDistanceOffset;
+        if (MinecraftClient.getInstance().player.getVehicle() instanceof URRideableDragonEntity) return desiredCameraDistance + 2;
         else return desiredCameraDistance;
     }
 

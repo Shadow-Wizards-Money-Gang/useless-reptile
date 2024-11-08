@@ -27,8 +27,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
-import nordmods.uselessreptile.common.config.URConfig;
-import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.*;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
@@ -61,15 +59,15 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         experiencePoints = 5;
         setCanPickUpLoot(true);
 
-        basePrimaryAttackCooldown = attributes().pikehornBasePrimaryAttackCooldown;
+        basePrimaryAttackCooldown = 20;
         secondaryAttackDuration = 12;
         primaryAttackDuration = 12;
-        baseAccelerationDuration = attributes().pikehornBaseAccelerationDuration;
-        rotationSpeedGround = attributes().pikehornRotationSpeedGround;
-        rotationSpeedAir = attributes().pikehornRotationSpeedAir;
+        baseAccelerationDuration = 100;
+        rotationSpeedGround = 10;
+        rotationSpeedAir = 10;
         canNavigateInFluids = true;
-        regenerationFromFood = attributes().pikehornRegenerationFromFood;
-        verticalSpeed = attributes().pikehornVerticalSpeed;
+        regenerationFromFood = 3;
+        verticalSpeed = 0.2f;
         inventory = new SimpleInventory(0);
         ticksUntilHeal = 400;
         defaultVariant = "blue";
@@ -230,13 +228,13 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
 
     public static DefaultAttributeContainer.Builder createPikehornAttributes() {
         return TameableEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, attributes().pikehornDamage * attributes().dragonDamageMultiplier)
-                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, attributes().pikehornKnockback * URMobAttributesConfig.getConfig().dragonKnockbackMultiplier)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, attributes().pikehornHealth * attributes().dragonHealthMultiplier)
-                .add(EntityAttributes.GENERIC_ARMOR, attributes().pikehornArmor * attributes().dragonArmorMultiplier)
-                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, attributes().pikehornArmorToughness * attributes().dragonArmorToughnessMultiplier)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, attributes().pikehornGroundSpeed * attributes().dragonGroundSpeedMultiplier)
-                .add(EntityAttributes.GENERIC_FLYING_SPEED, attributes().pikehornFlyingSpeed * attributes().dragonFlyingSpeedMultiplier)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 2.5F)
+                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 16)
+                .add(EntityAttributes.GENERIC_ARMOR, 5)
+                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, 0)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.2)
+                .add(EntityAttributes.GENERIC_FLYING_SPEED, 0.8)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
     }
 
@@ -256,7 +254,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         targetSelector.add(4, new DragonAttackWithOwnerGoal<>(this));
         targetSelector.add(4, new PikehornFluteTargetGoal<>(this, LivingEntity.class));
         targetSelector.add(5, new DragonTrackOwnerAttackerGoal(this));
-        if (URConfig.getConfig().dragonMadness) targetSelector.add(4, new UntamedActiveTargetGoal<>(this, PlayerEntity.class, true, null));
+        if (false) targetSelector.add(4, new UntamedActiveTargetGoal<>(this, PlayerEntity.class, true, null));
     }
 
     @Override
@@ -362,6 +360,6 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
 
     @Override
     public int getLimitPerChunk() {
-        return URConfig.getConfig().pikehornMaxGroupSize * 2;
+        return 2;
     }
 }

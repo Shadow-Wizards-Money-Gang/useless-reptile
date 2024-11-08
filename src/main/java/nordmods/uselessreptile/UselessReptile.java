@@ -3,8 +3,6 @@ package nordmods.uselessreptile;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
-import nordmods.uselessreptile.common.config.URConfig;
-import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.util.dragon_variant.DragonVariantLoader;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.network.KeyInputC2SPacket;
@@ -17,7 +15,6 @@ public class UselessReptile implements ModInitializer, PreLaunchEntrypoint {
     @Override
     public void onInitialize() {
         DragonVariantLoader.init();
-        URMobAttributesConfig.init();
         URSounds.init();
         UREntities.init();
         URItems.init();
@@ -31,8 +28,5 @@ public class UselessReptile implements ModInitializer, PreLaunchEntrypoint {
     }
 
     @Override
-    public void onPreLaunch() {
-        URConfig.init();
-        URMobAttributesConfig.init();
-    }
+    public void onPreLaunch() {}
 }

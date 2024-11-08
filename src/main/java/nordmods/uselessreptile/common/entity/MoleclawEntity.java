@@ -35,8 +35,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.*;
-import nordmods.uselessreptile.common.config.URConfig;
-import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawEscapeLightGoal;
@@ -71,11 +69,11 @@ public class MoleclawEntity extends URRideableDragonEntity {
         navigation = new MoleclawNavigation(this, world);
 
         pitchLimitGround = 50;
-        rotationSpeedGround = attributes().moleclawRotationSpeedGround;
-        basePrimaryAttackCooldown = attributes().moleclawBasePrimaryAttackCooldown;
-        baseSecondaryAttackCooldown = attributes().moleclawBaseSecondaryAttackCooldown;
+        rotationSpeedGround = 6;
+        basePrimaryAttackCooldown = 60;
+        baseSecondaryAttackCooldown = 30;
         baseTamingProgress = 64;
-        regenerationFromFood = attributes().moleclawRegenerationFromFood;
+        regenerationFromFood = 4;
         ticksUntilHeal = 400;
         defaultVariant = "black";
     }
@@ -114,12 +112,12 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     public static DefaultAttributeContainer.Builder createMoleclawAttributes() {
         return TameableEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, attributes().moleclawDamage * attributes().dragonDamageMultiplier)
-                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, attributes().moleclawKnockback * URMobAttributesConfig.getConfig().dragonKnockbackMultiplier)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, attributes().moleclawHealth * attributes().dragonHealthMultiplier)
-                .add(EntityAttributes.GENERIC_ARMOR, attributes().moleclawArmor * attributes().dragonArmorMultiplier)
-                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, attributes().moleclawArmorToughness * attributes().dragonArmorToughnessMultiplier)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, attributes().moleclawGroundSpeed * attributes().dragonGroundSpeedMultiplier)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 8.0f)
+                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.5f)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 100)
+                .add(EntityAttributes.GENERIC_ARMOR, 5)
+                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, 2)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25f)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
 
     }
@@ -314,7 +312,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
             if (doesCollide(targetBox, getSecondaryAttackBox())) tryAttack(mob);
         }
 
-        boolean shouldBreakBlocks = isTamed() ? URConfig.getConfig().allowDragonGriefing.canTamedBreak() : URConfig.getConfig().allowDragonGriefing.canUntamedBreak();
+        boolean shouldBreakBlocks = true;
         boolean canBreakBlocks = shouldBreakBlocks && getWorld().getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING);
         if (getWorld().isClient() || !canBreakBlocks) return;
 
@@ -332,7 +330,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
             if (hasStatusEffect(StatusEffects.WEAKNESS)) maxMiningLevel -= getStatusEffect(StatusEffects.WEAKNESS).getAmplifier() + 1;
 
             if (!blockState.isAir() && miningLevel <= maxMiningLevel) {
-                boolean shouldDrop = getRandom().nextDouble() * 100 <= URConfig.getConfig().blockDropChance;
+                boolean shouldDrop = getRandom().nextDouble() * 100 <= 50;
                 getWorld().breakBlock(blockPos, shouldDrop, this);
             }
         }
@@ -447,6 +445,6 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     @Override
     public int getLimitPerChunk() {
-        return URConfig.getConfig().moleclawMaxGroupSize * 2;
+        return 2;
     }
 }
